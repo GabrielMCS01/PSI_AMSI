@@ -10,7 +10,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CicloDias">
         <activity
-            android:name=".MainActivity"
+            android:name=".ResultsTrainingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InProgressTrainingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PausedTrainingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StartTrainingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConfigurationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
