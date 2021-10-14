@@ -7,4 +7,10 @@
     <string name="txtPassword">Palavra-passe</string>
     <string name="txtBtEntrar">Entrar</string>
     <string name="txtBtRegistar">Ainda não é membro? Registe-se aqui</string>
+    <string name="txtRegisto">Registo</string>
+    <string name="txtBtRegistarse">Registar-se</string>
+    <string name="txtPrimeiroNome">Primeiro Nome</string>
+    <string name="txtUltimoNome">Ultimo Nome</string>
+    <string name="txtConfirmarEmail">Confirmar Email </string>
+    <string name="txtConfirmarPassword">Confirmar Palavra-passe</string>
 </resources>
