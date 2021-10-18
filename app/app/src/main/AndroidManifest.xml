@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.psi.ciclodias">
-
+    
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CicloDias">
+
         <activity
             android:name=".ResultsTrainingActivity"
             android:exported="false" />
@@ -20,7 +21,8 @@
             android:exported="false" />
         <activity
             android:name=".StartTrainingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainPageActivity"/>
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />

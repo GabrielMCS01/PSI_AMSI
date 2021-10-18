@@ -13,4 +13,17 @@
     <string name="txtUltimoNome">Ultimo Nome</string>
     <string name="txtConfirmarEmail">Confirmar Email </string>
     <string name="txtConfirmarPassword">Confirmar Palavra-passe</string>
+    <string name="txtAtividadeTotalUtilizador">Atividade Total do Utilizador</string>
+    <string name="txtNomeUtilizador">Nome de Utilizador</string>
+    <string name="txtDataNascimento">Data de Nascimento</string>
+    <string name="txtBtGuardarAlteracoes">Guardar Alterações</string>
+    <string name="txtDistancia">Distância</string>
+    <string name="txtTempo">Tempo</string>
+    <string name="txtVelocidadeMedia">Velocidade Média</string>
+    <string name="txtNomeCompleto">Nome Completo</string>
+    <string name="txtTreino">Treino</string>
+    <string name="txtBtComecarTreino">Começar</string>
+    <string name="txtPausa">Pausa</string>
+    <string name="txtBtRetomarTreino">Retomar</string>
+    <string name="txtBtTerminarTreino">Terminar</string>
 </resources>
