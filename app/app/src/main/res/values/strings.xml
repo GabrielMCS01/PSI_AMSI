@@ -26,4 +26,5 @@
     <string name="txtPausa">Pausa</string>
     <string name="txtBtRetomarTreino">Retomar</string>
     <string name="txtBtTerminarTreino">Terminar</string>
+    <string name="txtResumoTreino">Resumo do Treino</string>
 </resources>
