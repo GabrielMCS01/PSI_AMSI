@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 public class ProfileActivity extends AppCompatActivity {
+    private ImageView fotoPerfil;
     private EditText nomeUtilizador, email, dataNascimento;
     private Button btGuardaAlteracoes;
     private TextView nomeCompleto, distancia, velMedia, tempo, pordefenir;
@@ -19,9 +20,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
         nomeUtilizador = findViewById(R.id.etUserPerfil);
         email = findViewById(R.id.etEmailPerfil);
         dataNascimento = findViewById(R.id.etDataNascimentoPerfil);
@@ -30,17 +28,17 @@ public class ProfileActivity extends AppCompatActivity {
         distancia = findViewById(R.id.tvDistanciaPerfil);
         velMedia = findViewById(R.id.tvVelMedia);
         tempo = findViewById(R.id.tvTempoPerfil);
-        pordefenir = findViewById(R.id.textView8);
+        pordefenir = findViewById(R.id.tvPorDefinirPerfil);
+        fotoPerfil = findViewById(R.id.ivFotoPerfil);
 
         btGuardaAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Codigo para guardar na BD as alterações
+
 
             }
         });
 
-    }
-
-    private void setSupportActionBar(Toolbar myToolbar) {
     }
 }

@@ -27,4 +27,13 @@
     <string name="txtBtRetomarTreino">Retomar</string>
     <string name="txtBtTerminarTreino">Terminar</string>
     <string name="txtResumoTreino">Resumo do Treino</string>
+    <string name="txtErrorConfirmarEmail">Os emails inseridos não são iguais</string>
+    <string name="txtErrorConfirmarPassword">As palavra-chaves inseridas não são iguais</string>
+    <string name="txtBtGuardar">Guardar</string>
+    <string name="txtBtSair">Sair</string>
+    <string name="tvSessaoTreino">Sessão de Treino</string>
+    <string name="txtDuracao">Duração</string>
+    <string name="txtVelInstantanea">Velocidade Instantânea</string>
+    <string name="txtDistanciaPercorrida">Distância Percorrida</string>
+    <string name="txtBtMapa">Mapa</string>
 </resources>

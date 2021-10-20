@@ -37,14 +37,19 @@ public class RegistryActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString();
                 String confirmarPassword = etConfirmarPassword.getText().toString();
 
-                if (email == confirmarEmail && password == confirmarPassword){
-                    // Verificar o resto dos dados
-                    // Enviar dados para a base de dados
+                if (email.equals(confirmarEmail)) {
+                    if (password.equals(confirmarPassword)) {
+                        // Verificar o resto dos dados
+                        // Enviar dados para a base de dados
 
-                    startActivity(intent);
+                        startActivity(intent);
+                    }
+                    else {
+                        etConfirmarPassword.setError(getString(R.string.txtErrorConfirmarPassword));
+                    }
                 }
                 else {
-
+                    etConfirmarEmail.setError(getString(R.string.txtErrorConfirmarEmail));
                 }
             }
         });
