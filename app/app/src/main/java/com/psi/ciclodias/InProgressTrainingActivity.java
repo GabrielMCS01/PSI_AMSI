@@ -47,8 +47,8 @@ public class InProgressTrainingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Abrir o fragmento do Mapbox
-
-
+                Intent intent = new Intent(getApplicationContext(), mapFragment.class);
+                startActivity(intent);
             }
         });
 

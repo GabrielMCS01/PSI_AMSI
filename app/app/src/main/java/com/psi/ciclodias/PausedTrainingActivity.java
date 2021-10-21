@@ -27,8 +27,8 @@ public class PausedTrainingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
-
-                // Fazer cenas
+                // Iniciar a atividade mas com dados que estavão anteriormente
+                // Também sem o botão de Login
                 startActivity(intent);
             }
         });
