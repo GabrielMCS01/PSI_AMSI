@@ -38,7 +38,9 @@ public class RegistryActivity extends AppCompatActivity {
                 String confirmarPassword = etConfirmarPassword.getText().toString();
 
                 if (email.equals(confirmarEmail)) {
+                    // Verificar se o email já existe na base de dados
                     if (password.equals(confirmarPassword)) {
+                        // Verificar se a palavra-passe tem pelo menos 6 digitos
                         // Verificar o resto dos dados
                         // Enviar dados para a base de dados
 

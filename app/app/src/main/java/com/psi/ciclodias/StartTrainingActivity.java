@@ -1,6 +1,7 @@
 package com.psi.ciclodias;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,14 +17,25 @@ public class StartTrainingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_training);
 
+        // Iniciação do fragmento da NavBar
+        Fragment fragment = new BottomNavBarFragment();
+
+        if(fragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.navBarMainPage, fragment)
+                    .commit();
+        }
+        // Fim da Iniciação do fragmento da NAVBAR
+
         btComecarTreino = findViewById(R.id.btComecarTreino);
 
         btComecarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
+                // Iniciar a outra atividade, iniciar dados?
 
-                // Fazer cenas
+                Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
             }
         });

@@ -8,13 +8,13 @@
 
     <ImageView
         android:id="@+id/ivFotoPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@drawable/logo" />
 
     <TextView
         android:id="@+id/tvNomePerfil"
@@ -135,7 +135,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
         android:adjustViewBounds="true"
-        android:background="@drawable/lapispequeno"
+        android:background="@drawable/ic_action_edit"
         android:scaleType="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivFotoPerfil" />
@@ -147,7 +147,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:adjustViewBounds="true"
-        android:background="@drawable/lapispequeno"
+        android:background="@drawable/ic_action_edit"
         android:scaleType="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgBtEmailPerfil" />
@@ -159,9 +159,19 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:adjustViewBounds="true"
-        android:background="@drawable/lapispequeno"
+        android:background="@drawable/ic_action_edit"
         android:scaleType="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgBtUserPerfil" />
+
+    <FrameLayout
+        android:id="@+id/navBarMainPage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

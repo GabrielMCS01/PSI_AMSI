@@ -1,6 +1,7 @@
 package com.psi.ciclodias;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,15 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        Fragment fragment = new BottomNavBarFragment();
+
+        if(fragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.navBarMainPage, fragment)
+                    .commit();
+        }
+
         nomeUtilizador = findViewById(R.id.etUserPerfil);
         email = findViewById(R.id.etEmailPerfil);
         dataNascimento = findViewById(R.id.etDataNascimentoPerfil);
@@ -31,11 +41,13 @@ public class ProfileActivity extends AppCompatActivity {
         pordefenir = findViewById(R.id.tvPorDefinirPerfil);
         fotoPerfil = findViewById(R.id.ivFotoPerfil);
 
+        // Atribuir ás textviews os valores na base de dados do utilizador
+
         btGuardaAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Codigo para guardar na BD as alterações
-
+                // POP-UP que os dados foram guardados com sucesso ou com insucesso
 
             }
         });

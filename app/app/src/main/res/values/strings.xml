@@ -36,4 +36,5 @@
     <string name="txtVelInstantanea">Velocidade Instantânea</string>
     <string name="txtDistanciaPercorrida">Distância Percorrida</string>
     <string name="txtBtMapa">Mapa</string>
+    <string name="txtGPSAdquirido">GPS Adquirido</string>
 </resources>
