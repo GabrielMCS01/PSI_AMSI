@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".MainPageActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <FrameLayout
         android:id="@+id/navBarMainPage"
         android:layout_width="0dp"

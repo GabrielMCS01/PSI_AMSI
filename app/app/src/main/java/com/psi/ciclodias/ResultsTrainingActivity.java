@@ -29,21 +29,22 @@ public class ResultsTrainingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Código para guardar na base de dados
 
-
                 Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
         btSair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
+                boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 if (respostaUser){
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
+                    finish();
                 }
                 else return;
             }

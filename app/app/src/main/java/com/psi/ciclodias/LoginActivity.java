@@ -31,10 +31,11 @@ public class LoginActivity extends AppCompatActivity {
                 String email = tvEmail.getText().toString();
                 String password = tvPassword.getText().toString();
 
-                // fazer a verificação se o login está correto
-                //if (email.matches())
+                // Fazer a verificação se o login está correto
+                //if (email.matches() && password.matches())
 
                 startActivity(intent);
+                finish();
             }
         });
 

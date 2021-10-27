@@ -2,61 +2,75 @@ package com.psi.ciclodias;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+
+import com.psi.ciclodias.databinding.ActivityRegistryBinding;
 
 public class RegistryActivity extends AppCompatActivity {
-    private EditText etPrimeiroNome, etUltimoNome, etEmail, etConfirmarEmail, etPassword, etConfirmarPassword;
-    private Button btRegistarse;
+    private ActivityRegistryBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registry);
+        //setContentView(R.layout.activity_registry);
 
-        etPrimeiroNome = findViewById(R.id.etPrimeiroNome);
-        etUltimoNome = findViewById(R.id.etUltimoNome);
-        etEmail = findViewById(R.id.etRegistoEmail);
-        etConfirmarEmail = findViewById(R.id.etConfirmarEmail);
-        etPassword = findViewById(R.id.etRegistoPassword);
-        etConfirmarPassword = findViewById(R.id.etConfirmarPassword);
-        btRegistarse = findViewById(R.id.btRegistarse);
+        binding = ActivityRegistryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        btRegistarse.setOnClickListener(new View.OnClickListener() {
+        binding.btRegistarse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                // Variáveis para enviar os dados inseridos para a API
+                String primeiroNome = binding.etPrimeiroNome.getText().toString();
+                String ultimoNome = binding.etUltimoNome.getText().toString();
+                String email = binding.etRegistoEmail.getText().toString();
+                String confirmarEmail = binding.etConfirmarEmail.getText().toString();
+                String password = binding.etRegistoPassword.getText().toString();
+                String confirmarPassword = binding.etConfirmarPassword.getText().toString();
 
-                String primeiroNome = etPrimeiroNome.getText().toString();
-                String ultimoNome = etUltimoNome.getText().toString();
-                String email = etEmail.getText().toString();
-                String confirmarEmail = etConfirmarEmail.getText().toString();
-                String password = etPassword.getText().toString();
-                String confirmarPassword = etConfirmarPassword.getText().toString();
-
-                if (email.equals(confirmarEmail)) {
+                if (isMailValida(email, confirmarEmail) && isPasswordValida(password, confirmarPassword)) {
                     // Verificar se o email já existe na base de dados
-                    if (password.equals(confirmarPassword)) {
-                        // Verificar se a palavra-passe tem pelo menos 6 digitos
-                        // Verificar o resto dos dados
-                        // Enviar dados para a base de dados
-
-                        startActivity(intent);
-                    }
-                    else {
-                        etConfirmarPassword.setError(getString(R.string.txtErrorConfirmarPassword));
-                    }
+                    // Verificar o resto dos dados
+                    // Enviar dados para a base de dados
+                    finish();
                 }
-                else {
-                    etConfirmarEmail.setError(getString(R.string.txtErrorConfirmarEmail));
+                else{
+                    // Outro erro
+                    //binding.etConfirmarPassword.setError(getString(R.string.txtErrorConfirmarPassword));
                 }
             }
         });
-
     }
 
+
+    private boolean isMailValida(String email, String confirmarEmail){
+        if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (email.equals(confirmarEmail))
+                return true;
+            else
+                binding.etConfirmarEmail.setError(getString(R.string.txtErrorConfirmarEmail));
+                return false;
+        }
+        else {
+            binding.etRegistoEmail.setError(getString(R.string.txtErrorEmail));
+            return false;
+        }
+    }
+
+    private boolean isPasswordValida(String password, String confirmarPassword){
+        if (password.length() > 6)
+            if (password.equals(confirmarPassword))
+                return true;
+            else {
+                binding.etConfirmarPassword.setError(getString(R.string.txtErrorConfirmarPassword));
+                return false;
+            }
+        else {
+            binding.etRegistoPassword.setError(getString(R.string.txtErrorPassword));
+            return false;
+        }
+    }
 
 }

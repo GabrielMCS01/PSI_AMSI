@@ -5,22 +5,22 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import com.psi.ciclodias.databinding.ActivityProfileBinding;
 
 public class ProfileActivity extends AppCompatActivity {
-    private ImageView fotoPerfil;
-    private EditText nomeUtilizador, email, dataNascimento;
-    private Button btGuardaAlteracoes;
-    private TextView nomeCompleto, distancia, velMedia, tempo, pordefenir;
+    private ActivityProfileBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
 
+        // Recebe os IDs da Activity Profile
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // ----------------------- Inicio da Bottom-navbar --------------------------------
         Fragment fragment = new BottomNavBarFragment();
 
         if(fragment != null){
@@ -29,26 +29,23 @@ public class ProfileActivity extends AppCompatActivity {
                     .replace(R.id.navBarMainPage, fragment)
                     .commit();
         }
+        // ------------------------ Fim da Bottom-navbar -----------------------------------
 
-        nomeUtilizador = findViewById(R.id.etUserPerfil);
-        email = findViewById(R.id.etEmailPerfil);
-        dataNascimento = findViewById(R.id.etDataNascimentoPerfil);
-        btGuardaAlteracoes = findViewById(R.id.btGuardarAlteracoes);
-        nomeCompleto = findViewById(R.id.tvNomePerfil);
-        distancia = findViewById(R.id.tvDistanciaPerfil);
-        velMedia = findViewById(R.id.tvVelMedia);
-        tempo = findViewById(R.id.tvTempoPerfil);
-        pordefenir = findViewById(R.id.tvPorDefinirPerfil);
-        fotoPerfil = findViewById(R.id.ivFotoPerfil);
+        // Atribuir ás textviews os dados na base de dados do utilizador
+        binding.ivFotoPerfil.setImageResource(R.drawable.ic_launcher_foreground);
+        binding.tvNomePerfil.setText("Nome Provisório");
+        binding.etEmailPerfil.setText("exemplo@mail.com");
+        binding.etUserPerfil.setText("Nome Utilizador Provisório");
+        binding.etDataNascimentoPerfil.setText("30-01-2001");
 
-        // Atribuir ás textviews os valores na base de dados do utilizador
-
-        btGuardaAlteracoes.setOnClickListener(new View.OnClickListener() {
+        binding.btGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean sucesso = false;
                 // Codigo para guardar na BD as alterações
                 // POP-UP que os dados foram guardados com sucesso ou com insucesso
-
+                if (!sucesso) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
+                else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
             }
         });
 

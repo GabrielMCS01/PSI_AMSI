@@ -26,20 +26,19 @@ public class PausedTrainingActivity extends AppCompatActivity {
         btRetomarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
-                // Iniciar a atividade mas com dados que estavão anteriormente
-                // Também sem o botão de Login
-                startActivity(intent);
+                finish();
+                onResume();
             }
         });
 
         btTerminarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
                 // Enviar os dados para a outra activity
                 // Fazer cenas
+                Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 

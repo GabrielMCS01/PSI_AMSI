@@ -56,7 +56,7 @@
         android:layout_marginStart="16dp"
         android:ems="14"
         android:hint="@string/txtDataNascimento"
-        android:inputType="number"
+        android:inputType="date"
         app:layout_constraintStart_toEndOf="@+id/imgBtUserPerfil2"
         app:layout_constraintTop_toBottomOf="@+id/etUserPerfil" />
 

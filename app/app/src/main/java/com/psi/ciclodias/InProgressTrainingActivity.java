@@ -31,15 +31,22 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 // Pausa no treino
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
+                onPause();
             }
         });
 
         btTerminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Confirmar ao utilizador se pretende mesmo terminar o treino
-                Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
-                startActivity(intent);
+                boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
+
+                // Confirmar ao utilizador se não quer mesmo guardar os dados
+                if (respostaUser) {
+                    // Enviar os dados para a outra Activity
+                    Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 

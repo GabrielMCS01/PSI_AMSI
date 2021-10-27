@@ -12,6 +12,7 @@ public class MainPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+        // ----------------------- Inicio da Bottom-navbar --------------------------------
         Fragment fragment = new BottomNavBarFragment();
 
         if(fragment != null){
@@ -20,5 +21,8 @@ public class MainPageActivity extends AppCompatActivity {
                     .replace(R.id.navBarMainPage, fragment)
                     .commit();
         }
+        // ------------------------ Fim da Bottom-navbar -----------------------------------
     }
+
+
 }

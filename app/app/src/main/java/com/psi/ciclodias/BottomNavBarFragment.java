@@ -23,6 +23,11 @@ public class BottomNavBarFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -37,6 +42,7 @@ public class BottomNavBarFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), MainPageActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -45,6 +51,7 @@ public class BottomNavBarFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), StartTrainingActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -53,6 +60,7 @@ public class BottomNavBarFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ProfileActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
         return view;
