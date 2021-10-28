@@ -5,31 +5,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+
+import com.psi.ciclodias.databinding.ActivityLoginBinding;
+import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button btEntrar, btRegisto;
-    private EditText tvEmail, tvPassword;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        btEntrar = findViewById(R.id.btEntrar);
-        btRegisto = findViewById(R.id.btRegistar);
-        tvEmail = findViewById(R.id.etLoginEmail);
-        tvPassword = findViewById(R.id.etLoginPassword);
+        // Recebe os IDs da Activity Results Training
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        btEntrar.setOnClickListener(new View.OnClickListener() {
+        binding.btEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
 
                 // Recebe os itens das editViews
-                String email = tvEmail.getText().toString();
-                String password = tvPassword.getText().toString();
+                String email = binding.etLoginEmail.getText().toString();
+                String password = binding.etLoginPassword.getText().toString();
 
                 // Fazer a verificação se o login está correto
                 //if (email.matches() && password.matches())
@@ -39,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btRegisto.setOnClickListener(new View.OnClickListener() {
+        binding.btRegistar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), RegistryActivity.class);

@@ -6,24 +6,25 @@ import androidx.fragment.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+
+import com.psi.ciclodias.databinding.ActivityProfileBinding;
+import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
 public class StartTrainingActivity extends AppCompatActivity {
-    private Button btComecarTreino;
-
+    private ActivityStartTrainingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_training);
 
-        btComecarTreino = findViewById(R.id.btComecarTreino);
+        // Recebe os IDs da Activity Start Training
+        binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        btComecarTreino.setOnClickListener(new View.OnClickListener() {
+        binding.btComecarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Iniciar a outra atividade, iniciar dados?
-
+                // Iniciar o treino
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();

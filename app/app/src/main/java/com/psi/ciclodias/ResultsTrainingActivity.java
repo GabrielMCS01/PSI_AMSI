@@ -5,26 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+
+import com.psi.ciclodias.databinding.ActivityProfileBinding;
+import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 
 public class ResultsTrainingActivity extends AppCompatActivity {
-    private TextView tempo, distancia, velMedia, pordefenir;
-    private Button btGuardar, btSair;
+    private ActivityResultsTrainingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results_training);
 
-        tempo = findViewById(R.id.tvTempoResumo);
-        distancia = findViewById(R.id.tvDistanciaResumo);
-        velMedia = findViewById(R.id.tvVelMediaResumo);
-        pordefenir = findViewById(R.id.tvPorDefenirResumo);
-        btGuardar = findViewById(R.id.btGuardarResumo);
-        btSair = findViewById(R.id.btSairResumo);
+        // Recebe os IDs da Activity Results Training
+        binding = ActivityResultsTrainingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        btGuardar.setOnClickListener(new View.OnClickListener() {
+        binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Código para guardar na base de dados
@@ -35,7 +31,7 @@ public class ResultsTrainingActivity extends AppCompatActivity {
             }
         });
 
-        btSair.setOnClickListener(new View.OnClickListener() {
+        binding.btSairResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean respostaUser = true; // Mudar para false e depois perguntar ao USER

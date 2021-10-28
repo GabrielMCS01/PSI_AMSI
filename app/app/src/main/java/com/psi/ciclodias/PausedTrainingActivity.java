@@ -5,39 +5,40 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+
+import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
+import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 
 public class PausedTrainingActivity extends AppCompatActivity {
-    private Button btRetomarTreino, btTerminarTreino;
-    private TextView tempo, distancia, velMedia;
+    private ActivityPausedTrainingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_paused_training);
 
-        btRetomarTreino = findViewById(R.id.btRetomarTreinoPausa);
-        btTerminarTreino = findViewById(R.id.btTerminarTreinoPausa);
-        tempo = findViewById(R.id.tvTempoPausa);
-        distancia = findViewById(R.id.tvDistanciaPausa);
-        velMedia = findViewById(R.id.tvVelMediaPausa);
+        // Recebe os IDs da Activity Results Training
+        binding = ActivityPausedTrainingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        btRetomarTreino.setOnClickListener(new View.OnClickListener() {
+        binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Retoma atividade
+                Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
+                startActivity(intent);
                 finish();
-                onResume();
             }
         });
 
-        btTerminarTreino.setOnClickListener(new View.OnClickListener() {
+        binding.btTerminarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Enviar os dados para a outra activity
                 // Fazer cenas
                 Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
                 startActivity(intent);
+                // Terminar a ativity da pausa e da sessão do treino
+                //finish();
                 finish();
             }
         });

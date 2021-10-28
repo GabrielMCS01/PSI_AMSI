@@ -5,37 +5,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+
+import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 
 public class InProgressTrainingActivity extends AppCompatActivity {
-    private TextView duracao, velInstantanea, velMedia, distancia;
-    private Button btPausa, btTerminar, btMapa;
+    private ActivityInProgressTrainingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_in_progress_training);
 
-        duracao = findViewById(R.id.tvDuracaoTreino);
-        velInstantanea = findViewById(R.id.tvVelInstantaneaTreino);
-        velMedia = findViewById(R.id.tvVelMediaTreino);
-        distancia = findViewById(R.id.tvDistanciaTreino);
-        btPausa = findViewById(R.id.btPausaTreino);
-        btTerminar = findViewById(R.id.btTerminarTreino);
-        btMapa = findViewById(R.id.btMapaTreino);
+        // Recebe os IDs da Activity Results Training
+        binding = ActivityInProgressTrainingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        btPausa.setOnClickListener(new View.OnClickListener() {
+        binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Pausa no treino
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
-                onPause();
+                finish();
             }
         });
 
-        btTerminar.setOnClickListener(new View.OnClickListener() {
+        binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
@@ -50,7 +45,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
             }
         });
 
-        btMapa.setOnClickListener(new View.OnClickListener() {
+        binding.btMapaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Abrir o fragmento do Mapbox
