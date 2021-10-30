@@ -1,4 +1,4 @@
-package com.psi.ciclodias;
+package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 
+import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityRegistryBinding;
 
 public class RegistryActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.psi.ciclodias;
+package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityProfileBinding;
 
 public class ProfileActivity extends AppCompatActivity {

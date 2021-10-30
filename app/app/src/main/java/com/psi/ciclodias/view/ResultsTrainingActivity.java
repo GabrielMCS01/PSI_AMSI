@@ -1,4 +1,4 @@
-package com.psi.ciclodias;
+package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.psi.ciclodias.databinding.ActivityProfileBinding;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 
 public class ResultsTrainingActivity extends AppCompatActivity {

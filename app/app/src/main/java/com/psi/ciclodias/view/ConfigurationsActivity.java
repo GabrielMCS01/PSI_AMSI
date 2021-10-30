@@ -1,8 +1,10 @@
-package com.psi.ciclodias;
+package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.psi.ciclodias.R;
 
 public class ConfigurationsActivity extends AppCompatActivity {
 
