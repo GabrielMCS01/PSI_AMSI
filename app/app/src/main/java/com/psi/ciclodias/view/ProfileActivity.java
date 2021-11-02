@@ -21,6 +21,8 @@ public class ProfileActivity extends AppCompatActivity {
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        dadosExemploPerfil();
+
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         Fragment fragment = new BottomNavBarFragment();
 
@@ -51,4 +53,12 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
     }
+
+    private void dadosExemploPerfil() {
+        binding.tvDistanciaPerfil.setText("Distância: 5980.1KM");
+        binding.tvTempoPerfil.setText("Tempo: 73:20:30");
+        binding.tvVelMedia.setText("Vel Média: 16.2 KM/H");
+        binding.tvVelMaxPerfil.setText("Vel Máxima: 30.1 KM/H");
+    }
+
 }

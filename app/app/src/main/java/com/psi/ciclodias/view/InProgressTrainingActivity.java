@@ -19,6 +19,8 @@ public class InProgressTrainingActivity extends AppCompatActivity {
         binding = ActivityInProgressTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        dadosExemploInProgress();
+
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,5 +55,12 @@ public class InProgressTrainingActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void dadosExemploInProgress() {
+        binding.tvDistanciaTreino.setText("190.1KM");
+        binding.tvDuracaoTreino.setText("03:00:30");
+        binding.tvVelMediaTreino.setText("16.3 KM/H");
+        binding.tvVelInstantaneaTreino.setText("12.1 KM/H");
     }
 }

@@ -19,6 +19,8 @@ public class ResultsTrainingActivity extends AppCompatActivity {
         binding = ActivityResultsTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        dadosExemploResultsTraining();
+
         binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,4 +47,12 @@ public class ResultsTrainingActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void dadosExemploResultsTraining() {
+        binding.tvDistanciaResumo.setText("Distância: 72.5KM");
+        binding.tvTempoResumo.setText("Tempo: 01:21:32");
+        binding.tvVelMediaResumo.setText("Vel Média: 12.8 KM/H");
+        binding.tvVelMaxResumo.setText("Vel Máxima: 30.1 KM/H");
+    }
+
 }

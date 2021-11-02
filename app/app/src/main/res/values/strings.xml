@@ -43,4 +43,5 @@
     <string name="txtGPSAdquirido">GPS Adquirido</string>
     <string name="txtGuardadoSucesso">Guardado com Sucesso</string>
     <string name="txtGuardadoSemSucesso">As alterações não foram guardadas</string>
+    <string name="txtVelMaxima">Velocidade Máxima</string>
 </resources>

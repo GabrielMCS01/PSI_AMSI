@@ -21,8 +21,7 @@
             android:exported="false" />
         <activity
             android:name=".view.StartTrainingActivity"
-            android:exported="false"
-            android:parentActivityName=".view.MainPageActivity"/>
+            android:exported="false" />
         <activity
             android:name=".view.ProfileActivity"
             android:exported="false" />
