@@ -23,8 +23,9 @@ import com.psi.ciclodias.R;
 
 import java.util.List;
 
-public class SingletonLocation implements PermissionsListener
+public class SingletonLocation
 {
+    /*
     // Permissões para aceder á localização do dispositivo
     PermissionsManager permissionsManager;
     Activity activity;
@@ -112,4 +113,6 @@ public class SingletonLocation implements PermissionsListener
     public void onDestroy(){
 
     }
+    */
+
 }
