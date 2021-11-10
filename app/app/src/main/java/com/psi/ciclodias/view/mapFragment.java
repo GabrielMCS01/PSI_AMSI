@@ -12,9 +12,17 @@ import com.psi.ciclodias.R;
 
 public class mapFragment extends Fragment {
 
-    public mapFragment() {
+    private mapFragment() {
         // Required empty public constructor
     }
+
+    private static mapFragment instancia = null;
+
+    public static synchronized mapFragment getInstancia(){
+        if (instancia == null){ instancia = new mapFragment();}
+        return instancia;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
