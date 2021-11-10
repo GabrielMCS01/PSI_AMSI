@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
+    private String username, password;
+    private boolean isEmpty = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +28,14 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
 
                 // Recebe os itens das editViews
-                String email = binding.etLoginEmail.getText().toString();
-                String password = binding.etLoginPassword.getText().toString();
+                username = binding.etLoginUsername.getText().toString();
+                password = binding.etLoginPassword.getText().toString();
+
+                // Verifica se campos estão vazios
+                isEmptyLogin();
 
                 // Fazer a verificação se o login está correto
-                //if (email.matches() && password.matches())
+                //if (username.matches() && password.matches())
 
                 startActivity(intent);
                 finish();
@@ -45,4 +51,16 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
+    public void isEmptyLogin(){
+        if(username.isEmpty()) {
+            binding.etLoginUsername.setError(getString(R.string.txtErrorCampoVazio));
+            isEmpty = true;
+        }
+        if(password.isEmpty()) {
+            binding.etLoginPassword.setError(getString(R.string.txtErrorCampoVazio));
+            isEmpty = true;
+        }
+    }
+
 }

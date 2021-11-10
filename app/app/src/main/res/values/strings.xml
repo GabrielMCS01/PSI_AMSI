@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">CicloDias</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txtLogin">Login</string>
     <string name="txtEmail">Email</string>
     <string name="txtPassword">Palavra-passe</string>
@@ -11,7 +9,6 @@
     <string name="txtBtRegistarse">Registar-se</string>
     <string name="txtPrimeiroNome">Primeiro Nome</string>
     <string name="txtUltimoNome">Ultimo Nome</string>
-    <string name="txtConfirmarEmail">Confirmar Email </string>
     <string name="txtConfirmarPassword">Confirmar Palavra-passe</string>
     <string name="txtAtividadeTotalUtilizador">Atividade Total do Utilizador</string>
     <string name="txtNomeUtilizador">Nome de Utilizador</string>
@@ -27,12 +24,13 @@
     <string name="txtBtRetomarTreino">Retomar</string>
     <string name="txtBtTerminarTreino">Terminar</string>
     <string name="txtResumoTreino">Resumo do Treino</string>
-    <string name="txtErrorConfirmarEmail">Os emails inseridos não são iguais</string>
     <string name="txtErrorEmail">O email inserido não é válido</string>
     <string name="txtErrorEmailDuplicado">O email inserido já existe</string>
+    <string name="txtErrorUsernameDuplicado">O nome de utilizador inserido já existe</string>
     <string name="txtErrorConfirmarPassword">As palavra-chaves inseridas não são iguais</string>
-    <string name="txtErrorPassword">A palavra-chave inserida não é válida</string>
+    <string name="txtErrorPasswordTamanho">A palavra-chave tem que ter pelo menos 8 caracteres</string>
     <string name="txtErrorValidacao">Ocorreu um erro a fazer a validação dos dados</string>
+    <string name="txtErrorCampoVazio">Campo obrigatório</string>
     <string name="txtBtGuardar">Guardar</string>
     <string name="txtBtSair">Sair</string>
     <string name="tvSessaoTreino">Sessão de Treino</string>
@@ -44,4 +42,5 @@
     <string name="txtGuardadoSucesso">Guardado com Sucesso</string>
     <string name="txtGuardadoSemSucesso">As alterações não foram guardadas</string>
     <string name="txtVelMaxima">Velocidade Máxima</string>
+    <string name="txtUsername">Username</string>
 </resources>
