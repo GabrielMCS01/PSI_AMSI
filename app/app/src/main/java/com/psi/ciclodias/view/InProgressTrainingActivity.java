@@ -1,12 +1,16 @@
 package com.psi.ciclodias.view;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.DialogFragment;
+
+import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+
 
 public class InProgressTrainingActivity extends AppCompatActivity {
     private ActivityInProgressTrainingBinding binding;
@@ -34,9 +38,13 @@ public class InProgressTrainingActivity extends AppCompatActivity {
         binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
+                boolean respostaUser = false; // Mudar para false e depois perguntar ao USER
 
+                FragmentManager fm = getFragmentManager();
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
+                DialogFragment newFragment = ConfirmarSaidaDialogFragment.newInstance();
+                newFragment.show(fm, getString(R.string.txtDialog));
+
                 if (respostaUser) {
                     // Enviar os dados para a outra Activity
                     Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);

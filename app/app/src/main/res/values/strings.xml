@@ -43,4 +43,10 @@
     <string name="txtGuardadoSemSucesso">As alterações não foram guardadas</string>
     <string name="txtVelMaxima">Velocidade Máxima</string>
     <string name="txtUsername">Username</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txtDialogTerminarSessao">Pretende Terminar o Treino</string>
+    <string name="txtNao">Não</string>
+    <string name="txtSim">Sim</string>
+    <string name="txtDialog">dialog</string>
 </resources>
