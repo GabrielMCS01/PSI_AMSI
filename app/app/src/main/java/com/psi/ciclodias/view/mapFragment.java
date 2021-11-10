@@ -16,10 +16,16 @@ import android.widget.Toast;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Point;
+import com.mapbox.maps.CameraOptions;
+import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.MapboxMap;
 import com.mapbox.maps.Style;
 import com.mapbox.maps.plugin.LocationPuck2D;
+import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin;
+import com.mapbox.maps.plugin.animation.CameraAnimationsUtils;
+import com.mapbox.maps.plugin.animation.MapAnimationOptions;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils;
 import com.mapbox.navigation.base.options.NavigationOptions;
@@ -148,7 +154,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             List<Location> lista = new ArrayList<>();
             navigationLocationProvider.changePosition(location, lista, null, null);
             // Função para atualizar a camera enviando a nova localização
-            //updateCamera(location);
+            updateCamera(location);
 
             // Atualiza as funções de velocidade (Instântanea e média e a distância percorrida)
             // Envia a nova localização
@@ -171,6 +177,23 @@ public class mapFragment extends Fragment implements PermissionsListener {
         mapboxNavigation.unregisterLocationObserver(locationObs);
 
     }
+
+    private void updateCamera(Location location) {
+        // Animações na câmera
+        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+        // Modifica o zoom na câmera automaticamente
+        CameraOptions cameraOptions = (new CameraOptions.Builder())
+                .center(Point.fromLngLat(location.getLongitude(),location.getLatitude()))
+                .zoom(17.0)
+                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                .build();
+
+        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+    }
+
 
 
 }
