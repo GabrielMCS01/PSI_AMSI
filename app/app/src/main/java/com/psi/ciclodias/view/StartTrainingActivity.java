@@ -21,6 +21,14 @@ public class StartTrainingActivity extends AppCompatActivity {
         binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Fragment mapfragment = mapFragment.getInstancia();
+        if(mapfragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mapViewStartTraining, mapfragment)
+                    .commit();
+        }
+
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         Fragment fragment = new BottomNavBarFragment();
 

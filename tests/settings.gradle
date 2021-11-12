@@ -19,5 +19,5 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "CicloDias"
+rootProject.name = "ciclodias_test_new"
 include ':app'
