@@ -39,7 +39,8 @@ public class ConfirmarSaidaDialogFragment extends DialogFragment implements View
     @Override
     public void onClick(View view) {
         if (view.getId () == R.id.btDialogSim)
-           startActivity(intent);
+            startActivity(intent);
+
         if (view.getId () == R.id.btDialogNao)
             Toast.makeText(getActivity(), "no clicked", Toast.LENGTH_SHORT).show();
         dismiss();

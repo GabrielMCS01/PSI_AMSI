@@ -15,7 +15,8 @@
             android:exported="false" />
         <activity
             android:name=".view.InProgressTrainingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:noHistory="true"/>
         <activity
             android:name=".view.PausedTrainingActivity"
             android:exported="false" />

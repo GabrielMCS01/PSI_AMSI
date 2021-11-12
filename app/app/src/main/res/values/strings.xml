@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">CicloDias</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txtLogin">Login</string>
     <string name="txtEmail">Email</string>
     <string name="txtPassword">Palavra-passe</string>
@@ -33,6 +31,7 @@
     <string name="txtErrorPasswordTamanho">A palavra-chave tem que ter pelo menos 8 caracteres</string>
     <string name="txtErrorValidacao">Ocorreu um erro a fazer a validação dos dados</string>
     <string name="txtErrorCampoVazio">Campo obrigatório</string>
+    <string name="txtUsername">Username</string>
     <string name="txtBtGuardar">Guardar</string>
     <string name="txtBtSair">Sair</string>
     <string name="tvSessaoTreino">Sessão de Treino</string>
@@ -47,7 +46,6 @@
     <string name="txtPermissaoExplicacao">A aplicação necessita de localização</string>
     <string name="txtPermissaoNãoDada">Tem que permitir que a aplicação utilize a localização</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiaXVyaWNhcnJhcyIsImEiOiJja3V3aDJrZWEwNjhuMm5xd3hqNHRuODdiIn0.Yztl8wZEMrxIlkEVwt1zgw</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txtDialogTerminarSessao">Pretende Terminar o Treino</string>
     <string name="txtNao">Não</string>
     <string name="txtSim">Sim</string>
