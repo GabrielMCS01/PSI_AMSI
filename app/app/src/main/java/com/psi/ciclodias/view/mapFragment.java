@@ -2,6 +2,8 @@ package com.psi.ciclodias.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -34,9 +36,12 @@ import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.psi.ciclodias.R;
+import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 public class mapFragment extends Fragment implements PermissionsListener {
 
@@ -49,6 +54,24 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxNavigation mapboxNavigation;
 
+
+    public ActivityInProgressTrainingBinding binding = null;
+    // Variáveis para o cálculo da velocidade média
+    private int count = 0;
+    private float velocity = 0;
+    private float mean = 0;
+
+    // Variáveis para receberem a localização (anterior e atual)
+    private Location loc1;
+    private Location loc2;
+
+
+    // Variável para verificar se existe algum valor na localização 1 (primeira vez que entra na função recebe)
+    private boolean isLoc1 = false;
+
+    public float velocityInstant = 0;
+    public float distance = 0;
+    public float velocityMean = 0;
 
     private mapFragment() {
         // Required empty public constructor
@@ -112,12 +135,15 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private void enableLocationComponent() {
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
-            mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token)).build());
+            if(mapboxNavigation == null){
+                mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token)).build());
 
+            }
             // Inicia a navegação
-            mapboxNavigation.startTripSession();
-            mapboxNavigation.registerLocationObserver(locationObs);
-
+            if(!mapboxNavigation.isRunningForegroundService()){
+                mapboxNavigation.startTripSession();
+                mapboxNavigation.registerLocationObserver(locationObs);
+            }
             // Recebe o cronometro e inicia-o
         } else {
             permissionsManager = new PermissionsManager(this);
@@ -158,10 +184,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
             // Atualiza as funções de velocidade (Instântanea e média e a distância percorrida)
             // Envia a nova localização
-            //setVelocity(location);
-            //setVM(location);
-            //setDistance(location);
-
+            if(binding != null) {
+                setVelocity(location);
+                setVM(location);
+                setDistance(location);
+            }
         }
 
         @Override
@@ -170,13 +197,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     };
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapboxNavigation.stopTripSession();
-        mapboxNavigation.unregisterLocationObserver(locationObs);
-
-    }
 
     private void updateCamera(Location location) {
         // Animações na câmera
@@ -194,6 +214,101 @@ public class mapFragment extends Fragment implements PermissionsListener {
         cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
     }
 
+    //Função para destruir as variaveis do mapa a pedido do código
+    public void onMyDestroy(){
+            super.onDestroy();
+            mapboxNavigation.stopTripSession();
+            mapboxNavigation.unregisterLocationObserver(locationObs);
+            binding = null;
+    }
 
+    // Função para calcular o valor da velocidade instântanea
+    private void setVelocity(Location location){
+        // Reset á velocidade instântanea
+        float nCurrentSpeed = 0;
+
+        // Recebe a velocidade e converte-a para kilometros/hora
+        nCurrentSpeed = location.getSpeed() * 3.6F;
+
+        velocityInstant = nCurrentSpeed;
+
+
+        Formatter fmt = new Formatter(new StringBuilder());
+        fmt.format(Locale.US, "%5.2f", nCurrentSpeed);
+        String strCurrentSpeed = fmt.toString();
+        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+
+        // Unidade de medida
+        String strUnits = "Km/h";
+
+        // Atualiza na view a velocidade atual
+        binding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
+    }
+
+    // Função para calcular o valor da velocidade média
+    private void setVM(Location location){
+        // recebe o valor da velocidade e converte para metros por segundo
+        float speed = location.getSpeed() * 3.6F;
+
+        // Adiciona +1 no contador para fazer o cálculo da velocidade média
+        count++;
+
+        // Velocidade total de todas as vezes que passou na função
+        velocity = velocity + speed;
+
+        // Velocidade média (velocidade total a dividir pelas vezes que passou na função)
+        mean = velocity / count;
+
+        velocityMean = mean;
+
+
+        // Formata os dados
+        Formatter fmt = new Formatter(new StringBuilder());
+        fmt.format(Locale.US, "%5.2f", mean);
+        String strCurrentSpeed = fmt.toString();
+        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+
+        // Unidade de medida (Pode ser )
+        String strUnits = "Km/h";
+
+        // Escreve o valor da velocidade no ecrâ em KM/H
+        binding.tvVelMediaTreino.setText(strCurrentSpeed + " " + strUnits);
+    }
+
+    // Função para calcular a distância percorrida
+    private void setDistance(Location location){
+        // Caso seja o primeiro valor que recebe faz
+        if(!isLoc1){
+            //
+            loc1 = location;
+            isLoc1 = true;
+            // Se já existir um valor anterior faz
+        }else{
+            // Recebe a localização atual e coloca na segunda variável
+            loc2 = location;
+            // Calcula a diferença entre as duas localizações (anterior e atual)
+            float newDistance = loc1.distanceTo(loc2);
+            // Atribui a nova localização á anterior para ser utilizada na proxima vez que se entrar na função
+            loc1 = loc2;
+            // Adiciona a distância entre as duas localizações ao contador de distância total
+            distance = distance + newDistance;
+        }
+
+
+        // Formata os dados da distancia
+        Formatter fmt = new Formatter(new StringBuilder());
+        // 7 casas e 2 decimais
+        fmt.format(Locale.US, "%7.2f", distance);
+        String strCurrentSpeed = fmt.toString();
+        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+
+        // Unidade de medida
+        String strUnits = "m";
+
+        // Atualiza na view o valor da distância
+        binding.tvDistanciaTreino.setText(strCurrentSpeed + " " + strUnits);
+
+
+    }
 
 }

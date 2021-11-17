@@ -39,6 +39,7 @@ public class ConfirmarSaidaDialogFragment extends DialogFragment implements View
     @Override
     public void onClick(View view) {
         if (view.getId () == R.id.btDialogSim)
+            mapFragment.getInstancia().onMyDestroy();
             startActivity(intent);
 
         if (view.getId () == R.id.btDialogNao)

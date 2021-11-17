@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DialogFragment;
+import android.widget.Chronometer;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
@@ -14,7 +15,7 @@ import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 
 public class InProgressTrainingActivity extends AppCompatActivity {
     private ActivityInProgressTrainingBinding binding;
-
+    private Chronometer chronometer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +24,9 @@ public class InProgressTrainingActivity extends AppCompatActivity {
         binding = ActivityInProgressTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        dadosExemploInProgress();
+        mapFragment.getInstancia().binding = binding;
+
+        startTimer();
 
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,10 +68,9 @@ public class InProgressTrainingActivity extends AppCompatActivity {
 
     }
 
-    private void dadosExemploInProgress() {
-        binding.tvDistanciaTreino.setText("190.1KM");
-        binding.tvDuracaoTreino.setText("03:00:30");
-        binding.tvVelMediaTreino.setText("16.3 KM/H");
-        binding.tvVelInstantaneaTreino.setText("12.1 KM/H");
+    private void startTimer() {
+
+        chronometer = binding.tvDuracaoTreino;
+        chronometer.start();
     }
 }

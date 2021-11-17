@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <Chronometer
         android:id="@+id/tvDuracaoTreino"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
