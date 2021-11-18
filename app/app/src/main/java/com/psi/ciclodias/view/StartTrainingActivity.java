@@ -22,6 +22,7 @@ public class StartTrainingActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Fragment mapfragment = mapFragment.getInstancia();
+        mapFragment.getInstancia().startBinding = binding;
         if(mapfragment != null){
             getSupportFragmentManager()
                     .beginTransaction()

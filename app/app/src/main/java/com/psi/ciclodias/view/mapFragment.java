@@ -30,6 +30,8 @@ import com.mapbox.maps.plugin.animation.CameraAnimationsUtils;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils;
+import com.mapbox.navigation.base.options.DeviceProfile;
+import com.mapbox.navigation.base.options.DeviceType;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
@@ -37,6 +39,7 @@ import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -55,6 +58,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private MapboxNavigation mapboxNavigation;
 
 
+    public ActivityStartTrainingBinding startBinding = null;
     public ActivityInProgressTrainingBinding binding = null;
     // Variáveis para o cálculo da velocidade média
     private int count = 0;
@@ -136,7 +140,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
             if(mapboxNavigation == null){
-                mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token)).build());
+                mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
+                        .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
 
             }
             // Inicia a navegação
@@ -177,11 +182,16 @@ public class mapFragment extends Fragment implements PermissionsListener {
         @Override
         public void onNewRawLocation(@NonNull Location location) {
             // Lista para os keyPoints (vazia) rotas
-            List<Location> lista = new ArrayList<>();
-            navigationLocationProvider.changePosition(location, lista, null, null);
+            List<Location> list = new ArrayList<>();
+            navigationLocationProvider.changePosition(location, list, null, null);
             // Função para atualizar a camera enviando a nova localização
             updateCamera(location);
 
+            if(startBinding != null){
+                startBinding.textView3.setText(R.string.txtGPSAdquirido);
+                startBinding.btComecarTreino.setEnabled(true);
+                startBinding = null;
+            }
             // Atualiza as funções de velocidade (Instântanea e média e a distância percorrida)
             // Envia a nova localização
             if(binding != null) {
@@ -193,6 +203,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         @Override
         public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
+
 
         }
     };

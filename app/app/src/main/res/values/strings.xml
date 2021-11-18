@@ -50,4 +50,5 @@
     <string name="txtNao">Não</string>
     <string name="txtSim">Sim</string>
     <string name="txtDialog">dialog</string>
+    <string name="txtGPSPorAdquirir">GPS por Adquirir</string>
 </resources>

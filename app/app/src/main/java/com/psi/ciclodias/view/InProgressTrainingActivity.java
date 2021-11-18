@@ -69,7 +69,6 @@ public class InProgressTrainingActivity extends AppCompatActivity {
     }
 
     private void startTimer() {
-
         chronometer = binding.tvDuracaoTreino;
         chronometer.start();
     }
