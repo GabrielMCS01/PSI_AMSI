@@ -1,30 +1,31 @@
 package com.psi.ciclodias.view;
 
+import android.app.Application;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.DialogFragment;
-import android.widget.Chronometer;
 
 import com.psi.ciclodias.R;
-import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
 
+public class InProgressTrainingMapActivity extends AppCompatActivity {
 
-public class InProgressTrainingActivity extends AppCompatActivity {
-    private ActivityInProgressTrainingBinding binding;
+    private ActivityInProgressTrainingMapBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Results Training
-        binding = ActivityInProgressTrainingBinding.inflate(getLayoutInflater());
+        binding = ActivityInProgressTrainingMapBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
 
-        mapFragment.getInstancia().binding = binding;
+
+        mapFragment.getInstancia().mapBinding = binding;
 
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,16 +56,18 @@ public class InProgressTrainingActivity extends AppCompatActivity {
             }
         });
 
-        binding.btMapaTreino.setOnClickListener(new View.OnClickListener() {
+        binding.btVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Abrir o fragmento do Mapbox
-                Intent intent = new Intent(getApplicationContext(), InProgressTrainingMapActivity.class);
+                Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
-                mapFragment.getInstancia().binding = null;
+                mapFragment.getInstancia().mapBinding = null;
                 finish();
             }
         });
 
+
     }
+
 }

@@ -51,4 +51,6 @@
     <string name="txtSim">Sim</string>
     <string name="txtDialog">dialog</string>
     <string name="txtGPSPorAdquirir">GPS por Adquirir</string>
+    <string name="title_activity_in_progress_training_map">InProgressTrainingMapActivity</string>
+    <string name="txtBtVoltar">Voltar</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -39,6 +40,7 @@ import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
 import java.util.ArrayList;
@@ -60,6 +62,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     public ActivityStartTrainingBinding startBinding = null;
     public ActivityInProgressTrainingBinding binding = null;
+    public ActivityInProgressTrainingMapBinding mapBinding = null;
+
+    private Chronometer chronometer;
+    private boolean oneTime = true;
+
     // Variáveis para o cálculo da velocidade média
     private int count = 0;
     private float velocity = 0;
@@ -195,6 +202,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Atualiza as funções de velocidade (Instântanea e média e a distância percorrida)
             // Envia a nova localização
             if(binding != null) {
+                if(oneTime){
+                    startTimer();
+                    oneTime = false;
+                }
                 setVelocity(location);
                 setVM(location);
                 setDistance(location);
@@ -322,4 +333,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     }
 
+    private void startTimer() {
+        chronometer = binding.tvDuracaoTreino;
+        chronometer.start();
+    }
 }
