@@ -64,7 +64,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public ActivityInProgressTrainingBinding binding = null;
     public ActivityInProgressTrainingMapBinding mapBinding = null;
 
-    private Chronometer chronometer;
+    private Chronometer chronometerSimple;
     private boolean oneTime = true;
 
     // Variáveis para o cálculo da velocidade média
@@ -149,7 +149,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
             if(mapboxNavigation == null){
                 mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
                         .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
-
             }
             // Inicia a navegação
             if(!mapboxNavigation.isRunningForegroundService()){
@@ -203,8 +202,16 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Envia a nova localização
             if(binding != null) {
                 if(oneTime){
-                    startTimer();
+                    timer();
                     oneTime = false;
+                }
+                setVelocity(location);
+                setVM(location);
+                setDistance(location);
+            }else if(mapBinding != null){
+                if(!oneTime){
+                    timer();
+                    oneTime = true;
                 }
                 setVelocity(location);
                 setVM(location);
@@ -254,7 +261,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityInstant = nCurrentSpeed;
 
-
         Formatter fmt = new Formatter(new StringBuilder());
         fmt.format(Locale.US, "%5.2f", nCurrentSpeed);
         String strCurrentSpeed = fmt.toString();
@@ -264,7 +270,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
         String strUnits = "Km/h";
 
         // Atualiza na view a velocidade atual
-        binding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
+        if(binding != null) {
+            binding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
+        }
+        else if(mapBinding != null){
+            mapBinding.tvVelMax.setText("Velocidade Instantanea: "+ strCurrentSpeed + " " + strUnits);
+        }
     }
 
     // Função para calcular o valor da velocidade média
@@ -283,7 +294,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityMean = mean;
 
-
         // Formata os dados
         Formatter fmt = new Formatter(new StringBuilder());
         fmt.format(Locale.US, "%5.2f", mean);
@@ -294,7 +304,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
         String strUnits = "Km/h";
 
         // Escreve o valor da velocidade no ecrâ em KM/H
-        binding.tvVelMediaTreino.setText(strCurrentSpeed + " " + strUnits);
+        if(binding != null) {
+            binding.tvVelMediaTreino.setText(strCurrentSpeed + " " + strUnits);
+        }
+        else if(mapBinding != null){
+            mapBinding.tvVelMedia.setText("Velocidade Média: " + strCurrentSpeed + " " + strUnits);
+        }
     }
 
     // Função para calcular a distância percorrida
@@ -328,13 +343,22 @@ public class mapFragment extends Fragment implements PermissionsListener {
         String strUnits = "m";
 
         // Atualiza na view o valor da distância
-        binding.tvDistanciaTreino.setText(strCurrentSpeed + " " + strUnits);
+        if(binding != null) {
+            binding.tvDistanciaTreino.setText(strCurrentSpeed + " " + strUnits);
+        }
+        else if(mapBinding != null){
+            mapBinding.tvDistancia.setText("Distancia: " + strCurrentSpeed + " " + strUnits);
+        }
 
 
     }
 
-    private void startTimer() {
-        chronometer = binding.tvDuracaoTreino;
-        chronometer.start();
+    private void timer() {
+        if(chronometerSimple == null) {
+            chronometerSimple.start();
+        }
+        if (oneTime){
+            
+        }
     }
 }

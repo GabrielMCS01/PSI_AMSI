@@ -56,7 +56,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/btVoltar"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="@string/txtVelMaxima" />
+        tools:text="@string/txtVelInstantanea" />
 
     <Button
         android:id="@+id/btPausaTreino"

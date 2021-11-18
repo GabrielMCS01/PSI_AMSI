@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
@@ -26,6 +27,15 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
 
 
         mapFragment.getInstancia().mapBinding = binding;
+
+        Fragment mapfragment = mapFragment.getInstancia();
+
+        if(mapfragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mapViewTraining, mapfragment)
+                    .commit();
+        }
 
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
