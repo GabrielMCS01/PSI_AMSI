@@ -59,12 +59,13 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxNavigation mapboxNavigation;
 
-
+    //Objetos Bindings das Activities que necessitam dos dados do mapa
     public ActivityStartTrainingBinding startBinding = null;
     public ActivityInProgressTrainingBinding binding = null;
     public ActivityInProgressTrainingMapBinding mapBinding = null;
 
     private Chronometer chronometerSimple;
+    private Chronometer chronometerMap;
     private boolean oneTime = true;
 
     // Variáveis para o cálculo da velocidade média
@@ -80,6 +81,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     // Variável para verificar se existe algum valor na localização 1 (primeira vez que entra na função recebe)
     private boolean isLoc1 = false;
 
+    //Variáveis que guardam a velocidade instantanea, a distancia e a velocidade media
     public float velocityInstant = 0;
     public float distance = 0;
     public float velocityMean = 0;
@@ -88,6 +90,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         // Required empty public constructor
     }
 
+    //Codigo responsavel por criar/devolver a instancia do fragmento
     private static mapFragment instancia = null;
 
     public static synchronized mapFragment getInstancia(){
@@ -101,12 +104,14 @@ public class mapFragment extends Fragment implements PermissionsListener {
         super.onCreate(savedInstanceState);
     }
 
+    //Função responsavel por criar a view do fragmento e carregar o mapa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
+        //Buscar o mapa ao fragmento
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap();
 
@@ -115,35 +120,38 @@ public class mapFragment extends Fragment implements PermissionsListener {
         return view;
     }
 
+    //Responsavel por dar um estilo ao mapa e criar o puck de localização
     private void loadMap() {
 
+        //Carregar o estilo no mapa
         mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
 
-                LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
+                LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
                 //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
                 locationComponentPlugin.setLocationProvider(navigationLocationProvider);
 
+                //Carregar o puck de localização
                 LocationPuck2D locationPuck2D = new LocationPuck2D();
                 locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(),R.drawable.mapbox_navigation_puck_icon));
 
-                // Colocar no mapa
+                // Colocar o puck no mapa
                 locationComponentPlugin.setLocationPuck(locationPuck2D);
 
                 locationComponentPlugin.setEnabled(true);
 
-                // Pedir permissões ao utilizador e começar a navegação
-                enableLocationComponent();
+                // Verificar as permissões de localização e começar a navegação
+                startNavigation();
 
             }
         });
     }
 
     @SuppressLint("MissingPermission")
-    private void enableLocationComponent() {
+    private void startNavigation() {
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
             if(mapboxNavigation == null){
@@ -155,7 +163,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 mapboxNavigation.startTripSession();
                 mapboxNavigation.registerLocationObserver(locationObs);
             }
-            // Recebe o cronometro e inicia-o
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
@@ -176,7 +183,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     @Override
     public void onPermissionResult(boolean granted) {
         if(granted){
-
+          startNavigation();
         }else{
             Toast.makeText(getContext(), R.string.txtPermissaoNãoDada, Toast.LENGTH_LONG).show();
         }
@@ -184,6 +191,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     // Ouve alterações da localização
     private LocationObserver locationObs = new LocationObserver() {
+
         // Quando tem uma nova alteração na localização
         @Override
         public void onNewRawLocation(@NonNull Location location) {
@@ -193,13 +201,15 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Função para atualizar a camera enviando a nova localização
             updateCamera(location);
 
+            //Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
             if(startBinding != null){
                 startBinding.textView3.setText(R.string.txtGPSAdquirido);
                 startBinding.btComecarTreino.setEnabled(true);
                 startBinding = null;
             }
-            // Atualiza as funções de velocidade (Instântanea e média e a distância percorrida)
-            // Envia a nova localização
+
+            // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
+            // No InProgressTrainingActivity
             if(binding != null) {
                 if(oneTime){
                     timer();
@@ -208,6 +218,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 setVelocity(location);
                 setVM(location);
                 setDistance(location);
+            // No InProgressTrainingMapActivity
             }else if(mapBinding != null){
                 if(!oneTime){
                     timer();
@@ -221,8 +232,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         @Override
         public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
-
-
         }
     };
 
@@ -354,10 +363,13 @@ public class mapFragment extends Fragment implements PermissionsListener {
     }
 
     private void timer() {
-        if(chronometerSimple == null) {
+        if(chronometerMap == null && oneTime) {
+            chronometerSimple = binding.tvDuracaoTreino;
             chronometerSimple.start();
         }
-        if (oneTime){
+        if (!oneTime){
+            chronometerMap = mapBinding.tvTempo;
+            
             
         }
     }
