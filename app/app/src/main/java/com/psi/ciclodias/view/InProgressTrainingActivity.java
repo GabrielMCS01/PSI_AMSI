@@ -24,7 +24,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
         binding = ActivityInProgressTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mapFragment.getInstancia().binding = binding;
+        mapFragment.getInstancia().trainingBinding = binding;
 
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +32,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 // Pausa no treino
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
+                mapFragment.getInstancia().trainingBinding = null;
                 finish();
             }
         });
@@ -61,7 +62,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 // Abrir o fragmento do Mapbox
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingMapActivity.class);
                 startActivity(intent);
-                mapFragment.getInstancia().binding = null;
+                mapFragment.getInstancia().trainingBinding = null;
                 finish();
             }
         });

@@ -19,7 +19,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
         binding = ActivityPausedTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        dadosExemploPausedTraining();
+        mapFragment.getInstancia().pausedBinding = binding;
 
         binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override

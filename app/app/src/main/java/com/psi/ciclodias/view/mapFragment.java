@@ -41,6 +41,8 @@ import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
+import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
+import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
 import java.util.ArrayList;
@@ -61,8 +63,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Objetos Bindings das Activities que necessitam dos dados do mapa
     public ActivityStartTrainingBinding startBinding = null;
-    public ActivityInProgressTrainingBinding binding = null;
+    public ActivityInProgressTrainingBinding trainingBinding = null;
     public ActivityInProgressTrainingMapBinding mapBinding = null;
+    public ActivityPausedTrainingBinding pausedBinding = null;
 
     private Chronometer chronometerSimple;
     private Chronometer chronometerMap;
@@ -85,6 +88,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public float velocityInstant = 0;
     public float distance = 0;
     public float velocityMean = 0;
+    public float velocityMax = 0;
 
     private mapFragment() {
         // Required empty public constructor
@@ -210,23 +214,20 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
             // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
             // No InProgressTrainingActivity
-            if(binding != null) {
-                if(oneTime){
-                    timer();
-                    oneTime = false;
-                }
+            if(trainingBinding != null) {
                 setVelocity(location);
                 setVM(location);
                 setDistance(location);
             // No InProgressTrainingMapActivity
             }else if(mapBinding != null){
-                if(!oneTime){
-                    timer();
-                    oneTime = true;
-                }
                 setVelocity(location);
                 setVM(location);
                 setDistance(location);
+            // No PausedTrainingActivity
+            }else if(pausedBinding != null){
+                pausedBinding.tvDistanciaPausa.setText("Distancia: " + distance + "m");
+                pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima: " + velocityMax + " Km/h");
+                pausedBinding.tvVelMediaPausa.setText("Velocidade Média: " + velocityMean + "Km/h");
             }
         }
 
@@ -257,7 +258,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
             super.onDestroy();
             mapboxNavigation.stopTripSession();
             mapboxNavigation.unregisterLocationObserver(locationObs);
-            binding = null;
+            trainingBinding = null;
+            pausedBinding = null;
+            mapBinding = null;
     }
 
     // Função para calcular o valor da velocidade instântanea
@@ -278,12 +281,20 @@ public class mapFragment extends Fragment implements PermissionsListener {
         // Unidade de medida
         String strUnits = "Km/h";
 
+        setMaxVelocity(nCurrentSpeed);
+
         // Atualiza na view a velocidade atual
-        if(binding != null) {
-            binding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
+        if(trainingBinding != null) {
+            trainingBinding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
         }
         else if(mapBinding != null){
-            mapBinding.tvVelMax.setText("Velocidade Instantanea: "+ strCurrentSpeed + " " + strUnits);
+            mapBinding.tvVelMax.setText("Velocidade Instantanea: \n"+ strCurrentSpeed + " " + strUnits);
+        }
+    }
+
+    private void setMaxVelocity(float nCurrentSpeed) {
+        if(nCurrentSpeed > velocityMax){
+            velocityMax = nCurrentSpeed;
         }
     }
 
@@ -313,11 +324,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
         String strUnits = "Km/h";
 
         // Escreve o valor da velocidade no ecrâ em KM/H
-        if(binding != null) {
-            binding.tvVelMediaTreino.setText(strCurrentSpeed + " " + strUnits);
+        if(trainingBinding != null) {
+            trainingBinding.tvVelMediaTreino.setText(strCurrentSpeed + " " + strUnits);
         }
         else if(mapBinding != null){
-            mapBinding.tvVelMedia.setText("Velocidade Média: " + strCurrentSpeed + " " + strUnits);
+            mapBinding.tvVelMedia.setText("Velocidade Média: \n" + strCurrentSpeed + " " + strUnits);
         }
     }
 
@@ -352,25 +363,20 @@ public class mapFragment extends Fragment implements PermissionsListener {
         String strUnits = "m";
 
         // Atualiza na view o valor da distância
-        if(binding != null) {
-            binding.tvDistanciaTreino.setText(strCurrentSpeed + " " + strUnits);
+        if(trainingBinding != null) {
+            trainingBinding.tvDistanciaTreino.setText(strCurrentSpeed + " " + strUnits);
         }
         else if(mapBinding != null){
-            mapBinding.tvDistancia.setText("Distancia: " + strCurrentSpeed + " " + strUnits);
+            mapBinding.tvDistancia.setText("Distancia: \n" + strCurrentSpeed + " " + strUnits);
         }
 
 
     }
 
-    private void timer() {
-        if(chronometerMap == null && oneTime) {
-            chronometerSimple = binding.tvDuracaoTreino;
-            chronometerSimple.start();
-        }
-        if (!oneTime){
-            chronometerMap = mapBinding.tvTempo;
-            
-            
-        }
+    //Mostra os resultados do treino no ResultsTrainingActivity
+    public void getResults(ActivityResultsTrainingBinding binding) {
+        binding.tvVelMaxResumo.setText("Velocidade Máxima:\n" + velocityMax + " Km/h");
+        binding.tvVelMediaResumo.setText("Velocidade Média:\n" + velocityMean + "Km/h");
+        binding.tvDistanciaResumo.setText("Distancia:\n" + distance + "m");
     }
 }

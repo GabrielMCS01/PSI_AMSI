@@ -43,6 +43,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 // Pausa no treino
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
+                mapFragment.getInstancia().mapBinding = null;
                 finish();
             }
         });
@@ -76,8 +77,6 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
     }
 
 }

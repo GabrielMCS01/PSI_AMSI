@@ -19,13 +19,12 @@ public class ResultsTrainingActivity extends AppCompatActivity {
         binding = ActivityResultsTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        dadosExemploResultsTraining();
+        mapFragment.getInstancia().getResults(binding);
 
         binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Código para guardar na base de dados
-
                 Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                 startActivity(intent);
                 finish();
