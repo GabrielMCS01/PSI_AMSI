@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
+import com.psi.ciclodias.model.Chronometer;
 
 public class PausedTrainingActivity extends AppCompatActivity {
     private ActivityPausedTrainingBinding binding;
@@ -20,6 +21,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mapFragment.getInstancia().pausedBinding = binding;
+        binding.tvTempoPausa.setText("" + Chronometer.getInstancia().getTime());
 
         binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override

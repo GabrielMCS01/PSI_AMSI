@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -44,6 +44,7 @@ import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
+import com.psi.ciclodias.model.Chronometer;
 
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -67,9 +68,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public ActivityInProgressTrainingMapBinding mapBinding = null;
     public ActivityPausedTrainingBinding pausedBinding = null;
 
-    private Chronometer chronometerSimple;
-    private Chronometer chronometerMap;
-    private boolean oneTime = true;
+    private boolean startTimer = true;
+    private boolean resumeTimer = false;
+    private Handler handler = null;
+    private Chronometer chronometer;
+
 
     // Variáveis para o cálculo da velocidade média
     private int count = 0;
@@ -215,11 +218,23 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
             // No InProgressTrainingActivity
             if(trainingBinding != null) {
+                if(startTimer){
+                   chronometer = Chronometer.getInstancia();
+                   handler = new Handler();
+                   handler.post(chronometer);
+                   startTimer = false;
+                }
+                if(resumeTimer){
+                    chronometer.unHalt();
+                    resumeTimer = false;
+                }
+                Chronometer.getInstancia().trainingBinding = trainingBinding;
                 setVelocity(location);
                 setVM(location);
                 setDistance(location);
             // No InProgressTrainingMapActivity
             }else if(mapBinding != null){
+                Chronometer.getInstancia().mapBinding = mapBinding;
                 setVelocity(location);
                 setVM(location);
                 setDistance(location);
@@ -228,6 +243,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 pausedBinding.tvDistanciaPausa.setText("Distancia: " + distance + "m");
                 pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima: " + velocityMax + " Km/h");
                 pausedBinding.tvVelMediaPausa.setText("Velocidade Média: " + velocityMean + "Km/h");
+                chronometer.halt();
+                resumeTimer = true;
             }
         }
 
@@ -261,6 +278,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             trainingBinding = null;
             pausedBinding = null;
             mapBinding = null;
+            Chronometer.getInstancia().interrupt();
     }
 
     // Função para calcular o valor da velocidade instântanea
@@ -378,5 +396,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
         binding.tvVelMaxResumo.setText("Velocidade Máxima:\n" + velocityMax + " Km/h");
         binding.tvVelMediaResumo.setText("Velocidade Média:\n" + velocityMean + "Km/h");
         binding.tvDistanciaResumo.setText("Distancia:\n" + distance + "m");
+        binding.tvTempoResumo.setText("" + Chronometer.getInstancia().getTime());
     }
 }
