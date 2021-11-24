@@ -218,20 +218,24 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
             // No InProgressTrainingActivity
             if(trainingBinding != null) {
+                Chronometer.getInstancia().trainingBinding = trainingBinding;
                 if(startTimer){
                    chronometer = Chronometer.getInstancia();
-                   handler = new Handler();
-                   handler.post(chronometer);
+                   chronometer.start();
                    startTimer = false;
+                   System.out.println("Started");
                 }
                 if(resumeTimer){
                     chronometer.unHalt();
                     resumeTimer = false;
                 }
-                Chronometer.getInstancia().trainingBinding = trainingBinding;
+                System.out.println("Location Location");
                 setVelocity(location);
+                System.out.println("Location Location Location");
                 setVM(location);
+                System.out.println("Location Location");
                 setDistance(location);
+                System.out.println("Location Location Location");
             // No InProgressTrainingMapActivity
             }else if(mapBinding != null){
                 Chronometer.getInstancia().mapBinding = mapBinding;

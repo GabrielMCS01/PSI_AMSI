@@ -4,7 +4,7 @@ import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
 
-public class Chronometer extends Thread{
+public class Chronometer extends Thread {
 
 
         private boolean stopVariable = false;
@@ -34,13 +34,15 @@ public class Chronometer extends Thread{
 
 
         public void run(){
-
             while(!stopVariable){
                 timeSeconds++;
-
-
                 if(trainingBinding != null){
-                 trainingBinding.tvDuracaoTreino.setText("" + timeSeconds);
+                 trainingBinding.tvDuracaoTreino.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         trainingBinding.tvDuracaoTreino.setText("" + timeSeconds);
+                     }
+                 });
                 }else if(mapBinding != null){
                     mapBinding.tvTempo.setText("" + timeSeconds);
                 }
