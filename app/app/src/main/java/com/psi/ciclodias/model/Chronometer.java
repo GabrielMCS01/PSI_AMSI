@@ -6,8 +6,8 @@ import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
 
 public class Chronometer extends Thread {
 
-
-        private boolean stopVariable = false;
+        public boolean stopVariable = false;
+        public boolean stop = false;
         private long timeSeconds = 0;
 
         public ActivityInProgressTrainingBinding trainingBinding = null;
@@ -28,28 +28,29 @@ public class Chronometer extends Thread {
             stopVariable = true;
         }
 
-        public void unHalt() {
-            stopVariable = false;
-        }
-
 
         public void run(){
-            while(!stopVariable){
-                timeSeconds++;
-                if(trainingBinding != null){
-                 trainingBinding.tvDuracaoTreino.post(new Runnable() {
-                     @Override
-                     public void run() {
-                         trainingBinding.tvDuracaoTreino.setText("" + timeSeconds);
-                     }
-                 });
-                }else if(mapBinding != null){
-                    mapBinding.tvTempo.setText("" + timeSeconds);
+            while(true){
+                if(!stopVariable) {
+                    timeSeconds++;
+                    if (trainingBinding != null) {
+                        trainingBinding.tvDuracaoTreino.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                trainingBinding.tvDuracaoTreino.setText("" + timeSeconds);
+                            }
+                        });
+                    } else if (mapBinding != null) {
+                        mapBinding.tvTempo.setText("" + timeSeconds);
+                    }
                 }
                 try {
                     Thread.currentThread().sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }
+                if(stop){
+                    return;
                 }
             }
         }

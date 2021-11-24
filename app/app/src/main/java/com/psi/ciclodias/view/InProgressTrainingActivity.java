@@ -7,10 +7,10 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DialogFragment;
-import android.widget.Chronometer;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.model.Chronometer;
 
 
 public class InProgressTrainingActivity extends AppCompatActivity {
@@ -33,6 +33,8 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().trainingBinding = null;
+                Chronometer.getInstancia().stopVariable = true;
+                mapFragment.getInstancia().resumeTimer = true;
                 finish();
             }
         });
@@ -47,12 +49,12 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 DialogFragment newFragment = ConfirmarSaidaDialogFragment.newInstance();
                 newFragment.show(fm, getString(R.string.txtDialog));
 
-                if (respostaUser) {
+                /*if (respostaUser) {
                     // Enviar os dados para a outra Activity
                     Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
                     startActivity(intent);
                     finish();
-                }
+                }*/
             }
         });
 

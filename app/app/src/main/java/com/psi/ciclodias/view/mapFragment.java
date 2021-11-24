@@ -69,7 +69,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public ActivityPausedTrainingBinding pausedBinding = null;
 
     private boolean startTimer = true;
-    private boolean resumeTimer = false;
+    public boolean resumeTimer = false;
     private Handler handler = null;
     private Chronometer chronometer;
 
@@ -226,7 +226,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                    System.out.println("Started");
                 }
                 if(resumeTimer){
-                    chronometer.unHalt();
+                    chronometer.stopVariable = false;
                     resumeTimer = false;
                 }
                 System.out.println("Location Location");
@@ -247,8 +247,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 pausedBinding.tvDistanciaPausa.setText("Distancia: " + distance + "m");
                 pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima: " + velocityMax + " Km/h");
                 pausedBinding.tvVelMediaPausa.setText("Velocidade Média: " + velocityMean + "Km/h");
-                chronometer.halt();
-                resumeTimer = true;
             }
         }
 
@@ -282,7 +280,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             trainingBinding = null;
             pausedBinding = null;
             mapBinding = null;
-            Chronometer.getInstancia().interrupt();
+            Chronometer.getInstancia().stop = true;
     }
 
     // Função para calcular o valor da velocidade instântanea
