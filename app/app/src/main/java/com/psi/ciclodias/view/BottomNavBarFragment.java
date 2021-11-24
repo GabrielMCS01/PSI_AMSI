@@ -1,5 +1,6 @@
 package com.psi.ciclodias.view;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 
 public class BottomNavBarFragment extends Fragment {
     private ImageButton btHome, btTreino, btPerfil;
+    public boolean lockHome = false, lockTraining = false, lockPerfil = false;
+    private int count = 0;
 
     public BottomNavBarFragment() {
         // Required empty public constructor
@@ -42,27 +46,49 @@ public class BottomNavBarFragment extends Fragment {
         btHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), MainPageActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                if(!lockHome) {
+                    if(lockTraining){
+                        mapFragment.getInstancia().onMyDestroy();
+                    }
+                    Intent intent = new Intent(getContext(), MainPageActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
             }
         });
 
         btTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), StartTrainingActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                if(!lockTraining) {
+                    Intent intent = new Intent(getContext(), StartTrainingActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }else{
+                    if(count == 75) {
+                        Toast.makeText(getContext(), "Fock Off", Toast.LENGTH_LONG).show();
+                        getActivity().finish();
+                    }else if(count == 50){
+                        Toast.makeText(getContext(), "STOP!!!!", Toast.LENGTH_LONG).show();
+                    }else if(count == 25) {
+                        Toast.makeText(getContext(), "Stop!", Toast.LENGTH_LONG).show();
+                    }
+                    count++;
+                }
             }
         });
 
         btPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ProfileActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                if(!lockPerfil) {
+                    if(lockTraining){
+                        mapFragment.getInstancia().onMyDestroy();
+                    }
+                    Intent intent = new Intent(getContext(), ProfileActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
             }
         });
         return view;

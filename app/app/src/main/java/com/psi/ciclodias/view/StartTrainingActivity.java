@@ -31,9 +31,10 @@ public class StartTrainingActivity extends AppCompatActivity {
         }
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
-        Fragment fragment = new BottomNavBarFragment();
+        BottomNavBarFragment fragment = new BottomNavBarFragment();
 
         if(fragment != null){
+            fragment.lockTraining = true;
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.navBarMainPage, fragment)

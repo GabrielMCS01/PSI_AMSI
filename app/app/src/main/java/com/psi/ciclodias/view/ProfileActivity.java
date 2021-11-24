@@ -24,13 +24,14 @@ public class ProfileActivity extends AppCompatActivity {
         dadosExemploPerfil();
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
-        Fragment fragment = new BottomNavBarFragment();
+       BottomNavBarFragment fragment = new BottomNavBarFragment();
 
         if(fragment != null){
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.navBarMainPage, fragment)
                     .commit();
+            fragment.lockPerfil = true;
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
 

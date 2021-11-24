@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
+import com.psi.ciclodias.model.Chronometer;
 
 public class InProgressTrainingMapActivity extends AppCompatActivity {
 
@@ -27,6 +28,10 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
 
 
         mapFragment.getInstancia().mapBinding = binding;
+        Chronometer.getInstancia().mapBinding = binding;
+
+        mapFragment.getInstancia().setData();
+
 
         Fragment mapfragment = mapFragment.getInstancia();
 
@@ -44,6 +49,8 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().mapBinding = null;
+                Chronometer.getInstancia().stopVariable = true;
+                mapFragment.getInstancia().resumeTimer = true;
                 finish();
             }
         });
@@ -74,6 +81,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().mapBinding = null;
+                Chronometer.getInstancia().mapBinding = null;
                 finish();
             }
         });

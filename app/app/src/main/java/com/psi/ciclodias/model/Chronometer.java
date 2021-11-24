@@ -37,11 +37,16 @@ public class Chronometer extends Thread {
                         trainingBinding.tvDuracaoTreino.post(new Runnable() {
                             @Override
                             public void run() {
-                                trainingBinding.tvDuracaoTreino.setText("" + timeSeconds);
+                                trainingBinding.tvDuracaoTreino.setText("" + timeSeconds + " s");
                             }
                         });
                     } else if (mapBinding != null) {
-                        mapBinding.tvTempo.setText("" + timeSeconds);
+                        mapBinding.tvTempo.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mapBinding.tvTempo.setText("Tempo: \n" + timeSeconds + "s");
+                            }
+                        });
                     }
                 }
                 try {

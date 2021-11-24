@@ -1,9 +1,7 @@
 package com.psi.ciclodias.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
+
 import android.location.Location;
 import android.os.Bundle;
 
@@ -92,6 +90,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public float distance = 0;
     public float velocityMean = 0;
     public float velocityMax = 0;
+    public float time = 0;
+    public ArrayList<Point> pointsList = new ArrayList<>();
 
     private mapFragment() {
         // Required empty public constructor
@@ -207,46 +207,42 @@ public class mapFragment extends Fragment implements PermissionsListener {
             navigationLocationProvider.changePosition(location, list, null, null);
             // Função para atualizar a camera enviando a nova localização
             updateCamera(location);
-
             //Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
             if(startBinding != null){
                 startBinding.textView3.setText(R.string.txtGPSAdquirido);
                 startBinding.btComecarTreino.setEnabled(true);
                 startBinding = null;
-            }
-
-            // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
-            // No InProgressTrainingActivity
-            if(trainingBinding != null) {
-                Chronometer.getInstancia().trainingBinding = trainingBinding;
-                if(startTimer){
-                   chronometer = Chronometer.getInstancia();
-                   chronometer.start();
-                   startTimer = false;
-                   System.out.println("Started");
+            }else {
+                Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                pointsList.add(point);
+                // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
+                // No InProgressTrainingActivity
+                if (trainingBinding != null) {
+                    Chronometer.getInstancia().trainingBinding = trainingBinding;
+                    if (startTimer) {
+                        chronometer = Chronometer.getInstancia();
+                        chronometer.start();
+                        startTimer = false;
+                    }
+                    if (resumeTimer) {
+                        chronometer.stopVariable = false;
+                        resumeTimer = false;
+                    }
+                    setVelocity(location);
+                    setVM(location);
+                    setDistance(location);
+                    // No InProgressTrainingMapActivity
+                } else if (mapBinding != null) {
+                    Chronometer.getInstancia().mapBinding = mapBinding;
+                    setVelocity(location);
+                    setVM(location);
+                    setDistance(location);
+                    // No PausedTrainingActivity
+                } else if (pausedBinding != null) {
+                    pausedBinding.tvDistanciaPausa.setText("Distancia: " + distance + "m");
+                    pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima: " + velocityMax + " Km/h");
+                    pausedBinding.tvVelMediaPausa.setText("Velocidade Média: " + velocityMean + "Km/h");
                 }
-                if(resumeTimer){
-                    chronometer.stopVariable = false;
-                    resumeTimer = false;
-                }
-                System.out.println("Location Location");
-                setVelocity(location);
-                System.out.println("Location Location Location");
-                setVM(location);
-                System.out.println("Location Location");
-                setDistance(location);
-                System.out.println("Location Location Location");
-            // No InProgressTrainingMapActivity
-            }else if(mapBinding != null){
-                Chronometer.getInstancia().mapBinding = mapBinding;
-                setVelocity(location);
-                setVM(location);
-                setDistance(location);
-            // No PausedTrainingActivity
-            }else if(pausedBinding != null){
-                pausedBinding.tvDistanciaPausa.setText("Distancia: " + distance + "m");
-                pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima: " + velocityMax + " Km/h");
-                pausedBinding.tvVelMediaPausa.setText("Velocidade Média: " + velocityMean + "Km/h");
             }
         }
 
@@ -280,7 +276,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
             trainingBinding = null;
             pausedBinding = null;
             mapBinding = null;
-            Chronometer.getInstancia().stop = true;
+            if(chronometer != null) {
+                chronometer.stop = true;
+                time = chronometer.getTime();
+            }
     }
 
     // Função para calcular o valor da velocidade instântanea
@@ -398,6 +397,25 @@ public class mapFragment extends Fragment implements PermissionsListener {
         binding.tvVelMaxResumo.setText("Velocidade Máxima:\n" + velocityMax + " Km/h");
         binding.tvVelMediaResumo.setText("Velocidade Média:\n" + velocityMean + "Km/h");
         binding.tvDistanciaResumo.setText("Distancia:\n" + distance + "m");
-        binding.tvTempoResumo.setText("" + Chronometer.getInstancia().getTime());
+        binding.tvTempoResumo.setText("Tempo: \n" + time + "s");
     }
+
+
+    public void setData(){
+        if(trainingBinding != null){
+            trainingBinding.tvDuracaoTreino.setText(time + "s");
+            trainingBinding.tvVelMediaTreino.setText(velocityMean + "Km/h");
+            trainingBinding.tvDistanciaTreino.setText(distance + "m");
+            trainingBinding.tvVelInstantaneaTreino.setText(velocityMax + " Km/h");
+        }else if(mapBinding != null){
+            mapBinding.tvTempo.setText("Tempo: \n" + time + "s");
+            mapBinding.tvVelMax.setText("Velocidade Instantanea: \n" + velocityMax + " Km/h");
+            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + velocityMean + "Km/h");
+            mapBinding.tvDistancia.setText("Distancia:\n" + distance + "m");
+        }
+    }
+    public void destroyChronometerInfo(){
+    }
+
+
 }

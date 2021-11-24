@@ -25,6 +25,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mapFragment.getInstancia().trainingBinding = binding;
+        mapFragment.getInstancia().setData();
 
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +66,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingMapActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().trainingBinding = null;
+                Chronometer.getInstancia().trainingBinding = null;
                 finish();
             }
         });

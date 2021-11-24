@@ -18,13 +18,14 @@ public class MainPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_page);
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
-        Fragment fragment = new BottomNavBarFragment();
+        BottomNavBarFragment fragment = new BottomNavBarFragment();
 
         if(fragment != null){
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.navBarMainPage, fragment)
                     .commit();
+            fragment.lockHome = true;
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
     }
