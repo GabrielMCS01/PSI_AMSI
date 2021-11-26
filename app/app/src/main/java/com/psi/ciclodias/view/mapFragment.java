@@ -66,9 +66,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public ActivityInProgressTrainingMapBinding mapBinding = null;
     public ActivityPausedTrainingBinding pausedBinding = null;
 
+    //Cronometro
     private boolean startTimer = true;
     public boolean resumeTimer = false;
-    private Handler handler = null;
     private Chronometer chronometer;
 
 
@@ -85,7 +85,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     // Variável para verificar se existe algum valor na localização 1 (primeira vez que entra na função recebe)
     private boolean isLoc1 = false;
 
-    //Variáveis que guardam a velocidade instantanea, a distancia e a velocidade media
+    //Variáveis que guardam os dados da sessão de treino
     public float velocityInstant = 0;
     public float distance = 0;
     public float velocityMean = 0;
@@ -122,6 +122,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap();
 
+        //Responsavel por dar um estilo ao mapa e criar o puck de localização
         loadMap();
 
         return view;
@@ -157,6 +158,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         });
     }
 
+    // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
     private void startNavigation() {
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
@@ -165,6 +167,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
                         .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
             }
+
             // Inicia a navegação
             if(!mapboxNavigation.isRunningForegroundService()){
                 mapboxNavigation.startTripSession();
@@ -213,8 +216,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 startBinding.btComecarTreino.setEnabled(true);
                 startBinding = null;
             }else {
-                Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-                pointsList.add(point);
+                /*Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                pointsList.add(point);*/
                 // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
                 // No InProgressTrainingActivity
                 if (trainingBinding != null) {
@@ -307,7 +310,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             trainingBinding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
         }
         else if(mapBinding != null){
-            mapBinding.tvVelMax.setText("Velocidade Instantanea: \n"+ strCurrentSpeed + " " + strUnits);
+            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n"+ strCurrentSpeed + " " + strUnits);
         }
     }
 
@@ -320,13 +323,13 @@ public class mapFragment extends Fragment implements PermissionsListener {
     // Função para calcular o valor da velocidade média
     private void setVM(Location location){
         // recebe o valor da velocidade e converte para metros por segundo
-        float speed = location.getSpeed() * 3.6F;
+        float currentSpeed = location.getSpeed() * 3.6F;
 
         // Adiciona +1 no contador para fazer o cálculo da velocidade média
         count++;
 
         // Velocidade total de todas as vezes que passou na função
-        velocity = velocity + speed;
+        velocity = velocity + currentSpeed;
 
         // Velocidade média (velocidade total a dividir pelas vezes que passou na função)
         mean = velocity / count;
@@ -336,18 +339,18 @@ public class mapFragment extends Fragment implements PermissionsListener {
         // Formata os dados
         Formatter fmt = new Formatter(new StringBuilder());
         fmt.format(Locale.US, "%5.2f", mean);
-        String strCurrentSpeed = fmt.toString();
-        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+        String strMeanVelocity = fmt.toString();
+        strMeanVelocity = strMeanVelocity.replace(' ', '0');
 
-        // Unidade de medida (Pode ser )
+        // Unidade de medida
         String strUnits = "Km/h";
 
         // Escreve o valor da velocidade no ecrâ em KM/H
         if(trainingBinding != null) {
-            trainingBinding.tvVelMediaTreino.setText(strCurrentSpeed + " " + strUnits);
+            trainingBinding.tvVelMediaTreino.setText(strMeanVelocity + " " + strUnits);
         }
         else if(mapBinding != null){
-            mapBinding.tvVelMedia.setText("Velocidade Média: \n" + strCurrentSpeed + " " + strUnits);
+            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + strMeanVelocity + " " + strUnits);
         }
     }
 
@@ -375,18 +378,18 @@ public class mapFragment extends Fragment implements PermissionsListener {
         Formatter fmt = new Formatter(new StringBuilder());
         // 7 casas e 2 decimais
         fmt.format(Locale.US, "%7.2f", distance);
-        String strCurrentSpeed = fmt.toString();
-        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+        String strDistance = fmt.toString();
+        strDistance = strDistance.replace(' ', '0');
 
         // Unidade de medida
         String strUnits = "m";
 
         // Atualiza na view o valor da distância
         if(trainingBinding != null) {
-            trainingBinding.tvDistanciaTreino.setText(strCurrentSpeed + " " + strUnits);
+            trainingBinding.tvDistanciaTreino.setText(strDistance + " " + strUnits);
         }
         else if(mapBinding != null){
-            mapBinding.tvDistancia.setText("Distancia: \n" + strCurrentSpeed + " " + strUnits);
+            mapBinding.tvDistancia.setText("Distancia:\n" + strDistance + " " + strUnits);
         }
 
 
@@ -406,16 +409,13 @@ public class mapFragment extends Fragment implements PermissionsListener {
             trainingBinding.tvDuracaoTreino.setText(time + "s");
             trainingBinding.tvVelMediaTreino.setText(velocityMean + "Km/h");
             trainingBinding.tvDistanciaTreino.setText(distance + "m");
-            trainingBinding.tvVelInstantaneaTreino.setText(velocityMax + " Km/h");
+            trainingBinding.tvVelInstantaneaTreino.setText(velocityInstant + " Km/h");
         }else if(mapBinding != null){
-            mapBinding.tvTempo.setText("Tempo: \n" + time + "s");
-            mapBinding.tvVelMax.setText("Velocidade Instantanea: \n" + velocityMax + " Km/h");
+            mapBinding.tvTempo.setText("Tempo:\n" + time + "s");
+            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + velocityInstant + " Km/h");
             mapBinding.tvVelMedia.setText("Velocidade Média:\n" + velocityMean + "Km/h");
             mapBinding.tvDistancia.setText("Distancia:\n" + distance + "m");
         }
     }
-    public void destroyChronometerInfo(){
-    }
-
 
 }
