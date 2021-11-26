@@ -21,7 +21,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mapFragment.getInstancia().pausedBinding = binding;
-        binding.tvTempoPausa.setText("" + Chronometer.getInstancia().getTime());
+        mapFragment.getInstancia().setData();
 
         binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override

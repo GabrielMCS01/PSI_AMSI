@@ -240,11 +240,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
-                    // No PausedTrainingActivity
-                } else if (pausedBinding != null) {
-                    pausedBinding.tvDistanciaPausa.setText("Distancia: " + distance + "m");
-                    pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima: " + velocityMax + " Km/h");
-                    pausedBinding.tvVelMediaPausa.setText("Velocidade Média: " + velocityMean + "Km/h");
                 }
             }
         }
@@ -404,6 +399,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     }
 
 
+
     public void setData(){
         if(trainingBinding != null){
             trainingBinding.tvDuracaoTreino.setText(time + "s");
@@ -415,6 +411,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
             mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + velocityInstant + " Km/h");
             mapBinding.tvVelMedia.setText("Velocidade Média:\n" + velocityMean + "Km/h");
             mapBinding.tvDistancia.setText("Distancia:\n" + distance + "m");
+        }else if(pausedBinding != null){
+            pausedBinding.tvDistanciaPausa.setText("Distancia:\n" + distance + "m");
+            pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima:\n" + velocityMax + " Km/h");
+            pausedBinding.tvVelMediaPausa.setText("Velocidade Média:\n" + velocityMean + "Km/h");
+            pausedBinding.tvTempoPausa.setText("Tempo:\n" + time + "s");
         }
     }
 

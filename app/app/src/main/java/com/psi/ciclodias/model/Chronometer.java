@@ -3,6 +3,7 @@ package com.psi.ciclodias.model;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
+import com.psi.ciclodias.view.mapFragment;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -39,6 +40,7 @@ public class Chronometer extends Thread {
             while(true){
                 if(!stopVariable) {
                     timeSeconds++;
+                    mapFragment.getInstancia().time = timeSeconds;
                     if (trainingBinding != null) {
                         trainingBinding.tvDuracaoTreino.post(new Runnable() {
                             @Override
