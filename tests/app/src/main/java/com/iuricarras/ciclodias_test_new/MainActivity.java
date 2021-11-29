@@ -7,10 +7,16 @@ import androidx.core.content.ContextCompat;
 import android.location.Location;
 import android.os.Bundle;
 
+import android.view.View;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.iuricarras.ciclodias_test_new.databinding.ActivityMainBinding;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.matching.v5.MapboxMapMatching;
+import com.mapbox.api.matching.v5.models.MapMatchingResponse;
+import com.mapbox.bindgen.Expected;
 import com.mapbox.geojson.Point;
 import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
@@ -31,14 +37,28 @@ import com.mapbox.maps.MapboxMap;
 import com.mapbox.maps.Style;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
+import com.mapbox.navigation.core.directions.session.RoutesObserver;
+import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
+import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
+import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLine;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineError;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteSetValue;
 
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements PermissionsListener {
     // Permissões para aceder á localização do dispositivo
@@ -50,6 +70,16 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
     private MapboxNavigation mapboxNavigation;
     private ActivityMainBinding binding;
     private Chronometer chronometer;
+    private List<Point> pointlist = new ArrayList<>();
+
+    private MapboxMapMatching mapMatching;
+    private DirectionsRoute directionsRoute;
+    private MapboxRouteLineOptions routeLineOptions;
+    private MapboxRouteLineApi routeLineApi;
+    private MapboxRouteLineView routeLineView;
+    private RoutesObserver routesObserver;
+    private RouteLine routeLine;
+    private List<RouteLine> routes = new ArrayList<>();
 
     // Variáveis para o cálculo da velocidade média
     private int count = 0;
@@ -79,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
         public void onNewRawLocation(@NonNull Location location) {
             // Lista para os keyPoints (vazia) rotas
             List<Location> lista = new ArrayList<>();
+            pointlist.add(Point.fromLngLat(location.getLongitude(), location.getLatitude()));
             navigationLocationProvider.changePosition(location, lista, null, null);
             // Função para atualizar a camera enviando a nova localização
             updateCamera(location);
@@ -151,7 +182,58 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
             }
         });
 
+        binding.btGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                mapMatching = MapboxMapMatching.builder().
+                        accessToken(getString(R.string.mapbox_access_token)).
+                        coordinates(pointlist).
+                        steps(true).
+                        profile(DirectionsCriteria.PROFILE_CYCLING).
+                        build();
+
+                mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
+                    @Override
+                    public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                        directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+                        List<DirectionsRoute> list = new ArrayList<>();
+                        list.add(directionsRoute);
+
+                        for(DirectionsRoute directionsRoute : list){
+                            System.out.println(directionsRoute);
+                        }
+                        mapboxNavigation.setRoutes(list);
+
+                        routeLineOptions = new MapboxRouteLineOptions.Builder(getApplicationContext()).withRouteLineBelowLayerId("road-layer").build();
+                        routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                        routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                        routeLine = new RouteLine(directionsRoute, null);
+
+                        routesObserver = new RoutesObserver() {
+                            @Override
+                            public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                                routes.add(routeLine);
+                                routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                                    System.out.println("Hello");
+                                    routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                                    System.out.println("Hello");
+                                });
+                            }
+                        };
+
+                        mapboxNavigation.registerRoutesObserver(routesObserver);
+                    }
+
+                    @Override
+                    public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+                    }
+                });
+
+            }
+        });
 
     }
 
@@ -286,7 +368,6 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
         // Atualiza na view o valor da distância
         binding.tvDistance.setText(strCurrentSpeed + " " + strUnits);
     }
-
 
 
     @Override
