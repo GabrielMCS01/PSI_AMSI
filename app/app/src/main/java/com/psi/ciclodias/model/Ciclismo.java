@@ -1,8 +1,5 @@
 package com.psi.ciclodias.model;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 public class Ciclismo {
     private long id, user_id_ciclismo;
     private String nome_percurso, velocidade_grafico, rota;
@@ -97,19 +94,5 @@ public class Ciclismo {
 
     public void setDuracao(String duracao) {
         this.duracao = duracao;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "nome_percurso='" + nome_percurso + '\'' +
-                ", velocidade_grafico='" + velocidade_grafico + '\'' +
-                ", rota='" + rota + '\'' +
-                ", distancia=" + distancia +
-                ", velocidade_media=" + velocidade_media +
-                ", velocidade_maxima=" + velocidade_maxima +
-                ", data_treino=" + data_treino +
-                ", duracao=" + duracao +
-                '}';
     }
 }

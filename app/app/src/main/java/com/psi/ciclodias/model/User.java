@@ -97,15 +97,4 @@ public class User {
     public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", primeiro_nome='" + primeiro_nome + '\'' +
-                ", ultimo_nome='" + ultimo_nome + '\'' +
-                ", data_nascimento='" + data_nascimento + '\'' +
-                '}';
-    }
 }

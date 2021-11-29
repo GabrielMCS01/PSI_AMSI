@@ -7,13 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.time.LocalDate;
 
 public class DBHelp extends SQLiteOpenHelper {
+    // Nome da DB e versão da DB SQLITE
     private static final String DB_NOME = "projectdb";
     private static final int VERSAO = 1;
 
+    // Tabela Ciclismo
     private static final String TABELA_CICLISMO = "ciclismo";
     private static final String ID_CICLISMO = "id";
     private static final String NOME_PERCURSO = "nome_percurso";
@@ -26,6 +26,7 @@ public class DBHelp extends SQLiteOpenHelper {
     private static final String DATA_TREINO = "data_treino";
     private static final String USER_ID_CICLISMO = "user_id";
 
+    // Tabela USER_INFO
     private static final String TABELA_USERINFO = "user_info";
     private static final String ID_USERINFO = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
@@ -33,11 +34,15 @@ public class DBHelp extends SQLiteOpenHelper {
     private static final String DATA_NASCIMENTO = "data_nascimento";
     private static final String USER_ID_USERINFO = "user_id";
 
+    // Tabela USER
     private static final String USERNAME = "username";
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
 
     private SQLiteDatabase bd;
+
+    // URL Padrão
+    private String url ="http://localhost/PSI_PlatSI/app/backend/web/v1";
 
     public DBHelp(Context context) {
         super(context, DB_NOME, null, VERSAO);
@@ -46,6 +51,7 @@ public class DBHelp extends SQLiteOpenHelper {
         bd = getWritableDatabase();
     }
 
+    // Crias as tabelas na DB enviada
     @Override
     public void onCreate(SQLiteDatabase db) {
         String SQL = "CREATE TABLE " + TABELA_CICLISMO + "(" +
@@ -60,27 +66,19 @@ public class DBHelp extends SQLiteOpenHelper {
                 DATA_TREINO + " NUMERIC NOT NULL, " +
                 USER_ID_CICLISMO + " INTEGER NOT NULL)";
         db.execSQL(SQL);
-
-        String SQL1 = "CREATE TABLE " + TABELA_USERINFO + "(" +
-                ID_USERINFO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                PRIMEIRO_NOME + " TEXT NOT NULL, " +
-                ULTIMO_NOME + " TEXT NOT NULL, " +
-                DATA_NASCIMENTO + " NUMERIC, " +
-                USER_ID_USERINFO + " INTEGER NOT NULL)";
-        db.execSQL(SQL1);
     }
 
+    // Apaga as tabelas existentes e recria-as no método onCreate
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String SQL = "DROP TABLE IF EXISTS " + TABELA_CICLISMO;
-        String SQL1 = "DROP TABLE IF EXISTS " + TABELA_USERINFO;
         db.execSQL(SQL);
-        db.execSQL(SQL1);
 
         this.onCreate(db);
     }
 
-    // métodos CRUD
+    // ------------------------------------- Ciclismo -----------------------------------------------------------------
+    // Cria uma nova sessão de treino
     public Ciclismo AdicionarCiclismoDB(Ciclismo ciclismo){
         ContentValues valores = new ContentValues();
 
@@ -104,6 +102,7 @@ public class DBHelp extends SQLiteOpenHelper {
         return null;
     }
 
+    // Retorna todas as sessões de treino do utilizador
     public ArrayList<Ciclismo> getListaCiclismoDB(){
         ArrayList<Ciclismo> lista = new ArrayList<>();
 
@@ -133,6 +132,35 @@ public class DBHelp extends SQLiteOpenHelper {
         return lista;
     }
 
+    // Retorna uma sessão de treino detalhada
+    public Ciclismo getCiclismoDB(){
+        // Query á tabela para procurar os detalhes do treino selecionado
+        Cursor cursor = bd.query(TABELA_CICLISMO, new String[] {ID_CICLISMO, NOME_PERCURSO, DURACAO, DISTANCIA, VELOCIDADE_MEDIA,
+                        VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO, USER_ID_CICLISMO},
+                null, null, null, null, null);
+
+        // Se encontrar algum treino faz
+        if(cursor.moveToFirst()){
+            Ciclismo ciclismo = new Ciclismo(cursor.getString(0),
+                // Tipo de data está em String por agora
+                cursor.getString(1),
+                // ---------------------------------------
+                cursor.getFloat(2),
+                cursor.getFloat(3),
+                cursor.getFloat(4),
+                cursor.getString(5),
+                cursor.getString(6));
+
+                cursor.close();
+
+                return ciclismo;
+        }
+
+        cursor.close();
+        return null;
+    }
+
+    // Edita uma sessão de treino
     public boolean editarCiclismoDB(Ciclismo ciclismo){
         ContentValues valores = new ContentValues();
 
@@ -143,55 +171,53 @@ public class DBHelp extends SQLiteOpenHelper {
         return bd.update(TABELA_CICLISMO, valores, ID_CICLISMO + " = ?", new String[] {"" + ciclismo.getId()}) > 0;
     }
 
+    // Apaga uma sessão de treino
     public boolean apagarCiclismoDB(long id){
         // Retorna na Tabela Ciclismo o resultado de apagar o treino com o ID enviado
         return bd.delete(TABELA_CICLISMO, ID_CICLISMO + " = ?", new String[] {"" + id}) == 1;
     }
 
 
-    // métodos CRUD
-    public User AdicionarUserDB(User user){
+    // ---------------------------------------------- USER -----------------------------------------------------------------------
+    // Código para adaptar para quando se implementar a API
+
+    // Cria um utilizador enviando os dados inseridos para a API
+    /*public User AdicionarUserDB(User user){
         ContentValues valores = new ContentValues();
 
+        // Campos preenchidas na APP android a criar um USER
         valores.put(USERNAME, user.getUsername());
         valores.put(EMAIL, user.getEmail());
         valores.put(PASSWORD, user.getPassword());
         valores.put(PRIMEIRO_NOME, user.getPrimeiro_nome());
         valores.put(ULTIMO_NOME, user.getUltimo_nome());
 
-        long id = bd.insert(TABELA_CICLISMO, null, valores);
-
-        // Se devolver -1 é porque não conseguiu inserir
-        if (id != -1){
-            user.setId(id);
-            return user;
-        }
+        // Enviar os dados para a API
 
         return null;
     }
 
-    public User getUser(){
-        User user;
-        // Query á tabela toda
-        Cursor cursor = bd.query(TABELA_CICLISMO, new String[] {USER_ID_USERINFO},
-                null, null, null, null, null);
+    // Edita o próprio utilizador
+    public boolean editarUserDB(User user){
+        ContentValues valores = new ContentValues();
 
-        // Se o encontrar algum faz
-        if(cursor.moveToFirst()){
-            // Faz enquanto ainda houve mais treinos
-            user = new User(cursor.getString(0),
-            cursor.getString(1),
-            // ---------------------------------------
-            cursor.getString(2),
-            cursor.getString(3),
-            cursor.getString(4));
+        // O utilizadr pode editar o seu Email, DataNascimento, PrimeiroNome e UltimoNome
+        valores.put(EMAIL, user.getEmail());
+        valores.put(DATA_NASCIMENTO, user.getData_nascimento());
+        valores.put(PRIMEIRO_NOME, user.getPrimeiro_nome());
+        valores.put(ULTIMO_NOME, user.getUltimo_nome());
 
-            cursor.close();
+        // Envia dados para a API
 
-            return user;
-        }
-
-        cursor.close();
-        return null;
+        return true;
     }
+
+    // Apaga o utilizador com login feito (auth_key)
+    public boolean apagarUserDB(long id){
+        // Retorna na Tabela Ciclismo o resultado de apagar o treino com o ID enviado
+
+        return true;
+    }*/
+
+
 }
