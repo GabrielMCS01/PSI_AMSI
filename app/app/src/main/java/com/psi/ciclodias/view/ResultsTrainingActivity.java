@@ -32,10 +32,12 @@ public class ResultsTrainingActivity extends AppCompatActivity {
                     .replace(R.id.mapViewResult, mapfragment)
                     .commit();
         }
+
         binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Código para guardar na base de dados
+                mapFragment.getInstancia().onMyDestroy();
                 Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                 startActivity(intent);
                 finish();
@@ -45,6 +47,7 @@ public class ResultsTrainingActivity extends AppCompatActivity {
         binding.btSairResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mapFragment.getInstancia().onMyDestroy();
                 boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados

@@ -17,7 +17,7 @@ import com.psi.ciclodias.model.Chronometer;
 public class InProgressTrainingMapActivity extends AppCompatActivity {
 
     private ActivityInProgressTrainingMapBinding binding;
-
+    public static boolean RESPOSTA_USER = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
         if(mapfragment != null){
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.mapViewTraining, mapfragment)
+                    .replace(R.id.mapViewTraining, mapfragment, "MAPTAG")
                     .commit();
         }
 
@@ -57,21 +57,16 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
 
         binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                boolean respostaUser = false; // Mudar para false e depois perguntar ao USER
+            public void onClick(View view) {// Mudar para false e depois perguntar ao USER
 
+                getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
                 FragmentManager fm = getFragmentManager();
+
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 DialogFragment newFragment = ConfirmarSaidaDialogFragment.newInstance();
                 newFragment.show(fm, getString(R.string.txtDialog));
-
-                if (respostaUser) {
-                    // Enviar os dados para a outra Activity
-                    Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
-                    startActivity(intent);
-                    finish();
                 }
-            }
+
         });
 
         binding.btVoltar.setOnClickListener(new View.OnClickListener() {
