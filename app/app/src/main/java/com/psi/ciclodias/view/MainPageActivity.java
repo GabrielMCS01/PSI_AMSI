@@ -2,6 +2,9 @@ package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +12,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.psi.ciclodias.R;
+import com.psi.ciclodias.adapters.RecyclerCiclismoAdapter;
+import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
 public class MainPageActivity extends AppCompatActivity {
+    private RecyclerCiclismoAdapter adaptador;
+    private RecyclerView rvCiclismo;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
+
+        rvCiclismo = findViewById(R.id.rvCiclismo);
+        layoutManager = new LinearLayoutManager(this);
+        rvCiclismo.setLayoutManager(layoutManager);
+
+        adaptador = new RecyclerCiclismoAdapter(this, SingletonGestorCiclismo.getInstancia(this).getArrCiclismo());
+
+        rvCiclismo.setAdapter(adaptador);
+
+        rvCiclismo.setItemAnimator(new DefaultItemAnimator());
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         BottomNavBarFragment fragment = new BottomNavBarFragment();

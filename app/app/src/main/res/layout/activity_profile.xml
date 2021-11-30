@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/logo" />
+        tools:srcCompat="@drawable/ic_launcher_foreground" />
 
     <TextView
         android:id="@+id/tvNomePerfil"

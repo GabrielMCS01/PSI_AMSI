@@ -2,6 +2,8 @@ package com.psi.ciclodias.model;
 
 import android.content.Context;
 
+import com.psi.ciclodias.R;
+
 import java.util.ArrayList;
 
 public class SingletonGestorCiclismo {
@@ -23,7 +25,17 @@ public class SingletonGestorCiclismo {
     private SingletonGestorCiclismo(Context context){
         bd = new DBHelp(context);
         ArrCiclismo = bd.getListaCiclismoDB();
-        //gerarDadosDinamicos();
+        gerarDadosDinamicos();
+    }
+
+    private void gerarDadosDinamicos() {
+        ArrCiclismo = new ArrayList<>();
+        ArrCiclismo.add(new Ciclismo("Voltinha do banana", "00:15:30", 20.1f, 30.1f, 30.7f, null, null));
+        ArrCiclismo.add(new Ciclismo("Voltinha do banana", "00:15:30", 20.1f, 30.1f, 30.7f, null, null));
+        ArrCiclismo.add(new Ciclismo("Voltinha do banana", "00:15:30", 20.1f, 30.1f, 30.7f, null, null));
+        ArrCiclismo.add(new Ciclismo("Voltinha do banana", "00:15:30", 20.1f, 30.1f, 30.7f, null, null));
+        ArrCiclismo.add(new Ciclismo("Voltinha do banana", "00:15:30", 20.1f, 30.1f, 30.7f, null, null));
+        ArrCiclismo.add(new Ciclismo("Voltinha do banana", "00:15:30", 20.1f, 30.1f, 30.7f, null, null));
     }
 
     // Adiciona um treino á BD local
@@ -39,13 +51,13 @@ public class SingletonGestorCiclismo {
         if(bd.editarCiclismoDB(ciclismo)) {
             Ciclismo original = getCiclismo(ciclismo.getId());
 
-            /*// Caso exista um item para editar
+            // Caso exista um item para editar
             if (original != null) {
-                original.setTitulo(livro.getTitulo());
-                original.setAutor(livro.getAutor());
-                original.setSerie(livro.getSerie());
-                original.setAno(livro.getAno());
-            }*/
+                original.setNome_percurso(ciclismo.getNome_percurso());
+                original.setDuracao(ciclismo.getDuracao());
+                original.setDistancia(ciclismo.getDistancia());
+                original.setVelocidade_media(ciclismo.getVelocidade_media());
+            }
         }
     }
 
