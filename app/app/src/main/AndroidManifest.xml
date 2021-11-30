@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.psi.ciclodias">
+    package="com.psi.ciclodias" >
 
     <application
         android:allowBackup="true"
@@ -8,34 +8,41 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CicloDias">
+        android:theme="@style/Theme.CicloDias" >
         <activity
-            android:name=".ResultsTrainingActivity"
+            android:name=".view.InProgressTrainingMapActivity"
+            android:exported="false"
+            android:label="@string/title_activity_in_progress_training_map"
+            android:theme="@style/Theme.CicloDias.NoActionBar" />
+        <activity
+            android:name=".view.ResultsTrainingActivity"
             android:exported="false" />
         <activity
-            android:name=".InProgressTrainingActivity"
+            android:name=".view.InProgressTrainingActivity"
+            android:exported="false"
+            android:noHistory="true" />
+        <activity
+            android:name=".view.PausedTrainingActivity"
             android:exported="false" />
         <activity
-            android:name=".PausedTrainingActivity"
+            android:name=".view.StartTrainingActivity"
             android:exported="false" />
         <activity
-            android:name=".StartTrainingActivity"
+            android:name=".view.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".view.ConfigurationsActivity"
             android:exported="false" />
         <activity
-            android:name=".ConfigurationsActivity"
+            android:name=".view.MainPageActivity"
             android:exported="false" />
         <activity
-            android:name=".MainPageActivity"
-            android:exported="false" />
+            android:name=".view.RegistryActivity"
+            android:exported="false"
+            android:parentActivityName=".view.LoginActivity" />
         <activity
-            android:name=".RegistryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true">
+            android:name=".view.LoginActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
