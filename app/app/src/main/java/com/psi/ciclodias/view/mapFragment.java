@@ -17,6 +17,11 @@ import android.widget.Toast;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.matching.v5.MapboxMapMatching;
+import com.mapbox.api.matching.v5.models.MapMatchingResponse;
+import com.mapbox.bindgen.Expected;
 import com.mapbox.geojson.Point;
 import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
@@ -33,9 +38,17 @@ import com.mapbox.navigation.base.options.DeviceProfile;
 import com.mapbox.navigation.base.options.DeviceType;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
+import com.mapbox.navigation.core.directions.session.RoutesObserver;
+import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
+import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLine;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineError;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteSetValue;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
@@ -48,6 +61,11 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class mapFragment extends Fragment implements PermissionsListener {
 
@@ -65,6 +83,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public ActivityInProgressTrainingBinding trainingBinding = null;
     public ActivityInProgressTrainingMapBinding mapBinding = null;
     public ActivityPausedTrainingBinding pausedBinding = null;
+    private boolean isFinished = false;
 
     //Cronometro
     private boolean startTimer = true;
@@ -91,6 +110,17 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public float velocityMean = 0;
     public float velocityMax = 0;
     public float time = 0;
+
+
+
+    private MapboxMapMatching mapMatching;
+    private DirectionsRoute directionsRoute;
+    private MapboxRouteLineOptions routeLineOptions;
+    private MapboxRouteLineApi routeLineApi;
+    private MapboxRouteLineView routeLineView;
+    private RoutesObserver routesObserver;
+    private RouteLine routeLine;
+    private List<RouteLine> routes = new ArrayList<>();
     public ArrayList<Point> pointsList = new ArrayList<>();
 
     private mapFragment() {
@@ -122,6 +152,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap();
 
+        if(startBinding != null){
+            isFinished = false;
+        }
+
         //Responsavel por dar um estilo ao mapa e criar o puck de localização
         loadMap();
 
@@ -136,21 +170,23 @@ public class mapFragment extends Fragment implements PermissionsListener {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
 
+                if(!isFinished) {
+                    LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
-                LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
+                    //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
+                    locationComponentPlugin.setLocationProvider(navigationLocationProvider);
 
-                //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
-                locationComponentPlugin.setLocationProvider(navigationLocationProvider);
 
-                //Carregar o puck de localização
-                LocationPuck2D locationPuck2D = new LocationPuck2D();
-                locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(),R.drawable.mapbox_navigation_puck_icon));
+                    //Carregar o puck de localização
+                    LocationPuck2D locationPuck2D = new LocationPuck2D();
+                    locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
 
-                // Colocar o puck no mapa
-                locationComponentPlugin.setLocationPuck(locationPuck2D);
+                    // Colocar o puck no mapa
+                    locationComponentPlugin.setLocationPuck(locationPuck2D);
 
-                locationComponentPlugin.setEnabled(true);
 
+                    locationComponentPlugin.setEnabled(true);
+                }
                 // Verificar as permissões de localização e começar a navegação
                 startNavigation();
 
@@ -169,9 +205,59 @@ public class mapFragment extends Fragment implements PermissionsListener {
             }
 
             // Inicia a navegação
-            if(!mapboxNavigation.isRunningForegroundService()){
+            if(!mapboxNavigation.isRunningForegroundService() && !isFinished){
                 mapboxNavigation.startTripSession();
                 mapboxNavigation.registerLocationObserver(locationObs);
+            }else{
+                mapMatching = MapboxMapMatching.builder().
+                        accessToken(getString(R.string.mapbox_access_token)).
+                        coordinates(pointsList).
+                        steps(true).
+                        profile(DirectionsCriteria.PROFILE_CYCLING).
+                        build();
+
+                mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
+                    @Override
+                    public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                        directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+                        List<DirectionsRoute> list = new ArrayList<>();
+                        list.add(directionsRoute);
+
+                        for(DirectionsRoute directionsRoute : list){
+                            System.out.println(directionsRoute);
+                        }
+                        mapboxNavigation.setRoutes(list);
+
+                        routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-layer").build();
+                        routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                        routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                        routeLine = new RouteLine(directionsRoute, null);
+
+                        routesObserver = new RoutesObserver() {
+                            @Override
+                            public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                                routes.add(routeLine);
+                                routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                                    System.out.println("Hello");
+                                    routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                                    System.out.println("Hello");
+                                });
+                            }
+                        };
+
+                        mapboxNavigation.registerRoutesObserver(routesObserver);
+                    }
+
+                    @Override
+                    public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+                    }
+                });
+
+
+
+
             }
         } else {
             permissionsManager = new PermissionsManager(this);
@@ -216,8 +302,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 startBinding.btComecarTreino.setEnabled(true);
                 startBinding = null;
             }else {
-                /*Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-                pointsList.add(point);*/
+                Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                pointsList.add(point);
                 // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
                 // No InProgressTrainingActivity
                 if (trainingBinding != null) {
@@ -396,6 +482,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         binding.tvVelMediaResumo.setText("Velocidade Média:\n" + velocityMean + "Km/h");
         binding.tvDistanciaResumo.setText("Distancia:\n" + distance + "m");
         binding.tvTempoResumo.setText("Tempo: \n" + time + "s");
+        isFinished = true;
     }
 
 

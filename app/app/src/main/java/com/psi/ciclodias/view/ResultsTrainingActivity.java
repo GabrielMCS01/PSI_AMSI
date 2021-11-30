@@ -1,11 +1,13 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 
 public class ResultsTrainingActivity extends AppCompatActivity {
@@ -21,6 +23,15 @@ public class ResultsTrainingActivity extends AppCompatActivity {
 
         mapFragment.getInstancia().getResults(binding);
 
+
+        Fragment mapfragment = mapFragment.getInstancia();
+
+        if(mapfragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mapViewResult, mapfragment)
+                    .commit();
+        }
         binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
