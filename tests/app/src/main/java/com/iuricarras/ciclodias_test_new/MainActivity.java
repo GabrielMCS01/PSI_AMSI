@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
                         coordinates(pointlist).
                         steps(true).
                         profile(DirectionsCriteria.PROFILE_CYCLING).
+                        addApproaches(DirectionsCriteria.APPROACH_UNRESTRICTED).
                         build();
 
                 mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
