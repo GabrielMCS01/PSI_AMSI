@@ -2,6 +2,7 @@ package com.psi.ciclodias.view;
 
 import android.annotation.SuppressLint;
 
+import android.icu.text.Transliterator;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -23,6 +24,7 @@ import com.mapbox.api.matching.v5.MapboxMapMatching;
 import com.mapbox.api.matching.v5.models.MapMatchingResponse;
 import com.mapbox.bindgen.Expected;
 import com.mapbox.geojson.Point;
+import com.mapbox.geojson.utils.PolylineUtils;
 import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
@@ -58,6 +60,7 @@ import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 import com.psi.ciclodias.model.Chronometer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +74,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Gestor de Permissões
     private PermissionsManager permissionsManager;
+    private String accessToken;
 
     //Objetos necessarios para a gestão do mapa e da localização
     private MapView mapView;
@@ -122,6 +126,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private RouteLine routeLine;
     private List<RouteLine> routes = new ArrayList<>();
     public ArrayList<Point> pointsList = new ArrayList<>();
+    private ArrayList<DirectionsRoute> listDirections = new ArrayList<>();
+
 
     private mapFragment() {
         // Required empty public constructor
@@ -203,6 +209,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             if(mapboxNavigation == null){
                 mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
                         .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
+                accessToken = getString(R.string.mapbox_access_token);
             }
 
             // Inicia a navegação
@@ -212,73 +219,140 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
             }else
                 if(isFinished) {
-                    //Constroi a rota utilizando a lista de pontos adiquirida
-                    mapMatching = MapboxMapMatching.builder().
-                            accessToken(getString(R.string.mapbox_access_token)).
-                            coordinates(pointsList).
-                            steps(true).
-                            waypointIndices(0, pointsList.size()-1).
-                            profile(DirectionsCriteria.PROFILE_CYCLING).
-                            build();
+                    if(pointsList.size() > 2){
+                        MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
+                                accessToken(getString(R.string.mapbox_access_token)).
+                                coordinates(pointsList).
+                                steps(true).
+                                profile(DirectionsCriteria.PROFILE_CYCLING).
+                                build();
 
-                    mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
-                        @Override
-                        public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
-                            directionsRoute = response.body().matchings().get(0).toDirectionRoute();
-                            List<DirectionsRoute> list = new ArrayList<>();
-                            list.add(directionsRoute);
+                        pointsList = new ArrayList<>();
+                        mapMatchingTwo.enqueueCall(new Callback<MapMatchingResponse>() {
+                            @Override
+                            public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                                directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+                                listDirections.add(directionsRoute);
 
-                            for (DirectionsRoute directionsRoute : list) {
-                                System.out.println(directionsRoute);
-                            }
-                            mapboxNavigation.setRoutes(list);
+                                ArrayList<Point> resultGeometry = new ArrayList<>();
+                                for (DirectionsRoute directions : listDirections) {
 
-                            routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
-                            routeLineApi = new MapboxRouteLineApi(routeLineOptions);
-                            routeLineView = new MapboxRouteLineView(routeLineOptions);
+                                    // Convert the polyline string into a list of Position objects
+                                    List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
 
-                            routeLine = new RouteLine(directionsRoute, null);
+                                    // Chop off the first coordinate if appending to existing data, otherwise use entire geometry;
+                                    int startPos = resultGeometry.size() > 0 ? 1 : 0;
 
-                            routesObserver = new RoutesObserver() {
-                                @Override
-                                public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                                    routes.add(routeLine);
-                                    routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                                        System.out.println("Hello");
-                                        routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                                        System.out.println("Hello");
-                                        int index = pointsList.size()/2;
-                                        Point point = pointsList.get(index);
-
-                                        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-
-                                        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
-
-                                        // Modifica o zoom na câmera automaticamente
-                                        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                                .center(point)
-                                                .zoom(15.0)
-                                                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                                .build();
-
-                                        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                                    });
+                                    // Concatenate the route points, removing the first point if we're appendin
+                                    resultGeometry.addAll(startPos, routePoints);
                                 }
-                            };
 
-                            mapboxNavigation.registerRoutesObserver(routesObserver);
+                                // Generate a polyline encoded string from the accumulated points.
+                                String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+
+                                ArrayList<DirectionsRoute> list = new ArrayList<>();
+                                list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+
+                                mapboxNavigation.setRoutes(list);
+
+                                routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
+                                routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                                routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                                routeLine = new RouteLine(list.get(0), null);
+
+                                routesObserver = new RoutesObserver() {
+                                    @Override
+                                    public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                                        routes.add(routeLine);
+                                        routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                                            System.out.println("Hello");
+                                            routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                                            System.out.println("Hello");
+                                            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+                                            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+                                            // Modifica o zoom na câmera automaticamente
+                                            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                                    .center(Point.fromLngLat(loc1.getLongitude(),loc1.getLatitude()))
+                                                    .zoom(15.0)
+                                                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                                    .build();
+
+                                            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                                        });
+                                    }
+                                };
+
+                                mapboxNavigation.registerRoutesObserver(routesObserver);
+
+                            }
+                            @Override
+                            public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+                            }
+                        });
+
+                    }else{
+                        ArrayList<Point> resultGeometry = new ArrayList<>();
+                        for (DirectionsRoute directions : listDirections) {
+
+                            // Convert the polyline string into a list of Position objects
+                            List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
+
+                            // Chop off the first coordinate if appending to existing data, otherwise use entire geometry;
+                            int startPos = resultGeometry.size() > 0 ? 1 : 0;
+
+                            // Concatenate the route points, removing the first point if we're appendin
+                            resultGeometry.addAll(startPos, routePoints);
                         }
 
-                        @Override
-                        public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
-
-                        }
-                    });
+                        // Generate a polyline encoded string from the accumulated points.
+                        String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
 
 
+                        ArrayList<DirectionsRoute> list = new ArrayList<>();
+                        list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+
+                        mapboxNavigation.setRoutes(list);
+
+                        routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
+                        routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                        routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                        routeLine = new RouteLine(list.get(0), null);
+
+                        routesObserver = new RoutesObserver() {
+                            @Override
+                            public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                                routes.add(routeLine);
+                                routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                                    System.out.println("Hello");
+                                    routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                                    System.out.println("Hello");
+
+                                    MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+                                    CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+                                    // Modifica o zoom na câmera automaticamente
+                                    CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                            .center(Point.fromLngLat(loc1.getLongitude(),loc1.getLatitude()))
+                                            .zoom(15.0)
+                                            .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                            .build();
+
+                                    cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                                });
+                            }
+                        };
+
+                        mapboxNavigation.registerRoutesObserver(routesObserver);
+
+                    }
                 }
-
-
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
@@ -295,6 +369,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public void onExplanationNeeded(List<String> list) {
         Toast.makeText(getContext(), R.string.txtPermissaoExplicacao, Toast.LENGTH_LONG).show();
     }
+
 
     @Override
     public void onPermissionResult(boolean granted) {
@@ -324,6 +399,32 @@ public class mapFragment extends Fragment implements PermissionsListener {
             }else {
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
                 pointsList.add(point);
+
+                if(pointsList.size() == 95){
+                    mapMatching = MapboxMapMatching.builder().
+                            accessToken(accessToken).
+                            coordinates(pointsList).
+                            steps(true).
+                            profile(DirectionsCriteria.PROFILE_CYCLING).
+                            build();
+
+                    pointsList = new ArrayList<>();
+                    mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
+                        @Override
+                        public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                            directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+                            listDirections.add(directionsRoute);
+                        }
+
+                        @Override
+                        public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+                        }
+                    });
+
+                }
+
+                
                 // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
                 // No InProgressTrainingActivity
                 if (trainingBinding != null) {
