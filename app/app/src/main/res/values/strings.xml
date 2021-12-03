@@ -14,9 +14,9 @@
     <string name="txtNomeUtilizador">Nome de Utilizador</string>
     <string name="txtDataNascimento">Data de Nascimento</string>
     <string name="txtBtGuardarAlteracoes">Guardar Alterações</string>
-    <string name="txtDistancia">Distância</string>
+    <string name="txtDistancia">Distância: </string>
     <string name="txtTempo">Tempo</string>
-    <string name="txtVelocidadeMedia">Velocidade Média</string>
+    <string name="txtVelocidadeMedia">Velocidade Média: </string>
     <string name="txtNomeCompleto">Nome Completo</string>
     <string name="txtTreino">Treino</string>
     <string name="txtBtComecarTreino">Começar</string>
@@ -35,7 +35,7 @@
     <string name="txtBtGuardar">Guardar</string>
     <string name="txtBtSair">Sair</string>
     <string name="tvSessaoTreino">Sessão de Treino</string>
-    <string name="txtDuracao">Duração</string>
+    <string name="txtDuracao">Duração: </string>
     <string name="txtVelInstantanea">Velocidade Instantânea</string>
     <string name="txtDistanciaPercorrida">Distância Percorrida</string>
     <string name="txtBtMapa">Mapa</string>
@@ -53,4 +53,6 @@
     <string name="txtGPSPorAdquirir">GPS por Adquirir</string>
     <string name="title_activity_in_progress_training_map">InProgressTrainingMapActivity</string>
     <string name="txtBtVoltar">Voltar</string>
+    <string name="txtNomeAtividade">Nome da Atividade: </string>
+    <string name="txtExemplo">Exemplo</string>
 </resources>
