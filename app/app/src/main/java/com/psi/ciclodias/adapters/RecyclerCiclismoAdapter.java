@@ -57,7 +57,7 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
 
         public void update(Ciclismo ciclismo) {
             tvNomeAtividade.setText(ciclismo.getNome_percurso());
-            tvDuracao.setText(ciclismo.getDuracao());
+            tvDuracao.setText("" + ciclismo.getDuracao());
             tvDistancia.setText("" + ciclismo.getDistancia());
             tvVelMedia.setText("" + ciclismo.getVelocidade_media());
         }

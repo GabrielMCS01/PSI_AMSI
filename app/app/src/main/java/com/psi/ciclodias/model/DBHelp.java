@@ -41,8 +41,8 @@ public class DBHelp extends SQLiteOpenHelper {
 
     private SQLiteDatabase bd;
 
-    // URL Padrão
-    private String url ="http://localhost/PSI_PlatSI/app/backend/web/v1";
+    // URL para acesso
+    private String url ="http://ciclodias.duckdns.org/admin/v1/ciclismo";
 
     public DBHelp(Context context) {
         super(context, DB_NOME, null, VERSAO);
@@ -57,8 +57,8 @@ public class DBHelp extends SQLiteOpenHelper {
         String SQL = "CREATE TABLE " + TABELA_CICLISMO + "(" +
                 ID_CICLISMO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 NOME_PERCURSO + " TEXT, " +
-                DURACAO + " NUMERIC NOT NULL, " +
-                DISTANCIA + " REAL NOT NULL, " +
+                DURACAO + " INTEGER NOT NULL, " +
+                DISTANCIA + " INTEGER NOT NULL, " +
                 VELOCIDADE_MEDIA + " REAL NOT NULL, " +
                 VELOCIDADE_MAXIMA + " REAL NOT NULL, " +
                 VELOCIDADE_GRAFICO + " TEXT, " +
@@ -82,14 +82,16 @@ public class DBHelp extends SQLiteOpenHelper {
     public Ciclismo AdicionarCiclismoDB(Ciclismo ciclismo){
         ContentValues valores = new ContentValues();
 
+        valores.put(ID_CICLISMO, ciclismo.getId());
         valores.put(NOME_PERCURSO, ciclismo.getNome_percurso());
-        valores.put(DURACAO, "" + ciclismo.getDuracao());
+        valores.put(DURACAO, ciclismo.getDuracao());
         valores.put(DISTANCIA, ciclismo.getDistancia());
         valores.put(VELOCIDADE_MEDIA, ciclismo.getVelocidade_media());
         valores.put(VELOCIDADE_MAXIMA, ciclismo.getVelocidade_maxima());
         valores.put(VELOCIDADE_GRAFICO, ciclismo.getVelocidade_grafico());
         valores.put(ROTA, ciclismo.getRota());
-        valores.put(DATA_TREINO, "" + ciclismo.getData_treino());
+        // Talvez não seja preciso
+        //valores.put(DATA_TREINO, "" + ciclismo.getData_treino());
 
         long id = bd.insert(TABELA_CICLISMO, null, valores);
 
@@ -115,15 +117,16 @@ public class DBHelp extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             // Faz enquanto ainda houve mais treinos
             do {
-                Ciclismo aux = new Ciclismo(cursor.getString(0),
-                        // Tipo de data está em String por agora
+                Ciclismo aux = new Ciclismo(cursor.getLong(0),
                         cursor.getString(1),
+                        // Tipo de data está em String por agora
+                        cursor.getInt(2),
                         // ---------------------------------------
-                        cursor.getFloat(2),
-                        cursor.getFloat(3),
+                        cursor.getInt(3),
                         cursor.getFloat(4),
-                        cursor.getString(5),
-                        cursor.getString(6));
+                        cursor.getFloat(5),
+                        cursor.getString(6),
+                        cursor.getString(7));
                 lista.add(aux);
             } while (cursor.moveToNext());
         }
@@ -141,15 +144,16 @@ public class DBHelp extends SQLiteOpenHelper {
 
         // Se encontrar algum treino faz
         if(cursor.moveToFirst()){
-            Ciclismo ciclismo = new Ciclismo(cursor.getString(0),
-                // Tipo de data está em String por agora
-                cursor.getString(1),
-                // ---------------------------------------
-                cursor.getFloat(2),
-                cursor.getFloat(3),
-                cursor.getFloat(4),
-                cursor.getString(5),
-                cursor.getString(6));
+            Ciclismo ciclismo = new Ciclismo(cursor.getLong(0),
+                    cursor.getString(1),
+                    // Tipo de data está em String por agora
+                    cursor.getInt(2),
+                    // ---------------------------------------
+                    cursor.getInt(3),
+                    cursor.getFloat(4),
+                    cursor.getFloat(5),
+                    cursor.getString(6),
+                    cursor.getString(7));
 
                 cursor.close();
 

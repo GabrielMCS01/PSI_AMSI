@@ -35,18 +35,14 @@ public class ProfileActivity extends AppCompatActivity {
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
 
-        // Atribuir ás textviews os dados na base de dados do utilizador
-        binding.ivFotoPerfil.setImageResource(R.drawable.ic_launcher_foreground);
-        binding.tvNomePerfil.setText("Nome Provisório");
-        binding.etEmailPerfil.setText("exemplo@mail.com");
-        binding.etUserPerfil.setText("Nome Utilizador Provisório");
-        binding.etDataNascimentoPerfil.setText("30-01-2001");
-
         binding.btGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean sucesso = false;
                 // Codigo para guardar na BD as alterações
+
+
+
                 // POP-UP que os dados foram guardados com sucesso ou com insucesso
                 if (!sucesso) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
                 else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
@@ -55,7 +51,16 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    // Preencher o perfil com dados do utilizador
     private void dadosExemploPerfil() {
+        // Dados do utilizador
+        binding.ivFotoPerfil.setImageResource(R.drawable.ic_launcher_foreground);
+        binding.tvNomePerfil.setText("Nome Provisório");
+        binding.etEmailPerfil.setText("exemplo@mail.com");
+        binding.etUserPerfil.setText("Nome Utilizador Provisório");
+        binding.etDataNascimentoPerfil.setText("30-01-2001");
+
+        // Dados das atividades
         binding.tvDistanciaPerfil.setText("Distância: 5980.1KM");
         binding.tvTempoPerfil.setText("Tempo: 73:20:30");
         binding.tvVelMedia.setText("Vel Média: 16.2 KM/H");

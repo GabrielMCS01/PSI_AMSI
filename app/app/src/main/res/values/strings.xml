@@ -55,4 +55,6 @@
     <string name="txtBtVoltar">Voltar</string>
     <string name="txtNomeAtividade">Nome da Atividade: </string>
     <string name="txtExemplo">Exemplo</string>
+    <string name="no_internet">Sem ligação á Internet</string>
+    <string name="login_invalido">Dados Inseridos para login Inválidos</string>
 </resources>

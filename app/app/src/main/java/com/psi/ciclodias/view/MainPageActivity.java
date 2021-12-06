@@ -1,12 +1,13 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +16,10 @@ import com.psi.ciclodias.R;
 import com.psi.ciclodias.adapters.RecyclerCiclismoAdapter;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
-public class MainPageActivity extends AppCompatActivity {
+public class MainPageActivity extends AppCompatActivity{
+    public static final String TOKEN = "token";
+    public static final String USER = "user";
+    private String user, token;
     private RecyclerCiclismoAdapter adaptador;
     private RecyclerView rvCiclismo;
     private RecyclerView.LayoutManager layoutManager;
@@ -35,6 +39,8 @@ public class MainPageActivity extends AppCompatActivity {
         rvCiclismo.setAdapter(adaptador);
 
         rvCiclismo.setItemAnimator(new DefaultItemAnimator());
+
+        carregarCabecalhoNavigation();
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         BottomNavBarFragment fragment = new BottomNavBarFragment();
@@ -70,6 +76,18 @@ public class MainPageActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void carregarCabecalhoNavigation() {
+        user = getIntent().getStringExtra(LoginActivity.USER_LOGIN);
+        token = getIntent().getStringExtra(LoginActivity.TOKEN_LOGIN);
+
+        // SHARED PREFERENCES
+        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(TOKEN, token);
+        editor.putString(USER, user);
+        editor.apply();
     }
 
 

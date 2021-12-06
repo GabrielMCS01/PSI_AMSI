@@ -3,10 +3,12 @@ package com.psi.ciclodias.model;
 public class Ciclismo {
     private long id, user_id_ciclismo;
     private String nome_percurso, velocidade_grafico, rota;
-    private float distancia, velocidade_media, velocidade_maxima;
-    private String data_treino, duracao;
+    private double velocidade_media, velocidade_maxima;
+    private String data_treino;
+    private int distancia, duracao;
 
-    public Ciclismo(String nome_percurso, String duracao, float distancia, float velocidade_media, float velocidade_maxima, String velocidade_grafico, String rota) {
+    public Ciclismo(long id, String nome_percurso, int duracao, int distancia, double velocidade_media, double velocidade_maxima, String velocidade_grafico, String rota) {
+        this.id = id;
         this.nome_percurso = nome_percurso;
         this.velocidade_grafico = velocidade_grafico;
         this.rota = rota;
@@ -56,27 +58,19 @@ public class Ciclismo {
         this.rota = rota;
     }
 
-    public float getDistancia() {
-        return distancia;
-    }
-
-    public void setDistancia(float distancia) {
-        this.distancia = distancia;
-    }
-
-    public float getVelocidade_media() {
+    public double getVelocidade_media() {
         return velocidade_media;
     }
 
-    public void setVelocidade_media(float velocidade_media) {
+    public void setVelocidade_media(double velocidade_media) {
         this.velocidade_media = velocidade_media;
     }
 
-    public float getVelocidade_maxima() {
+    public double getVelocidade_maxima() {
         return velocidade_maxima;
     }
 
-    public void setVelocidade_maxima(float velocidade_maxima) {
+    public void setVelocidade_maxima(double velocidade_maxima) {
         this.velocidade_maxima = velocidade_maxima;
     }
 
@@ -88,11 +82,19 @@ public class Ciclismo {
         this.data_treino = data_treino;
     }
 
-    public String getDuracao() {
+    public int getDistancia() {
+        return distancia;
+    }
+
+    public void setDistancia(int distancia) {
+        this.distancia = distancia;
+    }
+
+    public int getDuracao() {
         return duracao;
     }
 
-    public void setDuracao(String duracao) {
+    public void setDuracao(int duracao) {
         this.duracao = duracao;
     }
 }
