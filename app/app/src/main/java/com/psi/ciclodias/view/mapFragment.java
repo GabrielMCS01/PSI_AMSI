@@ -73,6 +73,7 @@ import retrofit2.Response;
 public class mapFragment extends Fragment implements PermissionsListener {
 
     //Gestor de Permissões
+
     private PermissionsManager permissionsManager;
     private String accessToken;
 
@@ -250,6 +251,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
                                 // Generate a polyline encoded string from the accumulated points.
                                 String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
 
+
+                                System.out.println(resultGeometryString);
+                                System.out.println(resultGeometryString.length());
 
                                 ArrayList<DirectionsRoute> list = new ArrayList<>();
                                 list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
