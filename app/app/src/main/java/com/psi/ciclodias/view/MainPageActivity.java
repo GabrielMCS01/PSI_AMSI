@@ -14,12 +14,19 @@ import android.view.MenuItem;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.adapters.RecyclerCiclismoAdapter;
+import com.psi.ciclodias.listeners.ListaCiclismoListener;
+import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
-public class MainPageActivity extends AppCompatActivity{
+import java.util.ArrayList;
+
+public class MainPageActivity extends AppCompatActivity implements ListaCiclismoListener {
     public static final String TOKEN = "token";
     public static final String USER = "user";
-    private String user, token;
+    private static final String ID = "id";
+    private static final String PRIMEIRO_NOME = "primeiro_nome";
+    private static final String ULTIMO_NOME = "ultimo_nome";
+    private String user, token, primeiro_nome, ultimo_nome, id;
     private RecyclerCiclismoAdapter adaptador;
     private RecyclerView rvCiclismo;
     private RecyclerView.LayoutManager layoutManager;
@@ -29,6 +36,11 @@ public class MainPageActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
+
+        PreencherSharedPreferences();
+
+        SingletonGestorCiclismo.getInstancia(this).setListaCiclismoListener(this);
+
 
         rvCiclismo = findViewById(R.id.rvCiclismo);
         layoutManager = new LinearLayoutManager(this);
@@ -40,7 +52,7 @@ public class MainPageActivity extends AppCompatActivity{
 
         rvCiclismo.setItemAnimator(new DefaultItemAnimator());
 
-        carregarCabecalhoNavigation();
+        SingletonGestorCiclismo.getInstancia(this).getListaCiclismoAPI(this);
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         BottomNavBarFragment fragment = new BottomNavBarFragment();
@@ -54,6 +66,8 @@ public class MainPageActivity extends AppCompatActivity{
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
     }
+
+
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -78,17 +92,33 @@ public class MainPageActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    private void carregarCabecalhoNavigation() {
+    private void PreencherSharedPreferences() {
+        id = getIntent().getStringExtra(LoginActivity.ID);
+        primeiro_nome = getIntent().getStringExtra(LoginActivity.PRIMEIRO_NOME);
+        ultimo_nome = getIntent().getStringExtra(LoginActivity.ULTIMO_NOME);
         user = getIntent().getStringExtra(LoginActivity.USER_LOGIN);
         token = getIntent().getStringExtra(LoginActivity.TOKEN_LOGIN);
 
         // SHARED PREFERENCES
-        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TOKEN, token);
         editor.putString(USER, user);
+        editor.putString(ID, id);
+        editor.putString(PRIMEIRO_NOME, primeiro_nome);
+        editor.putString(ULTIMO_NOME, ultimo_nome);
         editor.apply();
+
+        System.out.println(primeiro_nome);
+        System.out.println(token);
     }
 
 
+    @Override
+    public void onRefreshListaLivros(ArrayList<Ciclismo> lista) {
+        adaptador = new RecyclerCiclismoAdapter(this, lista);
+
+        rvCiclismo.setAdapter(adaptador);
+        rvCiclismo.setItemAnimator(new DefaultItemAnimator());
+    }
 }

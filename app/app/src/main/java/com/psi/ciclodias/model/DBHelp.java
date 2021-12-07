@@ -28,9 +28,6 @@ public class DBHelp extends SQLiteOpenHelper {
 
     private SQLiteDatabase bd;
 
-    // URL padrão para acesso aos treinos
-    private String url ="http://ciclodias.duckdns.org/admin/v1/ciclismo";
-
     public DBHelp(Context context) {
         super(context, DB_NOME, null, VERSAO);
 
@@ -66,7 +63,7 @@ public class DBHelp extends SQLiteOpenHelper {
 
     // ------------------------------------- Ciclismo -----------------------------------------------------------------
     // Cria uma nova sessão de treino
-    public Ciclismo AdicionarCiclismoDB(Ciclismo ciclismo){
+    public void AdicionarCiclismoDB(Ciclismo ciclismo){
         ContentValues valores = new ContentValues();
 
         valores.put(ID_CICLISMO, ciclismo.getId());
@@ -78,15 +75,7 @@ public class DBHelp extends SQLiteOpenHelper {
         valores.put(VELOCIDADE_GRAFICO, ciclismo.getVelocidade_grafico());
         valores.put(ROTA, ciclismo.getRota());
 
-        long id = bd.insert(TABELA_CICLISMO, null, valores);
-
-        // Se o ID for -1 é porque não conseguiu inserir na tabela
-        if (id != -1){
-            ciclismo.setId(id);
-            return ciclismo;
-        }
-
-        return null;
+        bd.insert(TABELA_CICLISMO, null, valores);
     }
 
     // Retorna todas as sessões de treino do utilizador

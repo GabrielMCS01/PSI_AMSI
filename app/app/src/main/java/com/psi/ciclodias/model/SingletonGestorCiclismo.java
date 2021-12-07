@@ -1,6 +1,7 @@
 package com.psi.ciclodias.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,9 +25,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SingletonGestorCiclismo {
+    // Variavel para colocar o num do treino selecionado no link
+    public static final String ID_TREINO = "id_treino";
+
+    // Variáveis globais para colocar no URL
+    public static final String ID = "id";
+    public static final String TOKEN = "token";
+
+
+    // URLs utilizados para acesso á API
     private static final String URL_LOGIN = "http://ciclodias.duckdns.org/admin/v1/login/login";
     private static final String URL_REGISTO = "http://ciclodias.duckdns.org/admin/v1/registo/signup";
     private static final String URL_CICLISMO = "http://ciclodias.duckdns.org/admin/v1/ciclismo";
+    private static final String URL_USER = "http://ciclodias.duckdns.org/admin/v1/user/" + ID + "?access-token=" + TOKEN;
 
     // Array com todos as atividades do utilizador
     ArrayList<Ciclismo> ArrCiclismo;
@@ -56,7 +67,7 @@ public class SingletonGestorCiclismo {
     private SingletonGestorCiclismo(Context context){
         bd = new DBHelp(context);
         ArrCiclismo = bd.getListaCiclismoDB();
-        gerarDadosDinamicos();
+        //gerarDadosDinamicos();
     }
 
     private void gerarDadosDinamicos() {
@@ -105,9 +116,13 @@ public class SingletonGestorCiclismo {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
         else{
+            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+            String url = URL_CICLISMO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
+
             JsonArrayRequest req = new JsonArrayRequest(
                     Request.Method.GET,
-                    URL_CICLISMO,
+                    url,
                     null,
                     new Response.Listener<JSONArray>() {
                         @Override
@@ -129,19 +144,21 @@ public class SingletonGestorCiclismo {
         }
     }
 
-    public void getCiclismoAPI(final Context context){
+    public void addCiclismoAPI(final Context context){
         if(!CiclismoJsonParser.isInternetConnection(context)){
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
         else{
-            JsonArrayRequest req = new JsonArrayRequest(
-                    Request.Method.GET,
-                    URL_CICLISMO,
+            String url = URL_CICLISMO + "?access-token=" + TOKEN;
+
+            /*JsonArrayRequest req = new JsonArrayRequest(
+                    Request.Method.POST,
+                    url,
                     null,
-                    new Response.Listener<JSONArray>() {
+                    new Response.Listener<String>() {
                         @Override
-                        public void onResponse(JSONArray response) {
-                            ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
+                        public void onResponse(String response) {
+                            String abc = CiclismoJsonParser.parserJsonCriaCiclismo(response);
 
                             if(listaCiclismoListener != null){
                                 listaCiclismoListener.onRefreshListaLivros(ArrCiclismo);
@@ -154,7 +171,7 @@ public class SingletonGestorCiclismo {
                 }
             });
 
-            volleyQueue.add(req);
+            volleyQueue.add(req);*/
         }
     }
 

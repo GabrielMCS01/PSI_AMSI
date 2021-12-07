@@ -7,8 +7,6 @@
     <string name="txtBtRegistar">Ainda não é membro? Registe-se aqui</string>
     <string name="txtRegisto">Registo</string>
     <string name="txtBtRegistarse">Registar-se</string>
-    <string name="txtPrimeiroNome">Primeiro Nome</string>
-    <string name="txtUltimoNome">Ultimo Nome</string>
     <string name="txtConfirmarPassword">Confirmar Palavra-passe</string>
     <string name="txtAtividadeTotalUtilizador">Atividade Total do Utilizador</string>
     <string name="txtNomeUtilizador">Nome de Utilizador</string>
@@ -57,4 +55,6 @@
     <string name="txtExemplo">Exemplo</string>
     <string name="no_internet">Sem ligação á Internet</string>
     <string name="login_invalido">Dados Inseridos para login Inválidos</string>
+    <string name="txtPrimeiroNome">Primeiro Nome</string>
+    <string name="txtUltimoNome">Ultimo Nome</string>
 </resources>

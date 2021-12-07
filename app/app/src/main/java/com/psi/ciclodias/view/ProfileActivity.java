@@ -56,8 +56,8 @@ public class ProfileActivity extends AppCompatActivity {
         // Dados do utilizador
         binding.ivFotoPerfil.setImageResource(R.drawable.ic_launcher_foreground);
         binding.tvNomePerfil.setText("Nome Provisório");
-        binding.etEmailPerfil.setText("exemplo@mail.com");
-        binding.etUserPerfil.setText("Nome Utilizador Provisório");
+        binding.etPrimeiroNomePerfil.setText("exemplo@mail.com");
+        binding.etUltimoNomePerfil.setText("Nome Utilizador Provisório");
         binding.etDataNascimentoPerfil.setText("30-01-2001");
 
         // Dados das atividades

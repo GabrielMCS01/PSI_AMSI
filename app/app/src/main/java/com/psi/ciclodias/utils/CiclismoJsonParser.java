@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CiclismoJsonParser {
     // Consulta á API para devolver todos os treinos do utilizador da API
@@ -45,48 +47,29 @@ public class CiclismoJsonParser {
         return lista;
     }
 
-    // Retorna um Treino da API
-    public static Ciclismo parserJsonCiclismo(String resposta){
-        Ciclismo ciclismo = null;
-
-        try {
-            JSONObject jsonCiclismo = new JSONObject(resposta);
-
-            // Converte os dados JSON para as variáveis locais para a criação da Atividade (Ciclismo)
-            int id = jsonCiclismo.getInt("id");
-            String nome_percurso = jsonCiclismo.getString("nome_percurso");
-            int duracao = jsonCiclismo.getInt("duracao");
-            int distancia = jsonCiclismo.getInt("distancia");
-            double velocidade_media = jsonCiclismo.getDouble("velocidade_media");
-            double velocidade_maxima = jsonCiclismo.getDouble("velocidade_maxima");
-
-            // velocidade grafico é JSON
-            String velocidade_grafico = jsonCiclismo.getString("velocidade_grafico");
-            String rota = jsonCiclismo.getString("rota");
-            String data_treino = jsonCiclismo.getString("data_treino");
-
-            ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return ciclismo;
+    // Guarda um Treino na API
+    public static String parserJsonCriaCiclismo(String resposta){
+        return resposta;
     }
 
     // Retorna o token de login
-    public static String parserJsonLogin(String resposta){
-        String token = null;
+    public static Map<String, String> parserJsonLogin(String resposta){
+        Map<String, String> dadosUser = new HashMap<String, String>();
+
         try{
             JSONObject jsonLogin = new JSONObject(resposta);
             if(jsonLogin.getBoolean("success")){
-                token = jsonLogin.getString("token");
+                dadosUser.put("id", jsonLogin.getString("id"));
+                dadosUser.put("token", jsonLogin.getString("token"));
+                dadosUser.put("primeiro_nome", jsonLogin.getString("primeiro_nome"));
+                dadosUser.put("ultimo_nome", jsonLogin.getString("ultimo_nome"));
             }
 
         }catch (JSONException e){
             e.printStackTrace();
         }
 
-        return token;
+        return dadosUser;
     }
 
     public static boolean isInternetConnection(Context context){

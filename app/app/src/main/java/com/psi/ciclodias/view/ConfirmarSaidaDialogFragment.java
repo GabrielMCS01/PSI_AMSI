@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import android.app.Fragment;
-
 import com.psi.ciclodias.R;
 
 public class ConfirmarSaidaDialogFragment extends DialogFragment implements View.OnClickListener {
