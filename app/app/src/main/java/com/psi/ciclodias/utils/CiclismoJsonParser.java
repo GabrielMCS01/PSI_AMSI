@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class CiclismoJsonParser {
-    // Consulta á API para devolver todos os livros da API
-    public static ArrayList<Ciclismo> parserJsonListaLivros(JSONArray resposta){
+    // Consulta á API para devolver todos os treinos do utilizador da API
+    public static ArrayList<Ciclismo> parserJsonListaCiclismo(JSONArray resposta){
         ArrayList<Ciclismo> lista = new ArrayList<>();
 
         try {
@@ -32,8 +32,9 @@ public class CiclismoJsonParser {
                 // velocidade grafico é JSON
                 String velocidade_grafico = jsonCiclismo.getString("velocidade_grafico");
                 String rota = jsonCiclismo.getString("rota");
+                String data_treino = jsonCiclismo.getString("data_treino");
 
-                Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota);
+                Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
                 lista.add(ciclismo);
             }
 
@@ -44,7 +45,7 @@ public class CiclismoJsonParser {
         return lista;
     }
 
-    // Retorna um Livro da API
+    // Retorna um Treino da API
     public static Ciclismo parserJsonCiclismo(String resposta){
         Ciclismo ciclismo = null;
 
@@ -62,8 +63,9 @@ public class CiclismoJsonParser {
             // velocidade grafico é JSON
             String velocidade_grafico = jsonCiclismo.getString("velocidade_grafico");
             String rota = jsonCiclismo.getString("rota");
+            String data_treino = jsonCiclismo.getString("data_treino");
 
-            ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota);
+            ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
         }catch (JSONException e) {
             e.printStackTrace();
         }

@@ -26,7 +26,7 @@ import java.util.Map;
 public class SingletonGestorCiclismo {
     private static final String URL_LOGIN = "http://ciclodias.duckdns.org/admin/v1/login/login";
     private static final String URL_REGISTO = "http://ciclodias.duckdns.org/admin/v1/registo/signup";
-    private static final String URL_CICLISMO = "http://amsi.dei.estg.ipleiria.pt/api/livros";
+    private static final String URL_CICLISMO = "http://ciclodias.duckdns.org/admin/v1/ciclismo";
 
     // Array com todos as atividades do utilizador
     ArrayList<Ciclismo> ArrCiclismo;
@@ -52,7 +52,7 @@ public class SingletonGestorCiclismo {
         return instancia;
     }
 
-    // Cria a base de dados local e recebe os todos os treinos do utilizador
+    // Cria a Base de dados local e recebe os todos os treinos do utilizador
     private SingletonGestorCiclismo(Context context){
         bd = new DBHelp(context);
         ArrCiclismo = bd.getListaCiclismoDB();
@@ -68,7 +68,7 @@ public class SingletonGestorCiclismo {
         ArrCiclismo.add(new Ciclismo(5,"Voltinha do banana", 5000, 14912, 30.1, 30.7, null, null));
         ArrCiclismo.add(new Ciclismo(6,"Voltinha do banana", 6182, 20192, 30.1, 30.7, null, null));
     }
-
+    // --------------------------- Métodos para BD Local -------------------------------------------
     // Adiciona um treino á BD local
     public void adicionarCiclismoBD(Ciclismo novo){
         bd.AdicionarCiclismoDB(novo);
@@ -99,7 +99,7 @@ public class SingletonGestorCiclismo {
         return ArrCiclismo;
     }
 
-    // APIs
+    // ------------------------------------- API ---------------------------------------------------
     public void getListaCiclismoAPI(final Context context){
         if(!CiclismoJsonParser.isInternetConnection(context)){
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -112,7 +112,36 @@ public class SingletonGestorCiclismo {
                     new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
-                            ArrCiclismo = CiclismoJsonParser.parserJsonListaLivros(response);
+                            ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
+
+                            if(listaCiclismoListener != null){
+                                listaCiclismoListener.onRefreshListaLivros(ArrCiclismo);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            volleyQueue.add(req);
+        }
+    }
+
+    public void getCiclismoAPI(final Context context){
+        if(!CiclismoJsonParser.isInternetConnection(context)){
+            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
+        else{
+            JsonArrayRequest req = new JsonArrayRequest(
+                    Request.Method.GET,
+                    URL_CICLISMO,
+                    null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
 
                             if(listaCiclismoListener != null){
                                 listaCiclismoListener.onRefreshListaLivros(ArrCiclismo);
@@ -130,6 +159,8 @@ public class SingletonGestorCiclismo {
     }
 
 
+    // Login pela API
+    // Envia uma resposta ao LoginListener onde o login é validado
     public void loginAPI(final String username, final String password, final Context context){
         if(!CiclismoJsonParser.isInternetConnection(context)){
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -141,6 +172,7 @@ public class SingletonGestorCiclismo {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            System.out.println(response);
                             loginListener.onValidateLogin(CiclismoJsonParser.parserJsonLogin(response), username);
                         }
                     },
@@ -167,6 +199,7 @@ public class SingletonGestorCiclismo {
         }
     }
 
+    // Encapsulamento do LoginListener
     public void setLoginListener(LoginListener loginListener) {
         this.loginListener = loginListener;
     }

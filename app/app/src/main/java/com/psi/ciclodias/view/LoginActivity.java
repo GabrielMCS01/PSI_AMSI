@@ -51,13 +51,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     private void efetuarLogin(View v){
         isEmpty = false;
 
-        // Recebe os itens das editViews
+        // Recebe os dados das editViews
         String username = binding.etLoginUsername.getText().toString();
         String password = binding.etLoginPassword.getText().toString();
 
-        // Verificações dos campos
+        // Verifica se os campos estão vazios
         isEmptyLogin(username, password);
 
+        // Se os campos estiverem preenchidos verifica o Login na API
         if(!isEmpty) {
             SingletonGestorCiclismo.getInstancia(this).loginAPI(username, password, this);
         }
@@ -74,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         }
     }
 
+    // Valida o login e inicia o Menu Principal
     @Override
     public void onValidateLogin(String token, String username) {
         if(token != null){
