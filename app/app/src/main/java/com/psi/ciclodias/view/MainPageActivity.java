@@ -37,21 +37,23 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+        // Preenche as shared Preferences
         PreencherSharedPreferences();
 
+        // Instancia da Singleton para poder ser utilizada em qualquer parte do código
         SingletonGestorCiclismo.getInstancia(this).setListaCiclismoListener(this);
 
-
+        // RecyclerView
         rvCiclismo = findViewById(R.id.rvCiclismo);
         layoutManager = new LinearLayoutManager(this);
         rvCiclismo.setLayoutManager(layoutManager);
 
+        // Recebe os ciclismos da BD local
         adaptador = new RecyclerCiclismoAdapter(this, SingletonGestorCiclismo.getInstancia(this).getArrCiclismo());
-
         rvCiclismo.setAdapter(adaptador);
-
         rvCiclismo.setItemAnimator(new DefaultItemAnimator());
 
+        // Recebe os ciclismos da API
         SingletonGestorCiclismo.getInstancia(this).getListaCiclismoAPI(this);
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
@@ -66,7 +68,6 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
     }
-
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,7 +93,9 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         return super.onOptionsItemSelected(item);
     }
 
+    // Preencher a Shared Preferences "user"
     private void PreencherSharedPreferences() {
+        // Recebe os valores das variáveis globais enviadas pelo loginActivity
         id = getIntent().getStringExtra(LoginActivity.ID);
         primeiro_nome = getIntent().getStringExtra(LoginActivity.PRIMEIRO_NOME);
         ultimo_nome = getIntent().getStringExtra(LoginActivity.ULTIMO_NOME);
@@ -114,6 +117,7 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
     }
 
 
+    // Função que recebe os treinos da API e coloca na RecylerViewE
     @Override
     public void onRefreshListaLivros(ArrayList<Ciclismo> lista) {
         adaptador = new RecyclerCiclismoAdapter(this, lista);

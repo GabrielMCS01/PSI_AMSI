@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CiclismoJsonParser {
+    // --------------------------------- CICLISMO --------------------------------------------------
     // Consulta á API para devolver todos os treinos do utilizador da API
     public static ArrayList<Ciclismo> parserJsonListaCiclismo(JSONArray resposta){
         ArrayList<Ciclismo> lista = new ArrayList<>();
@@ -52,6 +53,7 @@ public class CiclismoJsonParser {
         return resposta;
     }
 
+    // ----------------------------------- lOGIN ---------------------------------------------------
     // Retorna o token de login
     public static Map<String, String> parserJsonLogin(String resposta){
         Map<String, String> dadosUser = new HashMap<String, String>();
@@ -72,10 +74,30 @@ public class CiclismoJsonParser {
         return dadosUser;
     }
 
+    // ----------------------------------- INTERNET ------------------------------------------------
     public static boolean isInternetConnection(Context context){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnected();
+    }
+
+    // ------------------------------------- USER --------------------------------------------------
+    // Retorna os dados utilizador para preencher no perfil
+    public static Map<String, String> ParserUserDados(String resposta){
+        Map<String, String> dadosUser = new HashMap<String, String>();
+
+        try{
+            JSONObject jsonUser = new JSONObject(resposta);
+
+            dadosUser.put("primeiro_nome", jsonUser.getString("primeiro_nome"));
+            dadosUser.put("ultimo_nome", jsonUser.getString("ultimo_nome"));
+            dadosUser.put("data_nascimento", jsonUser.getString("data_nascimento"));
+
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return dadosUser;
     }
 }
