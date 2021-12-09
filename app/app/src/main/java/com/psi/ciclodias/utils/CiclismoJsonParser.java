@@ -102,7 +102,22 @@ public class CiclismoJsonParser {
     }
 
     public static Boolean parserJsonRegisto(String response) {
-        Boolean success = false;
+        boolean success = false;
+
+        try {
+            JSONObject json = new JSONObject(response);
+
+            success = json.getBoolean("success");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
+    public static Boolean parserJsonEditUser(String response) {
+        boolean success = false;
 
         try {
             JSONObject json = new JSONObject(response);

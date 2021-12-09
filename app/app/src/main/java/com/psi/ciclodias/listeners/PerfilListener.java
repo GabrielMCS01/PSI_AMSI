@@ -7,4 +7,5 @@ import java.util.Map;
 
 public interface PerfilListener {
     void perfilDados(Map<String, String> dadosUser);
+    void editUser(Boolean success);
 }

@@ -14,9 +14,10 @@ import com.psi.ciclodias.databinding.ActivityProfileBinding;
 import com.psi.ciclodias.listeners.PerfilListener;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity implements PerfilListener {
+public class ProfileActivity extends AppCompatActivity implements PerfilListener{
     private ActivityProfileBinding binding;
 
     public static final String USER = "user";
@@ -53,21 +54,20 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         binding.btGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean sucesso = false;
-                // Codigo para guardar na BD as alterações
+                Map<String, String> params = new HashMap<>();
 
+                params.put("primeiro_nome", binding.etPrimeiroNomePerfil.getText().toString());
+                params.put("ultimo_nome", binding.etUltimoNomePerfil.getText().toString());
+                params.put("data_nascimento", binding.etDataNascimentoPerfil.getText().toString());
 
-
-                // POP-UP que os dados foram guardados com sucesso ou com insucesso
-                if (!sucesso) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
-                else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
+                SingletonGestorCiclismo.getInstancia(getApplicationContext()).EditUser(params, getApplicationContext());
             }
         });
 
     }
 
     // Preencher o perfil com dados do utilizador
-    private void dadosExemploPerfil() {
+    private void dadosPerfil() {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
         // Dados do utilizador
@@ -102,6 +102,13 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
 
         editor.apply();
 
-        dadosExemploPerfil();
+        dadosPerfil();
+    }
+
+    @Override
+    public void editUser(Boolean success) {
+        // TOAST que os dados foram guardados com sucesso ou com insucesso
+        if (!success) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
+        else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
     }
 }

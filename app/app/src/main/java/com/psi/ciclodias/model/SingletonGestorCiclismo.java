@@ -192,7 +192,7 @@ public class SingletonGestorCiclismo {
         }
     }
 
-    // Envia uma resposta ao LoginListener onde o login é validado
+    // Cria um utilizador
     public void CreateUser(final Map<String, String> dadosRegisto,final Context context) {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -217,6 +217,44 @@ public class SingletonGestorCiclismo {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = dadosRegisto;
+
+                    return params;
+                }
+            };
+
+            volleyQueue.add(req);
+        }
+    }
+
+    // Edita o utilizador
+    public void EditUser(final Map<String, String> dadosEdicao,final Context context) {
+        if (!CiclismoJsonParser.isInternetConnection(context)) {
+            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+            String url = URL_USER + "/" + sharedPreferences.getString(ID, "") + "?access-token=" + sharedPreferences.getString(TOKEN, "");
+
+            StringRequest req = new StringRequest(
+                    Request.Method.PUT,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            perfilListener.editUser(CiclismoJsonParser.parserJsonEditUser(response));
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            ) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = dadosEdicao;
 
                     return params;
                 }
