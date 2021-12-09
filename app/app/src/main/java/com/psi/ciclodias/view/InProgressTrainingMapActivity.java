@@ -3,6 +3,7 @@ package com.psi.ciclodias.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -44,6 +45,14 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
         binding.btPausaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Mantenha o botão premido para pausar o treino", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        binding.btPausaTreino.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
                 // Pausa no treino
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
@@ -51,20 +60,29 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 Chronometer.getInstancia().stopVariable = true;
                 mapFragment.getInstancia().resumeTimer = true;
                 finish();
+                return false;
             }
         });
 
-        binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
+        binding.btTerminarTreino.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {// Mudar para false e depois perguntar ao USER
+            public boolean onLongClick(View view) {
 
                 getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 DialogFragment newFragment = new ConfirmarSaidaDialogFragment();
                 newFragment.show(getSupportFragmentManager(), getString(R.string.txtDialog));
-                }
 
+                return false;
+            }
+        });
+
+        binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {// Mudar para false e depois perguntar ao USER
+                Toast.makeText(getApplicationContext(), "Mantenha o botão premido para terminar o treino", Toast.LENGTH_LONG).show();
+            }
         });
 
         binding.btVoltar.setOnClickListener(new View.OnClickListener() {

@@ -33,8 +33,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         // Verifica se o User ja fez login na aplicação quando saiu
         if (!sharedPreferences.getString(ID, "").equals("null")){
             Intent intentMain = new Intent(this, MainPageActivity.class);
-
             startActivity(intentMain);
+            finish();
         }
 
         // Recebe os IDs da Activity Results Training
