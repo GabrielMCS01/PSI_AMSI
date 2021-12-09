@@ -26,6 +26,7 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
     private static final String ULTIMO_NOME = "ultimo_nome";
+    private static final String DATA_NASCIMENTO = "data_nascimento";
     private String user, token, primeiro_nome, ultimo_nome, id;
     private RecyclerCiclismoAdapter adaptador;
     private RecyclerView rvCiclismo;
@@ -84,9 +85,21 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.actionSettings) {
-            Intent intent = new Intent(this, ConfigurationsActivity.class);
+        if (id == R.id.actionLogout) {
+            SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString(TOKEN, "null");
+            editor.putString(USER, "null");
+            editor.putString(ID, "null");
+            editor.putString(PRIMEIRO_NOME, "null");
+            editor.putString(ULTIMO_NOME, "null");
+            editor.putString(DATA_NASCIMENTO, "null");
+            editor.apply();
+
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            finish();
             return true;
         }
 

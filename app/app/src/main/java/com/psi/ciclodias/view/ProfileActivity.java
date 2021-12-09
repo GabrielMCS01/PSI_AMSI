@@ -24,7 +24,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
     private static final String ULTIMO_NOME = "ultimo_nome";
-    private static final String DATA_NASCIMENTO = "data_nascimentoS";
+    private static final String DATA_NASCIMENTO = "data_nascimento";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

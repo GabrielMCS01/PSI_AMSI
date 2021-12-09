@@ -34,9 +34,6 @@
             android:name=".view.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ConfigurationsActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.MainPageActivity"
             android:exported="false" />
         <activity
