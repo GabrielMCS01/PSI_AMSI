@@ -225,7 +225,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                                 accessToken(getString(R.string.mapbox_access_token)).
                                 coordinates(pointsList).
                                 steps(true).
-                                profile(DirectionsCriteria.PROFILE_CYCLING).
+                                profile(DirectionsCriteria.PROFILE_WALKING).
                                 build();
 
                         pointsList = new ArrayList<>();
@@ -240,12 +240,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                                     // Convert the polyline string into a list of Position objects
                                     List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
-
-                                    // Chop off the first coordinate if appending to existing data, otherwise use entire geometry;
-                                    int startPos = resultGeometry.size() > 0 ? 1 : 0;
-
-                                    // Concatenate the route points, removing the first point if we're appendin
-                                    resultGeometry.addAll(startPos, routePoints);
+                                    
+                                    resultGeometry.addAll(routePoints);
                                 }
 
                                 // Generate a polyline encoded string from the accumulated points.
@@ -407,7 +403,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                             accessToken(accessToken).
                             coordinates(pointsList).
                             steps(true).
-                            profile(DirectionsCriteria.PROFILE_CYCLING).
+                            profile(DirectionsCriteria.PROFILE_WALKING).
                             build();
 
                     pointsList = new ArrayList<>();
