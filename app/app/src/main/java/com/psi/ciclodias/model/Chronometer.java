@@ -40,7 +40,7 @@ public class Chronometer extends Thread {
             while(true){
                 if(!stopVariable) {
                     timeSeconds++;
-                    mapFragment.getInstancia().time = timeSeconds;
+                    mapFragment.getInstancia().time = timeSeconds;  
                     if (trainingBinding != null) {
                         trainingBinding.tvDuracaoTreino.post(new Runnable() {
                             @Override
