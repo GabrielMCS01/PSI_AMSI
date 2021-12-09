@@ -14,6 +14,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.psi.ciclodias.R;
+import com.psi.ciclodias.listeners.CreateCiclismoListener;
 import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.listeners.LoginListener;
 import com.psi.ciclodias.listeners.PerfilListener;
@@ -58,6 +59,7 @@ public class SingletonGestorCiclismo {
     private ListaCiclismoListener listaCiclismoListener = null;
     private PerfilListener perfilListener = null;
     private RegistoListener registoListener = null;
+    private CreateCiclismoListener createCiclismoListener = null;
 
     // Faz de forma sincronizada
     public static synchronized SingletonGestorCiclismo getInstancia(Context context) {
@@ -297,37 +299,41 @@ public class SingletonGestorCiclismo {
         }
     }
 
-    public void addCiclismoAPI(final Context context) {
+    // Cria um utilizador
+    public void AddCiclismo(final Map<String, String> dadosCiclismo,final Context context) {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            // Shared Preferences de informações do utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
-            // url final, URL ciclismo padrão
             String url = URL_CICLISMO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
-            /*JsonArrayRequest req = new JsonArrayRequest(
+            StringRequest req = new StringRequest(
                     Request.Method.POST,
                     url,
-                    null,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            String abc = CiclismoJsonParser.parserJsonCriaCiclismo(response);
-
-                            if(listaCiclismoListener != null){
-                                listaCiclismoListener.onRefreshListaLivros(ArrCiclismo);
-                            }
+                            createCiclismoListener.createCiclismo(CiclismoJsonParser.parserJsonCriaCiclismo(response));
                         }
-                    }, new Response.ErrorListener() {
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            ) {
+                @Nullable
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = dadosCiclismo;
 
-            volleyQueue.add(req);*/
+                    return params;
+                }
+            };
+
+            volleyQueue.add(req);
         }
     }
 
@@ -386,5 +392,9 @@ public class SingletonGestorCiclismo {
 
     public void setRegistoListener(RegistoListener registoListener) {
         this.registoListener = registoListener;
+    }
+
+    public void setCreateCiclismoListener(CreateCiclismoListener createCiclismoListener) {
+        this.createCiclismoListener = createCiclismoListener;
     }
 }

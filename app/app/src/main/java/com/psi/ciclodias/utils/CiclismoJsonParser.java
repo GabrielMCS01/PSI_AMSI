@@ -49,8 +49,19 @@ public class CiclismoJsonParser {
     }
 
     // Guarda um Treino na API
-    public static String parserJsonCriaCiclismo(String resposta){
-        return resposta;
+    public static Boolean parserJsonCriaCiclismo(String response){
+        boolean success = false;
+
+        try {
+            JSONObject json = new JSONObject(response);
+
+            success = json.getBoolean("success");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return success;
     }
 
     // ----------------------------------- lOGIN ---------------------------------------------------

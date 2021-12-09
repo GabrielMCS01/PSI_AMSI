@@ -114,7 +114,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public float distance = 0;
     public float velocityMean = 0;
     public float velocityMax = 0;
-    public float time = 0;
+    public int time = 0;
 
 
 

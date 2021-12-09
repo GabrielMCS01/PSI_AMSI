@@ -12,7 +12,7 @@ public class Chronometer extends Thread {
 
         public boolean stopVariable = false;
         public boolean stop = false;
-        private long timeSeconds = 0;
+        private int timeSeconds = 0;
 
         private String strHours, strMinutes, strSeconds ,strUnits;
 
@@ -103,7 +103,7 @@ public class Chronometer extends Thread {
             strUnits = " h";
         }
 
-        public long getTime() {
+        public int getTime() {
             return timeSeconds;
     }
 }
