@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
         // Verifica se o User ja fez login na aplicação quando saiu
-        if (sharedPreferences.getString(ID, "") != "null"){
+        if (!sharedPreferences.getString(ID, "").equals("null")){
             Intent intentMain = new Intent(this, MainPageActivity.class);
 
             startActivity(intentMain);

@@ -1,23 +1,27 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityProfileBinding;
+import com.psi.ciclodias.dialogs.InserirDataFragment;
 import com.psi.ciclodias.listeners.PerfilListener;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity implements PerfilListener{
+public class ProfileActivity extends AppCompatActivity implements PerfilListener, InserirDataFragment.DateDialogListener {
     private ActivityProfileBinding binding;
 
     public static final String USER = "user";
@@ -64,7 +68,16 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
             }
         });
 
+        binding.ibDataNascimento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialogFragment = new InserirDataFragment();
+                dialogFragment.show(getSupportFragmentManager(), "dialog");
+            }
+        });
     }
+
+
 
     // Preencher o perfil com dados do utilizador
     private void dadosPerfil() {
@@ -110,5 +123,12 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         // TOAST que os dados foram guardados com sucesso ou com insucesso
         if (!success) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
         else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        String dataNascimento = year + "-" + month + "-" + day;
+
+        binding.etDataNascimentoPerfil.setText(dataNascimento);
     }
 }

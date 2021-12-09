@@ -1,17 +1,16 @@
 package com.psi.ciclodias.view;
 
-import android.app.Application;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
+import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
 
 public class InProgressTrainingMapActivity extends AppCompatActivity {
@@ -60,11 +59,10 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
             public void onClick(View view) {// Mudar para false e depois perguntar ao USER
 
                 getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
-                FragmentManager fm = getFragmentManager();
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
-                DialogFragment newFragment = ConfirmarSaidaDialogFragment.newInstance();
-                newFragment.show(fm, getString(R.string.txtDialog));
+                DialogFragment newFragment = new ConfirmarSaidaDialogFragment();
+                newFragment.show(getSupportFragmentManager(), getString(R.string.txtDialog));
                 }
 
         });

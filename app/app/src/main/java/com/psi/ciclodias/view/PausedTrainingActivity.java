@@ -49,11 +49,4 @@ public class PausedTrainingActivity extends AppCompatActivity {
 
     }
 
-    private void dadosExemploPausedTraining() {
-        binding.tvDistanciaPausa.setText("Distância: 6.8KM");
-        binding.tvTempoPausa.setText("Tempo: 00:20:52");
-        binding.tvVelMediaPausa.setText("Vel Média: 8.1 KM/H");
-        binding.tvVelMaxPausa.setText("Vel Máxima: 20.2 KM/H");
-    }
-
 }

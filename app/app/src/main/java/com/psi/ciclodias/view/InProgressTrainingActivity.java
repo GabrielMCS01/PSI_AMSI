@@ -1,15 +1,14 @@
 package com.psi.ciclodias.view;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 
-import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
 
 
@@ -45,10 +44,9 @@ public class InProgressTrainingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 boolean respostaUser = false; // Mudar para false e depois perguntar ao USER
 
-                FragmentManager fm = getFragmentManager();
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
-                DialogFragment newFragment = ConfirmarSaidaDialogFragment.newInstance();
-                newFragment.show(fm, getString(R.string.txtDialog));
+                DialogFragment newFragment = new ConfirmarSaidaDialogFragment();
+                newFragment.show(getSupportFragmentManager(), "dialog");
 
                 /*if (respostaUser) {
                     // Enviar os dados para a outra Activity

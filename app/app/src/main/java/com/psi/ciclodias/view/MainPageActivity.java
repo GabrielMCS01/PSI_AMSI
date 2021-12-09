@@ -1,12 +1,12 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.adapters.RecyclerCiclismoAdapter;
+import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
@@ -86,20 +87,9 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.actionLogout) {
-            SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            editor.putString(TOKEN, "null");
-            editor.putString(USER, "null");
-            editor.putString(ID, "null");
-            editor.putString(PRIMEIRO_NOME, "null");
-            editor.putString(ULTIMO_NOME, "null");
-            editor.putString(DATA_NASCIMENTO, "null");
-            editor.apply();
-
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "dialog");
             return true;
         }
 
