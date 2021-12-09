@@ -17,6 +17,7 @@ import com.psi.ciclodias.R;
 import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.listeners.LoginListener;
 import com.psi.ciclodias.listeners.PerfilListener;
+import com.psi.ciclodias.listeners.RegistoListener;
 import com.psi.ciclodias.utils.CiclismoJsonParser;
 
 import org.json.JSONArray;
@@ -56,6 +57,7 @@ public class SingletonGestorCiclismo {
     private LoginListener loginListener = null;
     private ListaCiclismoListener listaCiclismoListener = null;
     private PerfilListener perfilListener = null;
+    private RegistoListener registoListener = null;
 
     // Faz de forma sincronizada
     public static synchronized SingletonGestorCiclismo getInstancia(Context context) {
@@ -139,15 +141,17 @@ public class SingletonGestorCiclismo {
             velMedia += c.getVelocidade_media();
         }
 
-        return velMedia;
+        return velMedia / ArrCiclismo.size();
     }
 
     // Retorna a velocidade máxima dos percursos realizados pelo utilizador (BD local)
-    public float getVelocidadeMaxima() {
-        float velMaxima = 0;
+    public double getVelocidadeMaxima() {
+        double velMaxima = 0;
 
         for (Ciclismo c : ArrCiclismo) {
-            velMaxima += c.getVelocidade_maxima();
+            if (velMaxima < c.getVelocidade_maxima()) {
+                velMaxima = c.getVelocidade_maxima();
+            }
         }
 
         return velMaxima;
@@ -188,6 +192,39 @@ public class SingletonGestorCiclismo {
         }
     }
 
+    // Envia uma resposta ao LoginListener onde o login é validado
+    public void CreateUser(final Map<String, String> dadosRegisto,final Context context) {
+        if (!CiclismoJsonParser.isInternetConnection(context)) {
+            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest req = new StringRequest(
+                    Request.Method.POST,
+                    URL_REGISTO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            registoListener.createUser(CiclismoJsonParser.parserJsonRegisto(response));
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            ) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = dadosRegisto;
+
+                    return params;
+                }
+            };
+
+            volleyQueue.add(req);
+        }
+    }
 
     // ------------------------------------- CICLISMO ----------------------------------------------
     public void getListaCiclismoAPI(final Context context) {
@@ -307,5 +344,9 @@ public class SingletonGestorCiclismo {
 
     public void setPerfilListener(PerfilListener perfilListener) {
         this.perfilListener = perfilListener;
+    }
+
+    public void setRegistoListener(RegistoListener registoListener) {
+        this.registoListener = registoListener;
     }
 }

@@ -100,4 +100,19 @@ public class CiclismoJsonParser {
 
         return dadosUser;
     }
+
+    public static Boolean parserJsonRegisto(String response) {
+        Boolean success = false;
+
+        try {
+            JSONObject json = new JSONObject(response);
+
+            success = json.getBoolean("success");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
 }

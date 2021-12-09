@@ -94,7 +94,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         editor.putString(ULTIMO_NOME, dadosUser.get("ultimo_nome"));
 
         // Se a data de nascimento for NULL retorna vazio
-        if (dadosUser.get("data_nascimento").equals(null)){
+        if (!dadosUser.get("data_nascimento").equals(null)){
             editor.putString(DATA_NASCIMENTO, dadosUser.get("data_nascimento")); }
         else {
             editor.putString(DATA_NASCIMENTO, "");

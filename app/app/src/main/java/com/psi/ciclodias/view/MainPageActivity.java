@@ -95,25 +95,31 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
 
     // Preencher a Shared Preferences "user"
     private void PreencherSharedPreferences() {
-        // Recebe os valores das variáveis globais enviadas pelo loginActivity
-        id = getIntent().getStringExtra(LoginActivity.ID);
-        primeiro_nome = getIntent().getStringExtra(LoginActivity.PRIMEIRO_NOME);
-        ultimo_nome = getIntent().getStringExtra(LoginActivity.ULTIMO_NOME);
-        user = getIntent().getStringExtra(LoginActivity.USER_LOGIN);
-        token = getIntent().getStringExtra(LoginActivity.TOKEN_LOGIN);
+        // Verifica se a activity anterior é a de login, para receber os dados e preencher na SHARED
+        // PREFERENCES, principalmente o TOKEN que é utilizado para fazer os REQUESTS
+        if (getIntent().getStringExtra(LoginActivity.ID) != null) {
+            // Recebe os valores das variáveis globais enviadas pelo loginActivity
+            id = getIntent().getStringExtra(LoginActivity.ID);
+            primeiro_nome = getIntent().getStringExtra(LoginActivity.PRIMEIRO_NOME);
+            ultimo_nome = getIntent().getStringExtra(LoginActivity.ULTIMO_NOME);
+            user = getIntent().getStringExtra(LoginActivity.USER_LOGIN);
+            token = getIntent().getStringExtra(LoginActivity.TOKEN_LOGIN);
 
-        // SHARED PREFERENCES
-        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(TOKEN, token);
-        editor.putString(USER, user);
-        editor.putString(ID, id);
-        editor.putString(PRIMEIRO_NOME, primeiro_nome);
-        editor.putString(ULTIMO_NOME, ultimo_nome);
-        editor.apply();
+            // Cria uma instância das SHARED PREFERENCES
+            SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        System.out.println(primeiro_nome);
-        System.out.println(token);
+            // Preenche os dados na SHARED PREFERENCES
+            editor.putString(TOKEN, token);
+            editor.putString(USER, user);
+            editor.putString(ID, id);
+            editor.putString(PRIMEIRO_NOME, primeiro_nome);
+            editor.putString(ULTIMO_NOME, ultimo_nome);
+            editor.apply();
+
+            System.out.println(primeiro_nome);
+            System.out.println(token);
+        }
     }
 
 
