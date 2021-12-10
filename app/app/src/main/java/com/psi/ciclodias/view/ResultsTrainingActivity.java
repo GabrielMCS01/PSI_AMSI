@@ -6,11 +6,17 @@ import androidx.fragment.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
+import com.psi.ciclodias.listeners.CreateCiclismoListener;
+import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
-public class ResultsTrainingActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+public class ResultsTrainingActivity extends AppCompatActivity implements CreateCiclismoListener {
     private ActivityResultsTrainingBinding binding;
 
     @Override
@@ -23,6 +29,7 @@ public class ResultsTrainingActivity extends AppCompatActivity {
 
         mapFragment.getInstancia().getResults(binding);
 
+        SingletonGestorCiclismo.getInstancia(this).setCreateCiclismoListener(this);
 
         Fragment mapfragment = mapFragment.getInstancia();
 
@@ -36,11 +43,19 @@ public class ResultsTrainingActivity extends AppCompatActivity {
         binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Código para guardar na base de dados
-                mapFragment.getInstancia().onMyDestroy();
-                Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
-                startActivity(intent);
-                finish();
+                Map<String, String> dadosCiclismo = new HashMap<String, String>();
+
+                int distance = (int) mapFragment.getInstancia().distance;
+                // Recebe os dados do treino
+                dadosCiclismo.put("nome_percurso", binding.etNomeTreino.getText().toString());
+                dadosCiclismo.put("duracao", String.valueOf(mapFragment.getInstancia().time));
+                dadosCiclismo.put("distancia", String.valueOf(distance));
+                dadosCiclismo.put("velocidade_media", String.valueOf(mapFragment.getInstancia().velocityMean));
+                dadosCiclismo.put("velocidade_maxima", String.valueOf(mapFragment.getInstancia().velocityMax));
+                //dadosCiclismo.put("velocidade_grafico", null);
+                //dadosCiclismo.put("rota", null);
+
+                SingletonGestorCiclismo.getInstancia(getApplicationContext()).AddCiclismo(dadosCiclismo, getApplicationContext());
             }
         });
 
@@ -52,6 +67,7 @@ public class ResultsTrainingActivity extends AppCompatActivity {
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 if (respostaUser){
+                    mapFragment.getInstancia().onMyDestroy();
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
@@ -61,11 +77,18 @@ public class ResultsTrainingActivity extends AppCompatActivity {
         });
     }
 
-    private void dadosExemploResultsTraining() {
-        binding.tvDistanciaResumo.setText("Distância: 72.5KM");
-        binding.tvTempoResumo.setText("Tempo: 01:21:32");
-        binding.tvVelMediaResumo.setText("Vel Média: 12.8 KM/H");
-        binding.tvVelMaxResumo.setText("Vel Máxima: 30.1 KM/H");
-    }
+    @Override
+    public void createCiclismo(Boolean success) {
+        if (success) {
+            Toast.makeText(getApplicationContext(), "Treino Guardado com sucesso", Toast.LENGTH_SHORT).show();
 
+            mapFragment.getInstancia().onMyDestroy();
+            Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Treino não foi guardado", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

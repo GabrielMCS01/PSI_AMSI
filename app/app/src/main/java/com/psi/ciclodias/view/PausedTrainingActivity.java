@@ -1,12 +1,15 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
+import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
 
 public class PausedTrainingActivity extends AppCompatActivity {
@@ -23,37 +26,41 @@ public class PausedTrainingActivity extends AppCompatActivity {
         mapFragment.getInstancia().pausedBinding = binding;
         mapFragment.getInstancia().setData();
 
-        binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
+        binding.btRetomarTreinoPausa.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onLongClick(View view) {
                 // Retoma atividade
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();
+                return false;
+            }
+        });
+        binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Mantenha o botão premido para retomar o treino", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        binding.btTerminarTreinoPausa.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                // Terminar a ativity da pausa e da sessão do treino
+                DialogFragment dialogFragment = new ConfirmarSaidaDialogFragment();
+                dialogFragment.show(getSupportFragmentManager(), "dialog");
+                return false;
             }
         });
 
         binding.btTerminarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Enviar os dados para a outra activity
-                // Fazer cenas
-                Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
-                startActivity(intent);
-                // Terminar a ativity da pausa e da sessão do treino
-                //finish();
-                finish();
+                Toast.makeText(getApplicationContext(), "Mantenha o botão premido para terminar o treino", Toast.LENGTH_LONG).show();
             }
         });
 
 
-    }
-
-    private void dadosExemploPausedTraining() {
-        binding.tvDistanciaPausa.setText("Distância: 6.8KM");
-        binding.tvTempoPausa.setText("Tempo: 00:20:52");
-        binding.tvVelMediaPausa.setText("Vel Média: 8.1 KM/H");
-        binding.tvVelMaxPausa.setText("Vel Máxima: 20.2 KM/H");
     }
 
 }

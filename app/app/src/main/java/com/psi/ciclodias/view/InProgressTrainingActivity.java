@@ -1,15 +1,15 @@
 package com.psi.ciclodias.view;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 
-import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
+import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
 
 
@@ -31,34 +31,37 @@ public class InProgressTrainingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Pausa no treino
+                Toast.makeText(getApplicationContext(), "Mantenha o botão premido para pausar o treino", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        binding.btTerminarTreino.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                DialogFragment newFragment = new ConfirmarSaidaDialogFragment();
+                newFragment.show(getSupportFragmentManager(), "dialog");
+                return false;
+            }
+        });
+        binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Mantenha o botão premido para terminar o treino", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        binding.btPausaTreino.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().trainingBinding = null;
                 Chronometer.getInstancia().stopVariable = true;
                 mapFragment.getInstancia().resumeTimer = true;
                 finish();
+                return false;
             }
         });
-
-        binding.btTerminarTreino.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean respostaUser = false; // Mudar para false e depois perguntar ao USER
-
-                FragmentManager fm = getFragmentManager();
-                // Confirmar ao utilizador se não quer mesmo guardar os dados
-                DialogFragment newFragment = ConfirmarSaidaDialogFragment.newInstance();
-                newFragment.show(fm, getString(R.string.txtDialog));
-
-                /*if (respostaUser) {
-                    // Enviar os dados para a outra Activity
-                    Intent intent = new Intent(getApplicationContext(), ResultsTrainingActivity.class);
-                    startActivity(intent);
-                    finish();
-                }*/
-            }
-        });
-
         binding.btMapaTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

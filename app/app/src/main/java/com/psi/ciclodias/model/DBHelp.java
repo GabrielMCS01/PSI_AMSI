@@ -26,28 +26,12 @@ public class DBHelp extends SQLiteOpenHelper {
     private static final String DATA_TREINO = "data_treino";
     private static final String USER_ID_CICLISMO = "user_id";
 
-    // Tabela USER_INFO
-    private static final String TABELA_USERINFO = "user_info";
-    private static final String ID_USERINFO = "id";
-    private static final String PRIMEIRO_NOME = "primeiro_nome";
-    private static final String ULTIMO_NOME = "ultimo_nome";
-    private static final String DATA_NASCIMENTO = "data_nascimento";
-    private static final String USER_ID_USERINFO = "user_id";
-
-    // Tabela USER
-    private static final String USERNAME = "username";
-    private static final String EMAIL = "email";
-    private static final String PASSWORD = "password";
-
     private SQLiteDatabase bd;
-
-    // URL Padrão
-    private String url ="http://localhost/PSI_PlatSI/app/backend/web/v1";
 
     public DBHelp(Context context) {
         super(context, DB_NOME, null, VERSAO);
 
-        // Obtem a bd na qual se pretende trabalhar
+        // Obtém a BD na qual se pretende trabalhar
         bd = getWritableDatabase();
     }
 
@@ -57,14 +41,14 @@ public class DBHelp extends SQLiteOpenHelper {
         String SQL = "CREATE TABLE " + TABELA_CICLISMO + "(" +
                 ID_CICLISMO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 NOME_PERCURSO + " TEXT, " +
-                DURACAO + " NUMERIC NOT NULL, " +
-                DISTANCIA + " REAL NOT NULL, " +
+                DURACAO + " INTEGER NOT NULL, " +
+                DISTANCIA + " INTEGER NOT NULL, " +
                 VELOCIDADE_MEDIA + " REAL NOT NULL, " +
                 VELOCIDADE_MAXIMA + " REAL NOT NULL, " +
                 VELOCIDADE_GRAFICO + " TEXT, " +
                 ROTA + " TEXT, " +
-                DATA_TREINO + " NUMERIC NOT NULL, " +
-                USER_ID_CICLISMO + " INTEGER NOT NULL)";
+                DATA_TREINO + " NUMERIC, " +
+                USER_ID_CICLISMO + " INTEGER)";
         db.execSQL(SQL);
     }
 
@@ -79,27 +63,19 @@ public class DBHelp extends SQLiteOpenHelper {
 
     // ------------------------------------- Ciclismo -----------------------------------------------------------------
     // Cria uma nova sessão de treino
-    public Ciclismo AdicionarCiclismoDB(Ciclismo ciclismo){
+    public void AdicionarCiclismoDB(Ciclismo ciclismo){
         ContentValues valores = new ContentValues();
 
+        valores.put(ID_CICLISMO, ciclismo.getId());
         valores.put(NOME_PERCURSO, ciclismo.getNome_percurso());
-        valores.put(DURACAO, "" + ciclismo.getDuracao());
+        valores.put(DURACAO, ciclismo.getDuracao());
         valores.put(DISTANCIA, ciclismo.getDistancia());
         valores.put(VELOCIDADE_MEDIA, ciclismo.getVelocidade_media());
         valores.put(VELOCIDADE_MAXIMA, ciclismo.getVelocidade_maxima());
         valores.put(VELOCIDADE_GRAFICO, ciclismo.getVelocidade_grafico());
         valores.put(ROTA, ciclismo.getRota());
-        valores.put(DATA_TREINO, "" + ciclismo.getData_treino());
 
-        long id = bd.insert(TABELA_CICLISMO, null, valores);
-
-        // Se devolver -1 é porque não conseguiu inserir
-        if (id != -1){
-            ciclismo.setId(id);
-            return ciclismo;
-        }
-
-        return null;
+        bd.insert(TABELA_CICLISMO, null, valores);
     }
 
     // Retorna todas as sessões de treino do utilizador
@@ -108,22 +84,22 @@ public class DBHelp extends SQLiteOpenHelper {
 
         // Query á tabela toda
         Cursor cursor = bd.query(TABELA_CICLISMO, new String[] {ID_CICLISMO, NOME_PERCURSO, DURACAO, DISTANCIA, VELOCIDADE_MEDIA,
-                        VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO, USER_ID_CICLISMO},
+                        VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO},
                 null, null, null, null, null);
 
         // Se o encontrar algum faz
         if(cursor.moveToFirst()){
-            // Faz enquanto ainda houve mais treinos
+            // Faz enquanto ainda houver mais treinos
             do {
-                Ciclismo aux = new Ciclismo(cursor.getString(0),
-                        // Tipo de data está em String por agora
+                Ciclismo aux = new Ciclismo(cursor.getLong(0),
                         cursor.getString(1),
-                        // ---------------------------------------
-                        cursor.getFloat(2),
-                        cursor.getFloat(3),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
                         cursor.getFloat(4),
-                        cursor.getString(5),
-                        cursor.getString(6));
+                        cursor.getFloat(5),
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getString(8));
                 lista.add(aux);
             } while (cursor.moveToNext());
         }
@@ -141,15 +117,15 @@ public class DBHelp extends SQLiteOpenHelper {
 
         // Se encontrar algum treino faz
         if(cursor.moveToFirst()){
-            Ciclismo ciclismo = new Ciclismo(cursor.getString(0),
-                // Tipo de data está em String por agora
-                cursor.getString(1),
-                // ---------------------------------------
-                cursor.getFloat(2),
-                cursor.getFloat(3),
-                cursor.getFloat(4),
-                cursor.getString(5),
-                cursor.getString(6));
+            Ciclismo ciclismo = new Ciclismo(cursor.getLong(0),
+                    cursor.getString(1),
+                    cursor.getInt(2),
+                    cursor.getInt(3),
+                    cursor.getFloat(4),
+                    cursor.getFloat(5),
+                    cursor.getString(6),
+                    cursor.getString(7),
+                    cursor.getString(8));
 
                 cursor.close();
 
@@ -164,7 +140,7 @@ public class DBHelp extends SQLiteOpenHelper {
     public boolean editarCiclismoDB(Ciclismo ciclismo){
         ContentValues valores = new ContentValues();
 
-        // O utilizadr apenas pode editar o nome do percurso
+        // O utilizador apenas pode editar o nome do percurso
         valores.put(NOME_PERCURSO, ciclismo.getNome_percurso());
 
         // Retorna na Tabela Ciclismo o resultado de editar o treino com o ID enviado
@@ -176,48 +152,4 @@ public class DBHelp extends SQLiteOpenHelper {
         // Retorna na Tabela Ciclismo o resultado de apagar o treino com o ID enviado
         return bd.delete(TABELA_CICLISMO, ID_CICLISMO + " = ?", new String[] {"" + id}) == 1;
     }
-
-
-    // ---------------------------------------------- USER -----------------------------------------------------------------------
-    // Código para adaptar para quando se implementar a API
-
-    // Cria um utilizador enviando os dados inseridos para a API
-    /*public User AdicionarUserDB(User user){
-        ContentValues valores = new ContentValues();
-
-        // Campos preenchidas na APP android a criar um USER
-        valores.put(USERNAME, user.getUsername());
-        valores.put(EMAIL, user.getEmail());
-        valores.put(PASSWORD, user.getPassword());
-        valores.put(PRIMEIRO_NOME, user.getPrimeiro_nome());
-        valores.put(ULTIMO_NOME, user.getUltimo_nome());
-
-        // Enviar os dados para a API
-
-        return null;
-    }
-
-    // Edita o próprio utilizador
-    public boolean editarUserDB(User user){
-        ContentValues valores = new ContentValues();
-
-        // O utilizadr pode editar o seu Email, DataNascimento, PrimeiroNome e UltimoNome
-        valores.put(EMAIL, user.getEmail());
-        valores.put(DATA_NASCIMENTO, user.getData_nascimento());
-        valores.put(PRIMEIRO_NOME, user.getPrimeiro_nome());
-        valores.put(ULTIMO_NOME, user.getUltimo_nome());
-
-        // Envia dados para a API
-
-        return true;
-    }
-
-    // Apaga o utilizador com login feito (auth_key)
-    public boolean apagarUserDB(long id){
-        // Retorna na Tabela Ciclismo o resultado de apagar o treino com o ID enviado
-
-        return true;
-    }*/
-
-
 }

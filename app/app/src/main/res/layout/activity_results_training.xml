@@ -72,13 +72,18 @@
         app:layout_constraintBottom_toTopOf="@+id/btSairResumo"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/textView10"
+    <EditText
+        android:id="@+id/etNomeTreino"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/txtResumoTreino"
+        android:ems="12"
+        android:hint="Indique o nome do treino"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textAlignment="center"
         android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -92,7 +97,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tvTempoResumo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10">
+        app:layout_constraintTop_toBottomOf="@+id/etNomeTreino">
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,11 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityRegistryBinding;
+import com.psi.ciclodias.listeners.RegistoListener;
+import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
-public class RegistryActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+public class RegistryActivity extends AppCompatActivity implements RegistoListener {
     private ActivityRegistryBinding binding;
     private String primeiroNome, ultimoNome, email, username, password, confirmarPassword;
     private boolean isEmpty = false;
@@ -20,6 +26,8 @@ public class RegistryActivity extends AppCompatActivity {
 
         binding = ActivityRegistryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        SingletonGestorCiclismo.getInstancia(this).setRegistoListener(this);
 
         binding.btRegistarse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,11 +48,15 @@ public class RegistryActivity extends AppCompatActivity {
                 if (!isEmpty) {
                     // Se o email e a password estiverem válidas faz
                     if (isMailValida(email) && isPasswordValida(password, confirmarPassword)) {
-                        // Verificar se o email e o Username já existe na base de dados
-                       // if (email.equals() && username.equals())
+                        Map<String, String> params = new HashMap<>();
 
-                        // Enviar dados para a base de dados
-                        finish();
+                        params.put("username", username);
+                        params.put("primeiro_nome", primeiroNome);
+                        params.put("ultimo_nome", ultimoNome);
+                        params.put("email", email);
+                        params.put("password", password);
+
+                        SingletonGestorCiclismo.getInstancia(getApplicationContext()).CreateUser(params, getApplicationContext());
                     }
                 }
             }
@@ -102,4 +114,16 @@ public class RegistryActivity extends AppCompatActivity {
         }
     }
 
+    // Verifica se o utilizador foi criado com sucesso
+    @Override
+    public void createUser(Boolean success) {
+        if (success) {
+            Toast.makeText(getApplicationContext(), "Utilizador registado com sucesso", Toast.LENGTH_SHORT).show();
+
+            finish();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Registo Invalido, experimente outro EMAIL ou USERNAME", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

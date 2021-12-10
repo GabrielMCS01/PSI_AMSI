@@ -18,12 +18,13 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
     private Context context;
     private ArrayList<Ciclismo> listaCiclismo;
 
-    // Contrutor que recebe o contexto e a lista com as atividades do utilizador
+    // Construtor que recebe o contexto e a lista com as atividades do utilizador
     public RecyclerCiclismoAdapter(Context context, ArrayList<Ciclismo> lista){
         this.context = context;
         this.listaCiclismo = lista;
     }
 
+    // Recebe o Layout do cartão para instanciar as vezes que forem necessárias (Cada sessão de treino)
     @NonNull
     @Override
     public RecyclerCiclismoAdapter.ViewHolderCiclismo onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,6 +33,7 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
         return new ViewHolderCiclismo(item);
     }
 
+    // Ligação entre cada Cartão e o arraylist
     @Override
     public void onBindViewHolder(@NonNull RecyclerCiclismoAdapter.ViewHolderCiclismo holder, int position) {
         Ciclismo ciclismo = listaCiclismo.get(position);
@@ -39,11 +41,13 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
         holder.update(ciclismo);
     }
 
+    // Retorna o número de sessões de treino existentes
     @Override
     public int getItemCount() {
         return listaCiclismo.size();
     }
 
+    // Classe ViewHolder para preencher os cartões na RecyclerView
     public class ViewHolderCiclismo extends RecyclerView.ViewHolder {
         private TextView tvNomeAtividade, tvDuracao, tvDistancia, tvVelMedia;
 
@@ -57,7 +61,7 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
 
         public void update(Ciclismo ciclismo) {
             tvNomeAtividade.setText(ciclismo.getNome_percurso());
-            tvDuracao.setText(ciclismo.getDuracao());
+            tvDuracao.setText("" + ciclismo.getDuracao());
             tvDistancia.setText("" + ciclismo.getDistancia());
             tvVelMedia.setText("" + ciclismo.getVelocidade_media());
         }

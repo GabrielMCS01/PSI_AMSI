@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ivFotoPerfil"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,37 +28,38 @@
         app:layout_constraintTop_toTopOf="@+id/ivFotoPerfil" />
 
     <EditText
-        android:id="@+id/etEmailPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="40dp"
-        android:ems="14"
-        android:hint="@string/txtEmail"
-        android:inputType="textEmailAddress"
-        app:layout_constraintStart_toEndOf="@+id/imgBtEmailPerfil"
-        app:layout_constraintTop_toBottomOf="@+id/ivFotoPerfil" />
-
-    <EditText
-        android:id="@+id/etUserPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:ems="14"
-        android:hint="@string/txtNomeUtilizador"
-        app:layout_constraintStart_toEndOf="@+id/imgBtUserPerfil"
-        app:layout_constraintTop_toBottomOf="@+id/etEmailPerfil" />
-
-    <EditText
         android:id="@+id/etDataNascimentoPerfil"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:ems="14"
+        android:editable="false"
+        android:ems="12"
         android:hint="@string/txtDataNascimento"
-        android:inputType="date"
-        app:layout_constraintStart_toEndOf="@+id/imgBtUserPerfil2"
-        app:layout_constraintTop_toBottomOf="@+id/etUserPerfil" />
+        android:inputType="none"
+        app:layout_constraintStart_toStartOf="@+id/etUltimoNomePerfil"
+        app:layout_constraintTop_toBottomOf="@+id/etUltimoNomePerfil" />
+
+    <EditText
+        android:id="@+id/etPrimeiroNomePerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:ems="14"
+        android:hint="@string/txtPrimeiroNome"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivFotoPerfil" />
+
+    <EditText
+        android:id="@+id/etUltimoNomePerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:ems="14"
+        android:hint="@string/txtUltimoNome"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etPrimeiroNomePerfil" />
 
     <Button
         android:id="@+id/btGuardarAlteracoes"
@@ -92,7 +93,7 @@
         android:text="@string/txtVelMaxima"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvVelMedia" />
+        app:layout_constraintTop_toBottomOf="@+id/tvVelMediaPerfil" />
 
     <TextView
         android:id="@+id/tvTempoPerfil"
@@ -106,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvDistanciaPerfil" />
 
     <TextView
-        android:id="@+id/tvVelMedia"
+        android:id="@+id/tvVelMediaPerfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -127,43 +128,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-    <ImageButton
-        android:id="@+id/imgBtEmailPerfil"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="40dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/ic_action_edit"
-        android:scaleType="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivFotoPerfil" />
-
-    <ImageButton
-        android:id="@+id/imgBtUserPerfil"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/ic_action_edit"
-        android:scaleType="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgBtEmailPerfil" />
-
-    <ImageButton
-        android:id="@+id/imgBtUserPerfil2"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/ic_action_edit"
-        android:scaleType="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgBtUserPerfil" />
-
     <FrameLayout
         android:id="@+id/navBarMainPage"
         android:layout_width="0dp"
@@ -173,5 +137,16 @@
         app:layout_constraintStart_toStartOf="parent">
 
     </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/ibDataNascimento"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/etDataNascimentoPerfil"
+        app:layout_constraintEnd_toEndOf="@+id/etUltimoNomePerfil"
+        app:layout_constraintStart_toEndOf="@+id/etDataNascimentoPerfil"
+        app:layout_constraintTop_toBottomOf="@+id/etUltimoNomePerfil"
+        app:srcCompat="@drawable/ic_action_calendar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
