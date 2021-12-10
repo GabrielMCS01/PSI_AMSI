@@ -13,7 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.psi.ciclodias.model.SingletonGestorCiclismo;
 import com.psi.ciclodias.view.LoginActivity;
+
+import java.util.ArrayList;
 
 public class ConfirmarLogoutDialogFragment extends DialogFragment {
 
@@ -42,6 +45,10 @@ public class ConfirmarLogoutDialogFragment extends DialogFragment {
                 editor.putString(ULTIMO_NOME, "null");
                 editor.putString(DATA_NASCIMENTO, "null");
                 editor.apply();
+
+                SingletonGestorCiclismo.getInstancia(getContext()).ArrCiclismo = new ArrayList<>();
+                SingletonGestorCiclismo.getInstancia(getContext()).ArrCiclismoUnSync = new ArrayList<>();
+                SingletonGestorCiclismo.getInstancia(getContext()).apagarCiclismoDBAll();
 
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);

@@ -42,10 +42,10 @@ public class SingletonGestorCiclismo {
     private static final String URL_USER = "http://ciclodias.duckdns.org/admin/v1/user";
 
     // Arraylist com todos as atividades do utilizador
-    ArrayList<Ciclismo> ArrCiclismo;
+    public ArrayList<Ciclismo> ArrCiclismo;
 
     // Arraylist com todas as atividades do utilizador que não estão sincronizadas
-    ArrayList<Ciclismo> ArrCiclismoUnSync = new ArrayList<>();
+    public ArrayList<Ciclismo> ArrCiclismoUnSync = new ArrayList<>();
 
     // Variável do tipo DB
     private DBHelp bd;
@@ -98,7 +98,7 @@ public class SingletonGestorCiclismo {
         bd.apagarCiclismoDB(id);
     }
 
-    private void apagarCiclismoDBAll() {
+    public void apagarCiclismoDBAll() {
         bd.apagarCiclismoDBAll();
     }
 
@@ -161,7 +161,7 @@ public class SingletonGestorCiclismo {
     // Devolve o array ciclismo com todos os treinos dp utilizador 
     public ArrayList<Ciclismo> getArrCiclismo() {
         ArrCiclismo = bd.getListaCiclismoDB();
-        
+
         return ArrCiclismo;
     }
 
