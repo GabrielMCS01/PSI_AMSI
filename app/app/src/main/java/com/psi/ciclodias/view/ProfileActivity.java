@@ -40,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
 
         SingletonGestorCiclismo.getInstancia(this).setPerfilListener(this);
 
+        dadosPerfil();
+
         // Chama a função da API para receber os dados do utilizador
         SingletonGestorCiclismo.getInstancia(this).getUserDados(this);
 

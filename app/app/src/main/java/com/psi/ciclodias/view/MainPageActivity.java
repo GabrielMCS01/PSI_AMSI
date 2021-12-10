@@ -42,6 +42,8 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         // Preenche as shared Preferences
         PreencherSharedPreferences();
 
+        SingletonGestorCiclismo.getInstancia(this).PreencherArrCiclismoUnsync();
+
         // Instancia da Singleton para poder ser utilizada em qualquer parte do código
         SingletonGestorCiclismo.getInstancia(this).setListaCiclismoListener(this);
 
@@ -129,9 +131,11 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
     // Função que recebe os treinos da API e coloca na RecylerViewE
     @Override
     public void onRefreshListaLivros(ArrayList<Ciclismo> lista) {
-        adaptador = new RecyclerCiclismoAdapter(this, lista);
+        if (lista != null){
+            adaptador = new RecyclerCiclismoAdapter(this, lista);
 
-        rvCiclismo.setAdapter(adaptador);
-        rvCiclismo.setItemAnimator(new DefaultItemAnimator());
+            rvCiclismo.setAdapter(adaptador);
+            rvCiclismo.setItemAnimator(new DefaultItemAnimator());
+        }
     }
 }
