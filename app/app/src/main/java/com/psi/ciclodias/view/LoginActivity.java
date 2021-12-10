@@ -19,8 +19,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     public static final String ID = "id";
     public static final String PRIMEIRO_NOME = "primeiro_nome";
     public static final String ULTIMO_NOME = "ultimo_nome";
-    public static final String USER_LOGIN = "user_login";
-    public static final String TOKEN_LOGIN = "token_login";
+    public static final String USER = "user_login";
+    public static final String TOKEN = "token_login";
     private ActivityLoginBinding binding;
     private boolean isEmpty = false;
 
@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
         // Verifica se o User ja fez login na aplicação quando saiu
-        if (!sharedPreferences.getString(ID, "").equals("null")){
+        if (!sharedPreferences.getString(ID, "null").equals("null")){
             Intent intentMain = new Intent(this, MainPageActivity.class);
             startActivity(intentMain);
             finish();
@@ -100,8 +100,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             intentMain.putExtra(ID, dadosUser.get("id"));
             intentMain.putExtra(PRIMEIRO_NOME, dadosUser.get("primeiro_nome"));
             intentMain.putExtra(ULTIMO_NOME, dadosUser.get("ultimo_nome"));
-            intentMain.putExtra(USER_LOGIN, username);
-            intentMain.putExtra(TOKEN_LOGIN, dadosUser.get("token"));
+            intentMain.putExtra(USER, username);
+            intentMain.putExtra(TOKEN, dadosUser.get("token"));
             startActivity(intentMain);
         }
         else{

@@ -7,9 +7,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/logo"
+        android:icon="@mipmap/ic_logo_ciclodias"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logo"
+        android:roundIcon="@mipmap/ic_logo_ciclodias_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CicloDias"
         android:usesCleartextTraffic="true">

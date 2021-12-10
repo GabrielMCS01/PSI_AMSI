@@ -105,8 +105,8 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
             id = getIntent().getStringExtra(LoginActivity.ID);
             primeiro_nome = getIntent().getStringExtra(LoginActivity.PRIMEIRO_NOME);
             ultimo_nome = getIntent().getStringExtra(LoginActivity.ULTIMO_NOME);
-            user = getIntent().getStringExtra(LoginActivity.USER_LOGIN);
-            token = getIntent().getStringExtra(LoginActivity.TOKEN_LOGIN);
+            user = getIntent().getStringExtra(LoginActivity.USER);
+            token = getIntent().getStringExtra(LoginActivity.TOKEN);
 
             // Cria uma instância das SHARED PREFERENCES
             SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
