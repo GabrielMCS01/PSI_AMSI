@@ -44,6 +44,7 @@ import com.mapbox.navigation.core.directions.session.RoutesObserver;
 import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
+import com.mapbox.navigation.core.trip.session.TripSession;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
@@ -82,6 +83,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private MapboxMap mapboxMap;
     private NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxNavigation mapboxNavigation;
+
 
     //Objetos Bindings das Activities que necessitam dos dados do mapa
     public ActivityStartTrainingBinding startBinding = null;
