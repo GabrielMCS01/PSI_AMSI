@@ -49,19 +49,35 @@ public class CiclismoJsonParser {
     }
 
     // Guarda um Treino na API
-    public static Boolean parserJsonCriaCiclismo(String response) {
-        boolean success = false;
+    public static Ciclismo parserJsonCriaCiclismo(String response) {
+
 
         try {
             JSONObject json = new JSONObject(response);
 
-            success = json.getBoolean("success");
+
+            int id = json.getInt("id");
+            String nome_percurso = json.getString("nome_percurso");
+            int duracao = json.getInt("duracao");
+            int distancia = json.getInt("distancia");
+            double velocidade_media = json.getDouble("velocidade_media");
+            double velocidade_maxima = json.getDouble("velocidade_maxima");
+
+            // velocidade grafico é JSON
+            //String velocidade_grafico = json.getString("velocidade_grafico");
+            //String rota = json.getString("rota");
+            String data_treino = json.getString("data_treino");
+
+            Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, null, null, data_treino);
+
+            System.out.println(id);
+            return ciclismo;
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return success;
+        return null;
     }
 
     // ----------------------------------- lOGIN ---------------------------------------------------

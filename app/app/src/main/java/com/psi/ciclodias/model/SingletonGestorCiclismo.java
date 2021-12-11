@@ -372,7 +372,7 @@ public class SingletonGestorCiclismo {
 
 
 
-    // Cria um utilizador
+    // Cria um Ciclismo
     public void AddCiclismo(final Map<String, String> dadosCiclismo,final Context context) {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             // Cria localmente se não tiver Internet
@@ -400,7 +400,7 @@ public class SingletonGestorCiclismo {
             // Adiciona no Arraylist do treinos para sincronizar
             ArrCiclismoUnSync.add(c);
 
-            createCiclismoListener.createCiclismo(true);
+            createCiclismoListener.createCiclismo(c);
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 

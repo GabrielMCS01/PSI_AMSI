@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.listeners.CreateCiclismoListener;
+import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
 import java.util.HashMap;
@@ -78,8 +79,11 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
     }
 
     @Override
-    public void createCiclismo(Boolean success) {
-        if (success) {
+    public void createCiclismo(Ciclismo ciclismo) {
+        if (ciclismo.getId() != -1) {
+
+            SingletonGestorCiclismo.getInstancia(this).adicionarCiclismoBD(ciclismo);
+
             Toast.makeText(getApplicationContext(), "Treino Guardado com sucesso", Toast.LENGTH_SHORT).show();
 
             mapFragment.getInstancia().onMyDestroy();

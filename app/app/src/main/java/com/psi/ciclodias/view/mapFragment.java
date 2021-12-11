@@ -110,6 +110,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private boolean isLoc1 = false;
 
     //Variáveis que guardam os dados da sessão de treino
+    public boolean isRunning = false;
     public float velocityInstant = 0;
     public float distance = 0;
     public float velocityMean = 0;
@@ -361,6 +362,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        startNavigation();
     }
 
     @Override
@@ -372,7 +374,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     @Override
     public void onPermissionResult(boolean granted) {
         if(granted){
-          startNavigation();
+          loadMap();
         }else{
             Toast.makeText(getContext(), R.string.txtPermissaoNãoDada, Toast.LENGTH_LONG).show();
         }
@@ -395,6 +397,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 startBinding.btComecarTreino.setEnabled(true);
                 startBinding = null;
             }else {
+                isRunning = true;
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
                 pointsList.add(point);
 
@@ -474,6 +477,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     //Função para destruir as variaveis do mapa a pedido do código
     public void onMyDestroy(){
             super.onDestroy();
+            isRunning = false;
             mapboxNavigation.stopTripSession();
             mapboxNavigation.unregisterLocationObserver(locationObs);
             trainingBinding = null;

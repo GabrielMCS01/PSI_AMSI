@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -38,6 +39,14 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
+
+
+        if(mapFragment.getInstancia().isRunning){
+            Intent intent = new Intent(this, InProgressTrainingActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
 
         // Preenche as shared Preferences
         PreencherSharedPreferences();
