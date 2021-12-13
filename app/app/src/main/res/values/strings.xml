@@ -58,4 +58,6 @@
     <string name="txtPrimeiroNome">Primeiro Nome</string>
     <string name="txtUltimoNome">Ultimo Nome</string>
     <string name="txtHintNomeTreino">Indique o nome do treino</string>
+    <string name="txtCiclismoNaoRemovido">Não foi possivel apagar o treino</string>
+    <string name="txtCiclismoRemovido">Treino apagado com sucesso</string>
 </resources>

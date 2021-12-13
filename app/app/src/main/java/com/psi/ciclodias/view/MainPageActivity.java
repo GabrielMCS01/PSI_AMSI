@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.adapters.RecyclerCiclismoAdapter;
@@ -39,7 +38,7 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
     private static final String DATA_NASCIMENTO = "data_nascimento";
 
     private String user, token, primeiro_nome, ultimo_nome, id;
-    private RecyclerCiclismoAdapter adaptador, recyclerAdapter;
+    private RecyclerCiclismoAdapter adaptador;
     private RecyclerView rvCiclismo;
     private RecyclerView.LayoutManager layoutManager;
 

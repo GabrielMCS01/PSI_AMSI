@@ -1,22 +1,22 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityDetalhesTreinoMainBinding;
-import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
+import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.listeners.CiclismoListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener {
     private ActivityDetalhesTreinoMainBinding binding;
@@ -40,7 +40,6 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(p);
 
         System.out.println(ciclismo.getId());
-        //mapFragment.getInstancia().getResults(binding);
 
         Fragment mapfragment = mapFragment.getInstancia();
 
@@ -78,10 +77,30 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         });
     }
 
-    @Override
-    public void ciclismoDados(Map<String, String> dadosUser) {
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.delete, menu);
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.actionDelete) {
+
+            DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "dialog");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void editCiclismo(Boolean success) {
@@ -92,6 +111,20 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         else {
             Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void removeCiclismo(Boolean success) {
+        if (!success) {
+            Toast.makeText(getApplicationContext(), R.string.txtCiclismoNaoRemovido, Toast.LENGTH_SHORT).show();
+        }
+
+        else {
+            Toast.makeText(getApplicationContext(), R.string.txtCiclismoRemovido, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
             startActivity(intent);
             finish();

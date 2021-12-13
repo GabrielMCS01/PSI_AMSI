@@ -1,7 +1,6 @@
 package com.psi.ciclodias.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.listeners.RecyclerViewListener;
 import com.psi.ciclodias.model.Ciclismo;
-import com.psi.ciclodias.view.DetalhesTreinoMainActivity;
 
 import java.util.ArrayList;
 

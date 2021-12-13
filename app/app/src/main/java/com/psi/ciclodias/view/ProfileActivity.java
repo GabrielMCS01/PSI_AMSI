@@ -2,18 +2,19 @@ package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityProfileBinding;
+import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.dialogs.InserirDataFragment;
 import com.psi.ciclodias.listeners.PerfilListener;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
@@ -79,7 +80,29 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         });
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.delete, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.actionDelete) {
+
+            DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "dialog");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     // Preencher o perfil com dados do utilizador
     private void dadosPerfil() {
