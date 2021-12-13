@@ -14,6 +14,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.psi.ciclodias.R;
+import com.psi.ciclodias.listeners.CiclismoListener;
 import com.psi.ciclodias.listeners.CreateCiclismoListener;
 import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.listeners.LoginListener;
@@ -62,6 +63,7 @@ public class SingletonGestorCiclismo {
     private PerfilListener perfilListener = null;
     private RegistoListener registoListener = null;
     private CreateCiclismoListener createCiclismoListener = null;
+    private CiclismoListener ciclismoListener = null;
 
     // Faz de forma sincronizada
     public static synchronized SingletonGestorCiclismo getInstancia(Context context) {
@@ -89,8 +91,8 @@ public class SingletonGestorCiclismo {
     }
 
     // Atualiza um treino na BD local
-    public void atualizarCiclismoDB(Ciclismo ciclismo) {
-        bd.editarCiclismoDB(ciclismo);
+    public void atualizarCiclismoDB(long id, String nome) {
+        bd.editarCiclismoDB(id, nome);
     }
 
     // Remove um treino da DB local
@@ -103,13 +105,14 @@ public class SingletonGestorCiclismo {
     }
 
     // Recebe os treinos do utilizador
-    private Ciclismo getCiclismo(long id) {
-        for (Ciclismo c : ArrCiclismo) {
+    public Ciclismo getCiclismo(int id) {
+        /*for (Ciclismo c : ArrCiclismo) {
             if (c.getId() == id)
                 return c;
-        }
+        }*/
+        Ciclismo ciclismo = ArrCiclismo.get(id);
 
-        return null;
+        return ciclismo;
     }
 
     // Retorna a distância dos percursos realizados pelo utilizador (BD local)
@@ -436,7 +439,7 @@ public class SingletonGestorCiclismo {
     }
 
     // Edita o nome da sessão de treino
-    public void EditCiclismo(final Map<String, String> dadosEdicao, int id, final Context context) {
+    public void EditCiclismo(final String dadosEdicao, long id, final Context context) {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
         } else {
@@ -450,7 +453,12 @@ public class SingletonGestorCiclismo {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            perfilListener.editUser(CiclismoJsonParser.parserJsonEditUser(response));
+                            if (CiclismoJsonParser.parserJsonEditCiclismo(response)) {
+                                atualizarCiclismoDB(id, dadosEdicao);
+
+                                ciclismoListener.editCiclismo(true);
+                            }
+                            else ciclismoListener.editCiclismo(false);
                         }
                     },
                     new Response.ErrorListener() {
@@ -463,7 +471,8 @@ public class SingletonGestorCiclismo {
                 @Nullable
                 @Override
                 protected Map<String, String> getParams() {
-                    Map<String, String> params = dadosEdicao;
+                    Map<String, String> params = new HashMap<>();
+                    params.put("nome_percurso", dadosEdicao);
 
                     return params;
                 }
@@ -547,5 +556,9 @@ public class SingletonGestorCiclismo {
                 }
             }
         }
+    }
+
+    public void setCiclismoListener(CiclismoListener ciclismoListener) {
+        this.ciclismoListener = ciclismoListener;
     }
 }

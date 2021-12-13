@@ -2,12 +2,14 @@ package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
 import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
@@ -25,6 +27,15 @@ public class PausedTrainingActivity extends AppCompatActivity {
 
         mapFragment.getInstancia().pausedBinding = binding;
         mapFragment.getInstancia().setData();
+
+        Fragment mapfragment = mapFragment.getInstancia();
+
+        if(mapfragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mapViewTraining, mapfragment, "MAPTAG")
+                    .commit();
+        }
 
         binding.btRetomarTreinoPausa.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -46,6 +57,8 @@ public class PausedTrainingActivity extends AppCompatActivity {
         binding.btTerminarTreinoPausa.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
+
                 // Terminar a ativity da pausa e da sessão do treino
                 DialogFragment dialogFragment = new ConfirmarSaidaDialogFragment();
                 dialogFragment.show(getSupportFragmentManager(), "dialog");

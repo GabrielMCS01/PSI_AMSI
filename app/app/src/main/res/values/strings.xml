@@ -57,4 +57,5 @@
     <string name="login_invalido">Dados Inseridos para login Inválidos</string>
     <string name="txtPrimeiroNome">Primeiro Nome</string>
     <string name="txtUltimoNome">Ultimo Nome</string>
+    <string name="txtHintNomeTreino">Indique o nome do treino</string>
 </resources>

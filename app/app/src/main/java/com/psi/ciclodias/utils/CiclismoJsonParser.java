@@ -158,10 +158,23 @@ public class CiclismoJsonParser {
         return success;
     }
 
+    public static Boolean parserJsonEditCiclismo(String response) {
+        boolean success = false;
+
+        try {
+            JSONObject json = new JSONObject(response);
+
+            success = json.getBoolean("success");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
 
     public static JSONArray createJsonArray(ArrayList<Ciclismo> ciclismoArrayList) {
-
-
         JSONArray jsonArray = new JSONArray();
         try {
             for (Ciclismo ciclismo : ciclismoArrayList) {

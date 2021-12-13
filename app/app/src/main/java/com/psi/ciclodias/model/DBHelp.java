@@ -157,14 +157,14 @@ public class DBHelp extends SQLiteOpenHelper {
     }
 
     // Edita uma sessão de treino
-    public boolean editarCiclismoDB(Ciclismo ciclismo){
+    public boolean editarCiclismoDB(long id, String nome){
         ContentValues valores = new ContentValues();
 
         // O utilizador apenas pode editar o nome do percurso
-        valores.put(NOME_PERCURSO, ciclismo.getNome_percurso());
+        valores.put(NOME_PERCURSO, nome);
 
         // Retorna na Tabela Ciclismo o resultado de editar o treino com o ID enviado
-        return bd.update(TABELA_CICLISMO, valores, ID_CICLISMO + " = ?", new String[] {"" + ciclismo.getId()}) > 0;
+        return bd.update(TABELA_CICLISMO, valores, ID_CICLISMO + " = ?", new String[] {"" + id}) > 0;
     }
 
     // Apaga uma sessão de treino

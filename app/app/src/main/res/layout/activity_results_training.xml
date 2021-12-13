@@ -78,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="12"
-        android:hint="Indique o nome do treino"
+        android:hint="@string/txtHintNomeTreino"
         android:inputType="text"
         android:minHeight="48dp"
         android:textAlignment="center"

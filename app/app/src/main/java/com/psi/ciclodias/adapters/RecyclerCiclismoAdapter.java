@@ -1,6 +1,7 @@
 package com.psi.ciclodias.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.psi.ciclodias.R;
+import com.psi.ciclodias.listeners.RecyclerViewListener;
 import com.psi.ciclodias.model.Ciclismo;
+import com.psi.ciclodias.view.DetalhesTreinoMainActivity;
 
 import java.util.ArrayList;
 
 public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclismoAdapter.ViewHolderCiclismo> {
     private Context context;
     private ArrayList<Ciclismo> listaCiclismo;
+    private RecyclerViewListener itemListener = null;
+
 
     // Construtor que recebe o contexto e a lista com as atividades do utilizador
     public RecyclerCiclismoAdapter(Context context, ArrayList<Ciclismo> lista){
@@ -47,8 +52,12 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
         return listaCiclismo.size();
     }
 
+    public void setItemListener(RecyclerViewListener itemListener) {
+        this.itemListener = itemListener;
+    }
+
     // Classe ViewHolder para preencher os cartões na RecyclerView
-    public class ViewHolderCiclismo extends RecyclerView.ViewHolder {
+    public class ViewHolderCiclismo extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvNomeAtividade, tvDuracao, tvDistancia, tvVelMedia;
 
         public ViewHolderCiclismo(@NonNull View itemView) {
@@ -57,6 +66,7 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
             tvDuracao = itemView.findViewById(R.id.tvDuracaoCard);
             tvDistancia = itemView.findViewById(R.id.tvDistanciaCard);
             tvVelMedia = itemView.findViewById(R.id.tvVelMediaCard);
+            itemView.setOnClickListener(this);
         }
 
         public void update(Ciclismo ciclismo) {
@@ -64,6 +74,12 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
             tvDuracao.setText("" + ciclismo.getDuracao());
             tvDistancia.setText("" + ciclismo.getDistancia());
             tvVelMedia.setText("" + ciclismo.getVelocidade_media());
+        }
+
+
+        @Override
+        public void onClick(View view) {
+            itemListener.recyclerViewListClicked(view, this.getLayoutPosition());
         }
     }
 }

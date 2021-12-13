@@ -1,16 +1,100 @@
 package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.psi.ciclodias.R;
+import com.psi.ciclodias.databinding.ActivityDetalhesTreinoMainBinding;
+import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
+import com.psi.ciclodias.listeners.CiclismoListener;
+import com.psi.ciclodias.model.Ciclismo;
+import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
-public class DetalhesTreinoMainActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener {
+    private ActivityDetalhesTreinoMainBinding binding;
+    public static String POSITION_TREINO = "position";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detalhes_treino_main);
+
+        // Recebe os IDs da Activity Results Training
+        binding = ActivityDetalhesTreinoMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        SingletonGestorCiclismo.getInstancia(this).setCiclismoListener(this);
+
+        Intent intent = getIntent();
+        int p = intent.getIntExtra(POSITION_TREINO, -1);
+
+        System.out.println(p);
+        Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(p);
+
+        System.out.println(ciclismo.getId());
+        //mapFragment.getInstancia().getResults(binding);
+
+        Fragment mapfragment = mapFragment.getInstancia();
+
+        if(mapfragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mapViewResult, mapfragment)
+                    .commit();
+        }
+
+        // Preencher as textViews com os dados do treino
+        binding.tvDistanciaDetalhes.setText("Distancia: " + ciclismo.getDistancia());
+        binding.tvTempoDetalhes.setText("Tempo: " + ciclismo.getDuracao());
+        binding.tvVelMaxDetalhes.setText("Vel Máxima: " + ciclismo.getVelocidade_maxima());
+        binding.tvVelMediaDetalhes.setText("Vel Média: " + ciclismo.getVelocidade_media());
+        binding.etNomeTreinoDetalhes.setText(ciclismo.getNome_percurso());
+
+
+        binding.btVoltarDetalhes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        binding.btGuardarDetalhes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nome = binding.etNomeTreinoDetalhes.getText().toString();
+
+                SingletonGestorCiclismo.getInstancia(getApplicationContext()).EditCiclismo(nome, ciclismo.getId(), getApplicationContext());
+            }
+        });
+    }
+
+    @Override
+    public void ciclismoDados(Map<String, String> dadosUser) {
+
+    }
+
+    @Override
+    public void editCiclismo(Boolean success) {
+        // TOAST que os dados foram guardados com sucesso ou com insucesso
+        if (!success) {
+            Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
+        }
+
+        else {
+            Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

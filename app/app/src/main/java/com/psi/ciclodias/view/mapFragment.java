@@ -397,7 +397,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 startBinding.btComecarTreino.setEnabled(true);
                 startBinding = null;
             }else {
-                isRunning = true;
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
                 pointsList.add(point);
 
@@ -429,6 +428,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
                 // No InProgressTrainingActivity
                 if (trainingBinding != null) {
+                    isRunning = true;
                     Chronometer.getInstancia().trainingBinding = trainingBinding;
                     if (startTimer) {
                         chronometer = Chronometer.getInstancia();
@@ -444,6 +444,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     setDistance(location);
                     // No InProgressTrainingMapActivity
                 } else if (mapBinding != null) {
+                    isRunning = true;
                     Chronometer.getInstancia().mapBinding = mapBinding;
                     setVelocity(location);
                     setVM(location);
