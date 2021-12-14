@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,17 +15,20 @@ import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityProfileBinding;
+import com.psi.ciclodias.dialogs.ConfirmarApagarUserDialogFragment;
 import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.dialogs.InserirDataFragment;
 import com.psi.ciclodias.listeners.PerfilListener;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity implements PerfilListener, InserirDataFragment.DateDialogListener {
+public class ProfileActivity extends AppCompatActivity implements PerfilListener, InserirDataFragment.DateDialogListener, ConfirmarApagarUserDialogFragment.ApagarPerfilListener {
     private ActivityProfileBinding binding;
 
+    private static final String TOKEN = "token";
     public static final String USER = "user";
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
@@ -96,7 +100,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         //noinspection SimplifiableIfStatement
         if (id == R.id.actionDelete) {
 
-            DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
+            DialogFragment dialogFragment = new ConfirmarApagarUserDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
             return true;
         }
@@ -151,9 +155,43 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     }
 
     @Override
+    public void removeUser(Boolean success) {
+        if (!success) {
+            Toast.makeText(getApplicationContext(), R.string.txtUserNaoRemovido, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), R.string.txtUserRemovido, Toast.LENGTH_SHORT).show();
+
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString(TOKEN, "null");
+            editor.putString(USER, "null");
+            editor.putString(ID, "null");
+            editor.putString(PRIMEIRO_NOME, "null");
+            editor.putString(ULTIMO_NOME, "null");
+            editor.putString(DATA_NASCIMENTO, "null");
+            editor.apply();
+
+            SingletonGestorCiclismo.getInstancia(this).ArrCiclismo = new ArrayList<>();
+            SingletonGestorCiclismo.getInstancia(this).ArrCiclismoUnSync = new ArrayList<>();
+            SingletonGestorCiclismo.getInstancia(this).apagarCiclismoDBAll();
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         String dataNascimento = year + "-" + month + "-" + day;
 
         binding.etDataNascimentoPerfil.setText(dataNascimento);
+    }
+
+    @Override
+    public void onApagarClick() {
+        SingletonGestorCiclismo.getInstancia(this).DeleteUser(getApplicationContext());
     }
 }

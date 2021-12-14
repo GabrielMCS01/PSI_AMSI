@@ -13,14 +13,16 @@ import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityDetalhesTreinoMainBinding;
+import com.psi.ciclodias.dialogs.ConfirmarApagarTreinoDialogFragment;
 import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.listeners.CiclismoListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 
-public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener {
+public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener, ConfirmarApagarTreinoDialogFragment.ApagarTreinoListener {
     private ActivityDetalhesTreinoMainBinding binding;
     public static String POSITION_TREINO = "position";
+    public int position, id;
 
 
     @Override
@@ -33,13 +35,14 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         SingletonGestorCiclismo.getInstancia(this).setCiclismoListener(this);
 
+        // Recebe a posição do treino selecionada na recycler view (DB local)
         Intent intent = getIntent();
-        int p = intent.getIntExtra(POSITION_TREINO, -1);
+        position = intent.getIntExtra(POSITION_TREINO, -1);
 
-        System.out.println(p);
-        Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(p);
+        // Recebe o treino com este ID
+        Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(position);
 
-        System.out.println(ciclismo.getId());
+        id = (int)ciclismo.getId();
 
         Fragment mapfragment = mapFragment.getInstancia();
 
@@ -92,9 +95,9 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.actionDelete) {
-
-            DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
+            DialogFragment dialogFragment = new ConfirmarApagarTreinoDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
+
             return true;
         }
 
@@ -129,5 +132,10 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    public void onApagarClick() {
+        SingletonGestorCiclismo.getInstancia(this).DeleteCiclismo(id, getApplicationContext());
     }
 }

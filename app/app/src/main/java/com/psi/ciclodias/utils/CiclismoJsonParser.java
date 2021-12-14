@@ -50,8 +50,6 @@ public class CiclismoJsonParser {
 
     // Guarda um Treino na API
     public static Ciclismo parserJsonCriaCiclismo(String response) {
-
-
         try {
             JSONObject json = new JSONObject(response);
 
@@ -128,37 +126,7 @@ public class CiclismoJsonParser {
         return dadosUser;
     }
 
-    public static Boolean parserJsonRegisto(String response) {
-        boolean success = false;
-
-        try {
-            JSONObject json = new JSONObject(response);
-
-            success = json.getBoolean("success");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return success;
-    }
-
-    public static Boolean parserJsonEditUser(String response) {
-        boolean success = false;
-
-        try {
-            JSONObject json = new JSONObject(response);
-
-            success = json.getBoolean("success");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return success;
-    }
-
-    public static Boolean parserJsonEditCiclismo(String response) {
+    public static Boolean parserJsonSuccess(String response) {
         boolean success = false;
 
         try {
@@ -174,6 +142,8 @@ public class CiclismoJsonParser {
     }
 
 
+    // ------------------------------------- BD Local ----------------------------------------------
+    // Converte os treinos da API para BD Local
     public static JSONArray createJsonArray(ArrayList<Ciclismo> ciclismoArrayList) {
         JSONArray jsonArray = new JSONArray();
         try {

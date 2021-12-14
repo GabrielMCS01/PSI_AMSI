@@ -57,7 +57,6 @@ public class ConfirmarLogoutDialogFragment extends DialogFragment {
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), ":( ", Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         }).setCancelable(false);
