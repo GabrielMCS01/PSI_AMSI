@@ -41,12 +41,9 @@
     <string name="txtGuardadoSucesso">Guardado com Sucesso</string>
     <string name="txtGuardadoSemSucesso">As alterações não foram guardadas</string>
     <string name="txtVelMaxima">Velocidade Máxima</string>
-    <string name="txtPermissaoExplicacao">A aplicação necessita de localização</string>
+    <string name="txtPermissaoExplicacao">A aplicação necessita de acesso á localização</string>
     <string name="txtPermissaoNãoDada">Tem que permitir que a aplicação utilize a localização</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiaXVyaWNhcnJhcyIsImEiOiJja3V3aDJrZWEwNjhuMm5xd3hqNHRuODdiIn0.Yztl8wZEMrxIlkEVwt1zgw</string>
-    <string name="txtDialogTerminarSessao">Pretende Terminar o Treino</string>
-    <string name="txtNao">Não</string>
-    <string name="txtSim">Sim</string>
     <string name="txtDialog">dialog</string>
     <string name="txtGPSPorAdquirir">GPS por Adquirir</string>
     <string name="title_activity_in_progress_training_map">InProgressTrainingMapActivity</string>
