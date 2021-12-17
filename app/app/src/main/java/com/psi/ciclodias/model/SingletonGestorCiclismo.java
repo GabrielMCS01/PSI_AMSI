@@ -402,7 +402,7 @@ public class SingletonGestorCiclismo {
                     Float.parseFloat(dadosCiclismo.get("velocidade_media")),
                     Float.parseFloat(dadosCiclismo.get("velocidade_maxima")),
                     null,
-                    null,
+                    dadosCiclismo.get("rota"),
                     date);
 
             c.setUser_id_ciclismo(-1);

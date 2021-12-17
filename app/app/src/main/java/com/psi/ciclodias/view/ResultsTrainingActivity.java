@@ -54,7 +54,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 dadosCiclismo.put("velocidade_media", String.valueOf(mapFragment.getInstancia().velocityMean));
                 dadosCiclismo.put("velocidade_maxima", String.valueOf(mapFragment.getInstancia().velocityMax));
                 //dadosCiclismo.put("velocidade_grafico", null);
-                //dadosCiclismo.put("rota", null);
+                dadosCiclismo.put("rota", mapFragment.getInstancia().routeString);
 
                 SingletonGestorCiclismo.getInstancia(getApplicationContext()).AddCiclismo(dadosCiclismo, getApplicationContext());
             }

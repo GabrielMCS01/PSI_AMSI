@@ -117,6 +117,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public float velocityMean = 0;
     public float velocityMax = 0;
     public int time = 0;
+    public String routeString = null;
 
 
     private MapboxMapMatching mapMatching;
@@ -249,6 +250,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
                             // Generate a polyline encoded string from the accumulated points.
                             String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
 
+                            routeString = resultGeometryString;
+
 
                             System.out.println(resultGeometryString);
                             System.out.println(resultGeometryString.length());
@@ -312,6 +315,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                     // Generate a polyline encoded string from the accumulated points.
                     String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+                    routeString = resultGeometryString;
 
 
                     ArrayList<DirectionsRoute> list = new ArrayList<>();
