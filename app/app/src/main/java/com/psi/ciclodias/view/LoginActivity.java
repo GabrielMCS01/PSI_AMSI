@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             intentMain.putExtra(USER, username);
             intentMain.putExtra(TOKEN, dadosUser.get("token"));
             startActivity(intentMain);
+            finish();
         }
         else{
             Toast.makeText(this, R.string.login_invalido, Toast.LENGTH_SHORT).show();

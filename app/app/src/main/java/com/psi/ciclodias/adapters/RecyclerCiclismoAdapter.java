@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.listeners.RecyclerViewListener;
 import com.psi.ciclodias.model.Ciclismo;
+import com.psi.ciclodias.utils.Converter;
 
 import java.util.ArrayList;
 
@@ -69,9 +70,9 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
 
         public void update(Ciclismo ciclismo) {
             tvNomeAtividade.setText(ciclismo.getNome_percurso());
-            tvDuracao.setText("" + ciclismo.getDuracao());
-            tvDistancia.setText("" + ciclismo.getDistancia());
-            tvVelMedia.setText("" + ciclismo.getVelocidade_media());
+            tvDuracao.setText(Converter.hourFormat(ciclismo.getDuracao()));
+            tvDistancia.setText(Converter.distanceFormat(ciclismo.getDistancia()));
+            tvVelMedia.setText(Converter.velocityFormat(ciclismo.getVelocidade_media()));
         }
 
 

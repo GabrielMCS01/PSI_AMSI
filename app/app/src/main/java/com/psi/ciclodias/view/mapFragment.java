@@ -58,6 +58,7 @@ import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 import com.psi.ciclodias.model.Chronometer;
+import com.psi.ciclodias.utils.Converter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -501,21 +502,13 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityInstant = nCurrentSpeed;
 
-        Formatter fmt = new Formatter(new StringBuilder());
-        fmt.format(Locale.US, "%5.2f", nCurrentSpeed);
-        String strCurrentSpeed = fmt.toString();
-        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
-
-        // Unidade de medida
-        String strUnits = "Km/h";
-
         setMaxVelocity(nCurrentSpeed);
 
         // Atualiza na view a velocidade atual
         if (trainingBinding != null) {
-            trainingBinding.tvVelInstantaneaTreino.setText(strCurrentSpeed + " " + strUnits);
+            trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
         } else if (mapBinding != null) {
-            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + strCurrentSpeed + " " + strUnits);
+            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + Converter.velocityFormat(velocityInstant));
         }
     }
 
@@ -541,20 +534,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityMean = mean;
 
-        // Formata os dados
-        Formatter fmt = new Formatter(new StringBuilder());
-        fmt.format(Locale.US, "%5.2f", mean);
-        String strMeanVelocity = fmt.toString();
-        strMeanVelocity = strMeanVelocity.replace(' ', '0');
-
-        // Unidade de medida
-        String strUnits = "Km/h";
-
         // Escreve o valor da velocidade no ecrâ em KM/H
         if (trainingBinding != null) {
-            trainingBinding.tvVelMediaTreino.setText(strMeanVelocity + " " + strUnits);
+            trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(mean));
         } else if (mapBinding != null) {
-            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + strMeanVelocity + " " + strUnits);
+            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + Converter.velocityFormat(mean));
         }
     }
 
@@ -578,21 +562,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
 
 
-        // Formata os dados da distancia
-        Formatter fmt = new Formatter(new StringBuilder());
-        // 7 casas e 2 decimais
-        fmt.format(Locale.US, "%7.2f", distance);
-        String strDistance = fmt.toString();
-        strDistance = strDistance.replace(' ', '0');
-
-        // Unidade de medida
-        String strUnits = "m";
-
         // Atualiza na view o valor da distância
         if (trainingBinding != null) {
-            trainingBinding.tvDistanciaTreino.setText(strDistance + " " + strUnits);
+            trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
         } else if (mapBinding != null) {
-            mapBinding.tvDistancia.setText("Distancia:\n" + strDistance + " " + strUnits);
+            mapBinding.tvDistancia.setText("Distancia:\n" + Converter.distanceFormat(distance));
         }
 
 
@@ -600,30 +574,30 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Mostra os resultados do treino no ResultsTrainingActivity
     public void getResults(ActivityResultsTrainingBinding binding) {
-        binding.tvVelMaxResumo.setText("Velocidade Máxima:\n" + velocityMax + " Km/h");
-        binding.tvVelMediaResumo.setText("Velocidade Média:\n" + velocityMean + "Km/h");
-        binding.tvDistanciaResumo.setText("Distancia:\n" + distance + "m");
-        binding.tvTempoResumo.setText("Tempo: \n" + time + "s");
+        binding.tvVelMaxResumo.setText("Velocidade Máxima:\n" + Converter.velocityFormat(velocityMax));
+        binding.tvVelMediaResumo.setText("Velocidade Média:\n" + Converter.velocityFormat(velocityMean));
+        binding.tvDistanciaResumo.setText("Distancia:\n" + Converter.distanceFormat(distance));
+        binding.tvTempoResumo.setText("Tempo: \n" + Converter.hourFormat(time));
         isFinished = true;
     }
 
 
     public void setData() {
         if (trainingBinding != null) {
-            trainingBinding.tvDuracaoTreino.setText(time + "s");
-            trainingBinding.tvVelMediaTreino.setText(velocityMean + "Km/h");
-            trainingBinding.tvDistanciaTreino.setText(distance + "m");
-            trainingBinding.tvVelInstantaneaTreino.setText(velocityInstant + " Km/h");
+            trainingBinding.tvDuracaoTreino.setText(Converter.hourFormat(time));
+            trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(velocityMean));
+            trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
+            trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
         } else if (mapBinding != null) {
-            mapBinding.tvTempo.setText("Tempo:\n" + time + "s");
-            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + velocityInstant + " Km/h");
-            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + velocityMean + "Km/h");
-            mapBinding.tvDistancia.setText("Distancia:\n" + distance + "m");
+            mapBinding.tvTempo.setText("Tempo:\n" + Converter.hourFormat(time));
+            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + Converter.velocityFormat(velocityInstant));
+            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + Converter.velocityFormat(velocityMean));
+            mapBinding.tvDistancia.setText("Distancia:\n" + Converter.distanceFormat(distance));
         } else if (pausedBinding != null) {
-            pausedBinding.tvDistanciaPausa.setText("Distancia:\n" + distance + "m");
-            pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima:\n" + velocityMax + " Km/h");
-            pausedBinding.tvVelMediaPausa.setText("Velocidade Média:\n" + velocityMean + "Km/h");
-            pausedBinding.tvTempoPausa.setText("Tempo:\n" + time + "s");
+            pausedBinding.tvDistanciaPausa.setText("Distancia:\n" + Converter.distanceFormat(distance));
+            pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima:\n" + Converter.velocityFormat(velocityMax));
+            pausedBinding.tvVelMediaPausa.setText("Velocidade Média:\n" + Converter.velocityFormat(velocityMean));
+            pausedBinding.tvTempoPausa.setText("Tempo:\n" + Converter.hourFormat(time));
         }
     }
 
