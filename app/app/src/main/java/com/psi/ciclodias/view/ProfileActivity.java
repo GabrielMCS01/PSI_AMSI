@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityProfileBinding;
 import com.psi.ciclodias.dialogs.ConfirmarApagarUserDialogFragment;
-import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.dialogs.InserirDataFragment;
 import com.psi.ciclodias.listeners.PerfilListener;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
@@ -121,10 +120,10 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         binding.etDataNascimentoPerfil.setText(sharedPreferences.getString(DATA_NASCIMENTO, ""));
 
         // Dados das atividades
-        binding.tvDistanciaPerfil.setText("Distância: \n " + Converter.distanceFormat(SingletonGestorCiclismo.getInstancia(this).getDistancia()));
-        binding.tvTempoPerfil.setText("Tempo: \n" + Converter.hourFormat(SingletonGestorCiclismo.getInstancia(this).getDuracao()));
-        binding.tvVelMediaPerfil.setText("Vel Média: \n" + Converter.velocityFormat(SingletonGestorCiclismo.getInstancia(this).getVelocidadeMedia()));
-        binding.tvVelMaxPerfil.setText("Vel Máxima: \n" + Converter.velocityFormat(SingletonGestorCiclismo.getInstancia(this).getVelocidadeMaxima()));
+        binding.tvDistanciaPerfil.setText(Converter.distanceFormat(SingletonGestorCiclismo.getInstancia(this).getDistancia()));
+        binding.tvTempoPerfil.setText(Converter.hourFormat(SingletonGestorCiclismo.getInstancia(this).getDuracao()));
+        binding.tvVelMediaPerfil.setText(Converter.velocityFormat(SingletonGestorCiclismo.getInstancia(this).getVelocidadeMedia()));
+        binding.tvVelMaxPerfil.setText(Converter.velocityFormat(SingletonGestorCiclismo.getInstancia(this).getVelocidadeMaxima()));
     }
 
     // Preenche o perfil com os dados atualizados do perfil

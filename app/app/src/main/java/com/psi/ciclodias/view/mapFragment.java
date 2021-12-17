@@ -513,10 +513,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
         if (trainingBinding != null) {
             trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
         } else if (mapBinding != null) {
-            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + Converter.velocityFormat(velocityInstant));
+            mapBinding.tvVelInstantanea.setText(Converter.velocityFormat(velocityInstant));
         }
     }
 
+    // Substitui o valor da velocidade máxima anterior com o da nova
     private void setMaxVelocity(float nCurrentSpeed) {
         if (nCurrentSpeed > velocityMax) {
             velocityMax = nCurrentSpeed;
@@ -543,7 +544,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         if (trainingBinding != null) {
             trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(mean));
         } else if (mapBinding != null) {
-            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + Converter.velocityFormat(mean));
+            mapBinding.tvVelMedia.setText(Converter.velocityFormat(mean));
         }
     }
 
@@ -571,7 +572,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         if (trainingBinding != null) {
             trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
         } else if (mapBinding != null) {
-            mapBinding.tvDistancia.setText("Distancia:\n" + Converter.distanceFormat(distance));
+            mapBinding.tvDistancia.setText(Converter.distanceFormat(distance));
         }
 
 
@@ -579,10 +580,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Mostra os resultados do treino no ResultsTrainingActivity
     public void getResults(ActivityResultsTrainingBinding binding) {
-        binding.tvVelMaxResumo.setText("Velocidade Máxima:\n" + Converter.velocityFormat(velocityMax));
-        binding.tvVelMediaResumo.setText("Velocidade Média:\n" + Converter.velocityFormat(velocityMean));
-        binding.tvDistanciaResumo.setText("Distancia:\n" + Converter.distanceFormat(distance));
-        binding.tvTempoResumo.setText("Tempo: \n" + Converter.hourFormat(time));
+        binding.tvVelMaxResumo.setText(Converter.velocityFormat(velocityMax));
+        binding.tvVelMediaResumo.setText(Converter.velocityFormat(velocityMean));
+        binding.tvDistanciaResumo.setText(Converter.distanceFormat(distance));
+        binding.tvTempoResumo.setText(Converter.hourFormat(time));
         isFinished = true;
     }
 
@@ -594,15 +595,15 @@ public class mapFragment extends Fragment implements PermissionsListener {
             trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
             trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
         } else if (mapBinding != null) {
-            mapBinding.tvTempo.setText("Tempo:\n" + Converter.hourFormat(time));
-            mapBinding.tvVelMax.setText("Velocidade Instantanea:\n" + Converter.velocityFormat(velocityInstant));
-            mapBinding.tvVelMedia.setText("Velocidade Média:\n" + Converter.velocityFormat(velocityMean));
-            mapBinding.tvDistancia.setText("Distancia:\n" + Converter.distanceFormat(distance));
+            mapBinding.tvTempo.setText(Converter.hourFormat(time));
+            mapBinding.tvVelInstantanea.setText(Converter.velocityFormat(velocityInstant));
+            mapBinding.tvVelMedia.setText(Converter.velocityFormat(velocityMean));
+            mapBinding.tvDistancia.setText(Converter.distanceFormat(distance));
         } else if (pausedBinding != null) {
-            pausedBinding.tvDistanciaPausa.setText("Distancia:\n" + Converter.distanceFormat(distance));
-            pausedBinding.tvVelMaxPausa.setText("Velocidade Máxima:\n" + Converter.velocityFormat(velocityMax));
-            pausedBinding.tvVelMediaPausa.setText("Velocidade Média:\n" + Converter.velocityFormat(velocityMean));
-            pausedBinding.tvTempoPausa.setText("Tempo:\n" + Converter.hourFormat(time));
+            pausedBinding.tvDistanciaPausa.setText(Converter.distanceFormat(distance));
+            pausedBinding.tvVelMaxPausa.setText(Converter.velocityFormat(velocityMax));
+            pausedBinding.tvVelMediaPausa.setText(Converter.velocityFormat(velocityMean));
+            pausedBinding.tvTempoPausa.setText(Converter.hourFormat(time));
         }
     }
 

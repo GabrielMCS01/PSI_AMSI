@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityDetalhesTreinoMainBinding;
 import com.psi.ciclodias.dialogs.ConfirmarApagarTreinoDialogFragment;
-import com.psi.ciclodias.dialogs.ConfirmarLogoutDialogFragment;
 import com.psi.ciclodias.listeners.CiclismoListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
@@ -55,10 +54,10 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         }
 
         // Preencher as textViews com os dados do treino
-        binding.tvDistanciaDetalhes.setText("Distancia: " + Converter.distanceFormat(ciclismo.getDistancia()));
-        binding.tvTempoDetalhes.setText("Tempo: " + Converter.hourFormat(ciclismo.getDuracao()));
-        binding.tvVelMaxDetalhes.setText("Vel Máxima: " + Converter.velocityFormat(ciclismo.getVelocidade_maxima()));
-        binding.tvVelMediaDetalhes.setText("Vel Média: " + Converter.velocityFormat(ciclismo.getVelocidade_media()));
+        binding.tvDistanciaDetalhes.setText(Converter.distanceFormat(ciclismo.getDistancia()));
+        binding.tvTempoDetalhes.setText(Converter.hourFormat(ciclismo.getDuracao()));
+        binding.tvVelMaxDetalhes.setText(Converter.velocityFormat(ciclismo.getVelocidade_maxima()));
+        binding.tvVelMediaDetalhes.setText(Converter.velocityFormat(ciclismo.getVelocidade_media()));
         binding.etNomeTreinoDetalhes.setText(ciclismo.getNome_percurso());
 
 

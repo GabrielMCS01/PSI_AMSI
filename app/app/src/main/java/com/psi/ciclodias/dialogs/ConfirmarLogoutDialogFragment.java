@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,14 +18,12 @@ import com.psi.ciclodias.view.LoginActivity;
 import java.util.ArrayList;
 
 public class ConfirmarLogoutDialogFragment extends DialogFragment {
-
     public static final String TOKEN = "token";
     public static final String USER = "user";
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
     private static final String ULTIMO_NOME = "ultimo_nome";
     private static final String DATA_NASCIMENTO = "data_nascimento";
-
 
     @NonNull
     @Override
