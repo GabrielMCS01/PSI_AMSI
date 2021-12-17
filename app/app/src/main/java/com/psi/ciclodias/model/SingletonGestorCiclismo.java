@@ -106,10 +106,6 @@ public class SingletonGestorCiclismo {
 
     // Recebe os treinos do utilizador
     public Ciclismo getCiclismo(int id) {
-        /*for (Ciclismo c : ArrCiclismo) {
-            if (c.getId() == id)
-                return c;
-        }*/
         Ciclismo ciclismo = ArrCiclismo.get(id);
 
         return ciclismo;
@@ -209,7 +205,7 @@ public class SingletonGestorCiclismo {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            registoListener.createUser(CiclismoJsonParser.parserJsonRegisto(response));
+                            registoListener.createUser(CiclismoJsonParser.parserJsonSuccess(response));
                         }
                     },
                     new Response.ErrorListener() {
@@ -233,7 +229,7 @@ public class SingletonGestorCiclismo {
     }
 
     // Edita o utilizador
-    public void EditUser(final Map<String, String> dadosEdicao,final Context context) {
+    public void EditUser(final Map<String, String> dadosEdicao, final Context context) {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
         } else {
@@ -247,7 +243,7 @@ public class SingletonGestorCiclismo {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            perfilListener.editUser(CiclismoJsonParser.parserJsonEditUser(response));
+                            perfilListener.editUser(CiclismoJsonParser.parserJsonSuccess(response));
                         }
                     },
                     new Response.ErrorListener() {
@@ -265,6 +261,39 @@ public class SingletonGestorCiclismo {
                     return params;
                 }
             };
+
+            volleyQueue.add(req);
+        }
+    }
+
+    // Apaga o utilizador
+    public void DeleteUser(final Context context) {
+        if (!CiclismoJsonParser.isInternetConnection(context)) {
+            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+            String url = URL_USER + "/" + sharedPreferences.getString(ID, "") + "?access-token=" + sharedPreferences.getString(TOKEN, "");
+
+            StringRequest req = new StringRequest(
+                    Request.Method.DELETE,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (CiclismoJsonParser.parserJsonSuccess(response)) {
+                                perfilListener.removeUser(true);
+                            }
+                            else perfilListener.removeUser(false);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
 
             volleyQueue.add(req);
         }
@@ -349,26 +378,9 @@ public class SingletonGestorCiclismo {
                                 Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
-                ); /*{
-                    @Nullable
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-
-                        JSONArray json = new JSONArray();
-                        for (Ciclismo c : ArrCiclismoUnSync){
-                            json.put(c);
-                        }
-                        System.out.println(json.toString());
-                        params.put("treinos", json.toString());
-
-                        return params;
-                    }*/
-
+                );
 
                 volleyQueue.add(req);
-
-
             }
         }
     }
@@ -380,8 +392,6 @@ public class SingletonGestorCiclismo {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             // Cria localmente se não tiver Internet
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-
-            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
             String date = sdf.format(new Date());
@@ -453,7 +463,7 @@ public class SingletonGestorCiclismo {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            if (CiclismoJsonParser.parserJsonEditCiclismo(response)) {
+                            if (CiclismoJsonParser.parserJsonSuccess(response)) {
                                 atualizarCiclismoDB(id, dadosEdicao);
 
                                 ciclismoListener.editCiclismo(true);
@@ -482,8 +492,42 @@ public class SingletonGestorCiclismo {
         }
     }
 
+    // Apaga uma sessão de treino
+    public void DeleteCiclismo(long id, final Context context) {
+        if (!CiclismoJsonParser.isInternetConnection(context)) {
+            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
-    // Login pela API
+            String url = URL_CICLISMO + "/" + id + "?access-token=" + sharedPreferences.getString(TOKEN, "");
+
+            StringRequest req = new StringRequest(
+                    Request.Method.DELETE,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (CiclismoJsonParser.parserJsonSuccess(response)) {
+                                apagarCiclismoDB(id);
+
+                                ciclismoListener.removeCiclismo(true);
+                            }
+                            else ciclismoListener.removeCiclismo(false);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+            volleyQueue.add(req);
+        }
+    }
+
+
+    // ------------------------------------- LOGIN -------------------------------------------------
     // Envia uma resposta ao LoginListener onde o login é validado
     public void loginAPI(final String username, final String password, final Context context) {
         if (!CiclismoJsonParser.isInternetConnection(context)) {
@@ -522,7 +566,8 @@ public class SingletonGestorCiclismo {
         }
     }
 
-    // Encapsulamento do LoginListener
+    // --------------------------------- Setters dos Listeners -------------------------------------
+    // Encapsulamento
     public void setLoginListener(LoginListener loginListener) {
         this.loginListener = loginListener;
     }
@@ -543,6 +588,13 @@ public class SingletonGestorCiclismo {
         this.createCiclismoListener = createCiclismoListener;
     }
 
+    public void setCiclismoListener(CiclismoListener ciclismoListener) {
+        this.ciclismoListener = ciclismoListener;
+    }
+
+    // ---------------------------------- OUTROS METODOS -------------------------------------------
+    // Preencher o array Unsync quando se entra na aplicação para verificar se existem treinos que
+    // ainda não foram enviados para a API
     public void PreencherArrCiclismoUnsync() {
         if(ArrCiclismoUnSync.size() == 0) {
             ArrayList<Ciclismo> arrayList = new ArrayList<>();
@@ -556,9 +608,5 @@ public class SingletonGestorCiclismo {
                 }
             }
         }
-    }
-
-    public void setCiclismoListener(CiclismoListener ciclismoListener) {
-        this.ciclismoListener = ciclismoListener;
     }
 }

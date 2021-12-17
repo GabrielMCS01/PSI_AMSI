@@ -60,6 +60,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
             }
         });
 
+        // PRECISA DE MAIS COISAS!
         binding.btSairResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
