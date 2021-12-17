@@ -15,11 +15,12 @@ import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityDetalhesTreinoMainBinding;
 import com.psi.ciclodias.dialogs.ConfirmarApagarTreinoDialogFragment;
 import com.psi.ciclodias.listeners.CiclismoListener;
+import com.psi.ciclodias.listeners.RotaListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 import com.psi.ciclodias.utils.Converter;
 
-public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener, ConfirmarApagarTreinoDialogFragment.ApagarTreinoListener {
+public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener, ConfirmarApagarTreinoDialogFragment.ApagarTreinoListener, RotaListener {
     private ActivityDetalhesTreinoMainBinding binding;
     public static String POSITION_TREINO = "position";
     public int position, id;
@@ -32,8 +33,18 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         // Recebe os IDs da Activity Results Training
         binding = ActivityDetalhesTreinoMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        Fragment mapfragment = mapFragment.getInstancia();
 
+        if(mapfragment != null){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mapViewResult, mapfragment)
+                    .commit();
+        }
+
+        mapFragment.getInstancia().isDetails = true;
         SingletonGestorCiclismo.getInstancia(this).setCiclismoListener(this);
+        mapFragment.getInstancia().setRotaListener(this);
 
         // Recebe a posição do treino selecionada na recycler view (DB local)
         Intent intent = getIntent();
@@ -43,15 +54,6 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(position);
 
         id = (int)ciclismo.getId();
-
-        Fragment mapfragment = mapFragment.getInstancia();
-
-        if(mapfragment != null){
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.mapViewResult, mapfragment)
-                    .commit();
-        }
 
         // Preencher as textViews com os dados do treino
         binding.tvDistanciaDetalhes.setText(Converter.distanceFormat(ciclismo.getDistancia()));
@@ -64,6 +66,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         binding.btVoltarDetalhes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mapFragment.getInstancia().onMyDestroy();
                 Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                 startActivity(intent);
                 finish();
@@ -114,6 +117,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         else {
             Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
+            mapFragment.getInstancia().onMyDestroy();
             Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
             startActivity(intent);
             finish();
@@ -128,6 +132,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         else {
             Toast.makeText(getApplicationContext(), R.string.txtCiclismoRemovido, Toast.LENGTH_SHORT).show();
+            mapFragment.getInstancia().onMyDestroy();
             Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
             startActivity(intent);
             finish();
@@ -137,5 +142,11 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
     @Override
     public void onApagarClick() {
         SingletonGestorCiclismo.getInstancia(this).DeleteCiclismo(id, getApplicationContext());
+    }
+
+    @Override
+    public void setRoute() {
+        Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(position);
+        mapFragment.getInstancia().setRoute(ciclismo.getRota(), this);
     }
 }
