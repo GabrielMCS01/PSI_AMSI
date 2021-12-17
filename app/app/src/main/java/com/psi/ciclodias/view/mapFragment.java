@@ -626,7 +626,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
 
     public void setRoute(String route, Context context) {
-        if (route != null) {
+        if (!route.equals("null")) {
             System.out.println(route);
             ArrayList<DirectionsRoute> list = new ArrayList<>();
             list.add(DirectionsRoute.builder().geometry(route).duration(0.0).distance(0.0).build());
