@@ -27,8 +27,8 @@ public class Chronometer extends Thread {
         
         private static Chronometer instancia = null;
 
-        public static synchronized Chronometer getInstancia(){
-            if (instancia == null){ instancia = new Chronometer();}
+        public static synchronized Chronometer getInstancia(boolean newChrometer){
+            if (instancia == null || newChrometer){ instancia = new Chronometer();}
             return instancia;
         }
 

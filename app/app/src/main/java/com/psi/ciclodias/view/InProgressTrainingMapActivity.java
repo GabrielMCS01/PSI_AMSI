@@ -28,7 +28,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
 
 
         mapFragment.getInstancia().mapBinding = binding;
-        Chronometer.getInstancia().mapBinding = binding;
+        Chronometer.getInstancia(false).mapBinding = binding;
 
         mapFragment.getInstancia().setData();
 
@@ -57,7 +57,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().mapBinding = null;
-                Chronometer.getInstancia().stopVariable = true;
+                Chronometer.getInstancia(false).stopVariable = true;
                 mapFragment.getInstancia().resumeTimer = true;
                 finish();
                 return false;
@@ -92,7 +92,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().mapBinding = null;
-                Chronometer.getInstancia().mapBinding = null;
+                Chronometer.getInstancia(false).mapBinding = null;
                 finish();
             }
         });

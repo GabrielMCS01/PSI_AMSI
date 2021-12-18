@@ -56,6 +56,12 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 //dadosCiclismo.put("velocidade_grafico", null);
                 dadosCiclismo.put("rota", mapFragment.getInstancia().routeString);
 
+                mapFragment.getInstancia().distance = 0;
+                mapFragment.getInstancia().velocityMax = 0;
+                mapFragment.getInstancia().velocityMean = 0;
+                mapFragment.getInstancia().time = 0;
+                mapFragment.getInstancia().velocityInstant = 0;
+
                 SingletonGestorCiclismo.getInstancia(getApplicationContext()).AddCiclismo(dadosCiclismo, getApplicationContext());
             }
         });
@@ -70,6 +76,12 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 if (respostaUser){
                     mapFragment.getInstancia().onMyDestroy();
+                    mapFragment.getInstancia().distance = 0;
+                    mapFragment.getInstancia().velocityMax = 0;
+                    mapFragment.getInstancia().velocityMean = 0;
+                    mapFragment.getInstancia().time = 0;
+                    mapFragment.getInstancia().velocityInstant = 0;
+
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();

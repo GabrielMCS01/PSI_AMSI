@@ -271,6 +271,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                             ArrayList<DirectionsRoute> list = new ArrayList<>();
                             list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
 
+                            mapboxNavigation.setRoutes(new ArrayList<>());
                             mapboxNavigation.setRoutes(list);
 
                             routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
@@ -289,6 +290,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                                         System.out.println("Hello");
                                         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
+                                        routes = new ArrayList<>();
                                         CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
 
                                         // Modifica o zoom na câmera automaticamente
@@ -314,6 +316,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     });
 
                 } else {
+                    pointsList = new ArrayList<>();
                     ArrayList<Point> resultGeometry = new ArrayList<>();
                     for (DirectionsRoute directions : listDirections) {
 
@@ -330,10 +333,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                     routeString = resultGeometryString;
 
-
                     ArrayList<DirectionsRoute> list = new ArrayList<>();
                     list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
 
+                    mapboxNavigation.setRoutes(new ArrayList<>());
                     mapboxNavigation.setRoutes(list);
 
                     routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
@@ -351,6 +354,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                                 routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
                                 System.out.println("Hello");
 
+                                routes = new ArrayList<>();
                                 MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
                                 CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
@@ -442,15 +446,14 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     });
 
                 }
-
-
                 // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
                 // No InProgressTrainingActivity
                 if (trainingBinding != null) {
                     isRunning = true;
-                    Chronometer.getInstancia().trainingBinding = trainingBinding;
+                    Chronometer.getInstancia(false).trainingBinding = trainingBinding;
                     if (startTimer) {
-                        chronometer = Chronometer.getInstancia();
+                        chronometer = Chronometer.getInstancia(true);
+                        Chronometer.getInstancia(false).trainingBinding = trainingBinding;
                         chronometer.start();
                         startTimer = false;
                     }
@@ -466,7 +469,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 } else if (mapBinding != null) {
                     updateCamera(location);
                     isRunning = true;
-                    Chronometer.getInstancia().mapBinding = mapBinding;
+                    Chronometer.getInstancia(false).mapBinding = mapBinding;
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
@@ -503,12 +506,16 @@ public class mapFragment extends Fragment implements PermissionsListener {
         mapboxNavigation.resetTripSession();
         mapboxNavigation.stopTripSession();
         mapboxNavigation.setRoutes(new ArrayList<>());
-        mapboxNavigation.unregisterRoutesObserver(routesObserver);
+        listDirections = new ArrayList<>();
+        if (routesObserver != null) {
+            mapboxNavigation.unregisterRoutesObserver(routesObserver);
+        }
         mapboxNavigation.unregisterLocationObserver(locationObs);
         trainingBinding = null;
         pausedBinding = null;
         mapBinding = null;
         if (chronometer != null) {
+            startTimer = true;
             chronometer.stop = true;
             time = chronometer.getTime();
         }

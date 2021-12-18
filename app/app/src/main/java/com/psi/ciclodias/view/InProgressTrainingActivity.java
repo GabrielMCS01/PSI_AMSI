@@ -56,7 +56,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().trainingBinding = null;
-                Chronometer.getInstancia().stopVariable = true;
+                Chronometer.getInstancia(false).stopVariable = true;
                 mapFragment.getInstancia().resumeTimer = true;
                 finish();
                 return false;
@@ -69,7 +69,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingMapActivity.class);
                 startActivity(intent);
                 mapFragment.getInstancia().trainingBinding = null;
-                Chronometer.getInstancia().trainingBinding = null;
+                Chronometer.getInstancia(false).trainingBinding = null;
                 finish();
             }
         });
