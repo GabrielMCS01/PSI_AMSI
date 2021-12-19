@@ -147,6 +147,13 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
     @Override
     public void setRoute() {
         Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(position);
-        mapFragment.getInstancia().setRoute(ciclismo.getRota(), this);
+
+        // Rota pode ser nula e dá crash na aplicação
+        String rota = ciclismo.getRota();
+        if (rota == null){
+            rota = "null";
+        }
+
+        mapFragment.getInstancia().setRoute(rota, this);
     }
 }
