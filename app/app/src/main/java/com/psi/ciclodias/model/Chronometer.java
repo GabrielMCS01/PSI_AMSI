@@ -54,7 +54,7 @@ public class Chronometer extends Thread {
                         mapBinding.tvTempo.post(new Runnable() {
                             @Override
                             public void run() {
-                                mapBinding.tvTempo.setText("Tempo: \n"  + Converter.hourFormat(timeSeconds));
+                                mapBinding.tvTempo.setText(Converter.hourFormat(timeSeconds));
                             }
                         });
                     }

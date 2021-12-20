@@ -150,6 +150,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         // Rota pode ser nula e dá crash na aplicação
         String rota = ciclismo.getRota();
+        System.out.println(rota);
         if (rota == null){
             rota = "null";
         }

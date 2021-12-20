@@ -224,6 +224,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
             }
             if (isDetails) {
+                System.out.println("isDetails entered");
                 rotaListener.setRoute();
                 isDetails = false;
             }

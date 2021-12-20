@@ -63,10 +63,10 @@ public class CiclismoJsonParser {
 
             // velocidade grafico é JSON
             //String velocidade_grafico = json.getString("velocidade_grafico");
-            //String rota = json.getString("rota");
+            String rota = json.getString("rota");
             String data_treino = json.getString("data_treino");
 
-            Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, null, null, data_treino);
+            Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, null, rota, data_treino);
 
             System.out.println(id);
             return ciclismo;
