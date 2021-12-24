@@ -401,7 +401,7 @@ public class SingletonGestorCiclismo {
                     Integer.parseInt(dadosCiclismo.get("distancia")),
                     Float.parseFloat(dadosCiclismo.get("velocidade_media")),
                     Float.parseFloat(dadosCiclismo.get("velocidade_maxima")),
-                    null,
+                    dadosCiclismo.get("velocidade_grafico"),
                     dadosCiclismo.get("rota"),
                     date);
 

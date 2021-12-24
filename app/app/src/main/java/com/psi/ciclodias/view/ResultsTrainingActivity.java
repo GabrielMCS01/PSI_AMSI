@@ -13,6 +13,7 @@ import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.listeners.CreateCiclismoListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
+import com.psi.ciclodias.utils.CiclismoJsonParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 dadosCiclismo.put("distancia", String.valueOf(distance));
                 dadosCiclismo.put("velocidade_media", String.valueOf(mapFragment.getInstancia().velocityMean));
                 dadosCiclismo.put("velocidade_maxima", String.valueOf(mapFragment.getInstancia().velocityMax));
-                //dadosCiclismo.put("velocidade_grafico", null);
+                dadosCiclismo.put("velocidade_grafico", CiclismoJsonParser.createJsonVelocity(mapFragment.getInstancia().arrayVelocity).toString());
                 dadosCiclismo.put("rota", mapFragment.getInstancia().routeString);
 
                 mapFragment.getInstancia().distance = 0;

@@ -120,6 +120,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public float velocityMax = 0;
     public int time = 0;
     public String routeString = null;
+    public ArrayList<Float> arrayVelocity = new ArrayList<>();
 
 
     private MapboxMapMatching mapMatching;
@@ -531,6 +532,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
         nCurrentSpeed = location.getSpeed() * 3.6F;
 
         velocityInstant = nCurrentSpeed;
+
+        arrayVelocity.add(velocityInstant);
 
         setMaxVelocity(nCurrentSpeed);
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.google.gson.JsonArray;
 import com.psi.ciclodias.model.Ciclismo;
 
 import org.json.JSONArray;
@@ -62,11 +63,11 @@ public class CiclismoJsonParser {
             double velocidade_maxima = json.getDouble("velocidade_maxima");
 
             // velocidade grafico é JSON
-            //String velocidade_grafico = json.getString("velocidade_grafico");
+            String velocidade_grafico = json.getString("velocidade_grafico");
             String rota = json.getString("rota");
             String data_treino = json.getString("data_treino");
 
-            Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, null, rota, data_treino);
+            Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
 
             System.out.println(id);
             return ciclismo;
@@ -167,4 +168,18 @@ public class CiclismoJsonParser {
 
         return jsonArray;
     }
+
+    //-------------------------------------- Velocidade --------------------------------------------
+    //Converte arraylist para json
+    public static JsonArray createJsonVelocity(ArrayList<Float> arrayList){
+
+        JsonArray jsonArray = new JsonArray();
+
+        for(float velocity: arrayList){
+            jsonArray.add(velocity);
+        }
+
+        return jsonArray;
+    }
+
 }
