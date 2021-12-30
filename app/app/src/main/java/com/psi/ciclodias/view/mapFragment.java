@@ -533,7 +533,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityInstant = nCurrentSpeed;
 
-        arrayVelocity.add(velocityInstant);
+        arrayVelocity.add((float)Math.round(velocityInstant*100)/100);
 
         setMaxVelocity(nCurrentSpeed);
 

@@ -28,6 +28,7 @@
         <entry key="..\:/Users/gabri/Desktop/Universidade_Ficheiros/Semestre_3/Acesso_Movel_Sistemas_Informacao/Projeto/PSI_AMSI/app/app/src/main/res/menu/main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_in_progress_training.xml" value="0.34601449275362317" />
         <entry key="app/src/main/res/layout/activity_in_progress_training_map.xml" value="0.30117753623188404" />
+        <entry key="app/src/main/res/layout/activity_main_page.xml" value="0.1574074074074074" />
         <entry key="app/src/main/res/layout/activity_paused_training.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.22146739130434784" />
         <entry key="app/src/main/res/layout/activity_results_training.xml" value="0.28306159420289856" />
@@ -35,6 +36,7 @@
         <entry key="app/src/main/res/layout/content_in_progress_training_map.xml" value="0.30117753623188404" />
         <entry key="app/src/main/res/layout/fragment_confirmar_saida_dialog.xml" value="0.2125" />
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.3428442028985507" />
+        <entry key="app/src/main/res/layout/item_ciclismo_cartao.xml" value="0.3489583333333333" />
       </map>
     </option>
   </component>

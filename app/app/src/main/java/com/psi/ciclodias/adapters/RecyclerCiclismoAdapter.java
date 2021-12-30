@@ -22,6 +22,8 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
     private RecyclerViewListener itemListener = null;
 
 
+
+
     // Construtor que recebe o contexto e a lista com as atividades do utilizador
     public RecyclerCiclismoAdapter(Context context, ArrayList<Ciclismo> lista){
         this.context = context;
