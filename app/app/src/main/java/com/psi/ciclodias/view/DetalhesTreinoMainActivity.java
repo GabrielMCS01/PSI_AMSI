@@ -157,4 +157,25 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
         mapFragment.getInstancia().setRoute(rota, this);
     }
+
+
+    @Override
+    public void onBackPressed() {
+        mapFragment.getInstancia().onMyDestroy();
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapFragment.getInstancia().onMyDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapFragment.getInstancia().startNavigation();
+        mapFragment.getInstancia().isDetails = true;
+        mapFragment.getInstancia().setRotaListener(this);
+    }
 }
