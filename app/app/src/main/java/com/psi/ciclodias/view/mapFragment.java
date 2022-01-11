@@ -7,6 +7,8 @@ import android.icu.text.Transliterator;
 import android.location.Location;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -182,35 +184,37 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Responsavel por dar um estilo ao mapa e criar o puck de localização
     private void loadMap() {
+            //Carregar o estilo no mapa
+            mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
+                @Override
+                public void onStyleLoaded(@NonNull Style style) {
 
-        //Carregar o estilo no mapa
-        mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
+                    if (!isFinished) {
+                        LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
-                if (!isFinished) {
-                    LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
-
-                    //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
-                    locationComponentPlugin.setLocationProvider(navigationLocationProvider);
-
-
-                    //Carregar o puck de localização
-                    LocationPuck2D locationPuck2D = new LocationPuck2D();
-                    locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
-
-                    // Colocar o puck no mapa
-                    locationComponentPlugin.setLocationPuck(locationPuck2D);
+                        //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
+                        locationComponentPlugin.setLocationProvider(navigationLocationProvider);
 
 
-                    locationComponentPlugin.setEnabled(true);
+                        //Carregar o puck de localização
+                        LocationPuck2D locationPuck2D = new LocationPuck2D();
+                        locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
+
+                        // Colocar o puck no mapa
+                        locationComponentPlugin.setLocationPuck(locationPuck2D);
+
+
+                        locationComponentPlugin.setEnabled(true);
+                    }
+                    // Verificar as permissões de localização e começar a navegação
+                    startNavigation();
+
                 }
-                // Verificar as permissões de localização e começar a navegação
-                startNavigation();
+            });
 
-            }
-        });
-    }
+
+
+}
 
     // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
@@ -386,6 +390,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        System.out.println("I am on 'onRequestPermissionsResult'");
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
         startNavigation();
     }
@@ -485,6 +490,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
     };
 
 
+
+
     private void updateCamera(Location location) {
         // Animações na câmera
         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
@@ -533,7 +540,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityInstant = nCurrentSpeed;
 
-        arrayVelocity.add((float)Math.round(velocityInstant*100)/100);
+        arrayVelocity.add((float) Math.round(velocityInstant * 100) / 100);
 
         setMaxVelocity(nCurrentSpeed);
 
