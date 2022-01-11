@@ -23,6 +23,7 @@ import com.psi.ciclodias.listeners.RegistoListener;
 import com.psi.ciclodias.utils.CiclismoJsonParser;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -310,13 +311,12 @@ public class SingletonGestorCiclismo {
 
                 String url = URL_CICLISMO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
-                JsonArrayRequest req = new JsonArrayRequest(
+                StringRequest req = new StringRequest(
                         Request.Method.GET,
                         url,
-                        null,
-                        new Response.Listener<JSONArray>() {
+                        new Response.Listener<String>() {
                             @Override
-                            public void onResponse(JSONArray response) {
+                            public void onResponse(String response) {
                                 ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
 
                                 // Recebe todos os treinos da API e cria-os na BD local
@@ -346,15 +346,12 @@ public class SingletonGestorCiclismo {
 
                 JSONArray json = CiclismoJsonParser.createJsonArray(ArrCiclismoUnSync);
 
-                System.out.println(json);
-
-                JsonArrayRequest req = new JsonArrayRequest(
+                StringRequest req = new StringRequest(
                         Request.Method.POST,
                         url,
-                        json,
-                        new Response.Listener<JSONArray>() {
+                        new Response.Listener<String>() {
                             @Override
-                            public void onResponse(JSONArray response) {
+                            public void onResponse(String response) {
                                 ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
 
                                 // Apaga os treinos todos
@@ -378,7 +375,22 @@ public class SingletonGestorCiclismo {
                                 Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
-                );
+                ){
+                    @Nullable
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+
+                        JSONArray json = CiclismoJsonParser.createJsonArray(ArrCiclismoUnSync);
+
+                        try {
+                            params.put("treinos", json.toString(1));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return params;
+                    }
+                };
 
                 volleyQueue.add(req);
             }

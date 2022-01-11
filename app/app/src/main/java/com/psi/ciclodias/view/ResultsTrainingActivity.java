@@ -35,7 +35,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
 
         Fragment mapfragment = mapFragment.getInstancia();
 
-        if(mapfragment != null){
+        if (mapfragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.mapViewResult, mapfragment)
@@ -57,6 +57,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 dadosCiclismo.put("velocidade_grafico", CiclismoJsonParser.createJsonVelocity(mapFragment.getInstancia().arrayVelocity).toString());
                 dadosCiclismo.put("rota", mapFragment.getInstancia().routeString);
 
+
                 mapFragment.getInstancia().distance = 0;
                 mapFragment.getInstancia().velocityMax = 0;
                 mapFragment.getInstancia().velocityMean = 0;
@@ -75,7 +76,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
-                if (respostaUser){
+                if (respostaUser) {
                     mapFragment.getInstancia().onMyDestroy();
                     mapFragment.getInstancia().distance = 0;
                     mapFragment.getInstancia().velocityMax = 0;
@@ -86,8 +87,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
-                }
-                else return;
+                } else return;
             }
         });
     }
@@ -104,8 +104,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
             Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
             startActivity(intent);
             finish();
-        }
-        else {
+        } else {
             Toast.makeText(getApplicationContext(), "Treino não foi guardado", Toast.LENGTH_SHORT).show();
         }
     }

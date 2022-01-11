@@ -3,8 +3,11 @@ package com.psi.ciclodias.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
 
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.psi.ciclodias.model.Ciclismo;
 
 import org.json.JSONArray;
@@ -18,30 +21,35 @@ import java.util.Map;
 public class CiclismoJsonParser {
     // --------------------------------- CICLISMO --------------------------------------------------
     // Consulta á API para devolver todos os treinos do utilizador da API
-    public static ArrayList<Ciclismo> parserJsonListaCiclismo(JSONArray resposta) {
+    public static ArrayList<Ciclismo> parserJsonListaCiclismo(String resposta) {
         ArrayList<Ciclismo> lista = new ArrayList<>();
-
         try {
-            for (int i = 0; i < resposta.length(); i++) {
-                JSONObject jsonCiclismo = resposta.getJSONObject(i);
+            JSONObject jsonObject = new JSONObject(resposta);
 
-                // Converte os dados JSON para as variáveis locais para a criação da Atividade (Ciclismo)
-                int id = jsonCiclismo.getInt("id");
-                String nome_percurso = jsonCiclismo.getString("nome_percurso");
-                int duracao = jsonCiclismo.getInt("duracao");
-                int distancia = jsonCiclismo.getInt("distancia");
-                double velocidade_media = jsonCiclismo.getDouble("velocidade_media");
-                double velocidade_maxima = jsonCiclismo.getDouble("velocidade_maxima");
+            if(jsonObject.getBoolean("success")) {
 
-                // velocidade grafico é JSON
-                String velocidade_grafico = jsonCiclismo.getString("velocidade_grafico");
-                String rota = jsonCiclismo.getString("rota");
-                String data_treino = jsonCiclismo.getString("data_treino");
+                JSONArray array = jsonObject.getJSONArray("ciclismo");
 
-                Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
-                lista.add(ciclismo);
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject jsonCiclismo = array.getJSONObject(i);
+
+                    // Converte os dados JSON para as variáveis locais para a criação da Atividade (Ciclismo)
+                    int id = jsonCiclismo.getInt("id");
+                    String nome_percurso = jsonCiclismo.getString("nome_percurso");
+                    int duracao = jsonCiclismo.getInt("duracao");
+                    int distancia = jsonCiclismo.getInt("distancia");
+                    double velocidade_media = jsonCiclismo.getDouble("velocidade_media");
+                    double velocidade_maxima = jsonCiclismo.getDouble("velocidade_maxima");
+
+                    // velocidade grafico é JSON
+                    String velocidade_grafico = jsonCiclismo.getString("velocidade_grafico");
+                    String rota = jsonCiclismo.getString("rota");
+                    String data_treino = jsonCiclismo.getString("data_treino");
+
+                    Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
+                    lista.add(ciclismo);
+                }
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -54,24 +62,27 @@ public class CiclismoJsonParser {
         try {
             JSONObject json = new JSONObject(response);
 
+            if(json.getBoolean("success")) {
 
-            int id = json.getInt("id");
-            String nome_percurso = json.getString("nome_percurso");
-            int duracao = json.getInt("duracao");
-            int distancia = json.getInt("distancia");
-            double velocidade_media = json.getDouble("velocidade_media");
-            double velocidade_maxima = json.getDouble("velocidade_maxima");
+                JSONObject treino = json.getJSONObject("ciclismo");
 
-            // velocidade grafico é JSON
-            String velocidade_grafico = json.getString("velocidade_grafico");
-            String rota = json.getString("rota");
-            String data_treino = json.getString("data_treino");
+                int id = treino.getInt("id");
+                String nome_percurso = treino.getString("nome_percurso");
+                int duracao = treino.getInt("duracao");
+                int distancia = treino.getInt("distancia");
+                double velocidade_media = treino.getDouble("velocidade_media");
+                double velocidade_maxima = treino.getDouble("velocidade_maxima");
 
-            Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
+                // velocidade grafico é JSON
+                String velocidade_grafico = treino.getString("velocidade_grafico");
+                String rota = treino.getString("rota");
+                String data_treino = treino.getString("data_treino");
 
-            System.out.println(id);
-            return ciclismo;
+                Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
 
+                System.out.println(id);
+                return ciclismo;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -116,10 +127,13 @@ public class CiclismoJsonParser {
         try {
             JSONObject jsonUser = new JSONObject(resposta);
 
-            dadosUser.put("primeiro_nome", jsonUser.getString("primeiro_nome"));
-            dadosUser.put("ultimo_nome", jsonUser.getString("ultimo_nome"));
-            dadosUser.put("data_nascimento", jsonUser.getString("data_nascimento"));
-
+            if(jsonUser.getBoolean("success")) {
+                dadosUser.put("primeiro_nome", jsonUser.getString("primeiro_nome"));
+                dadosUser.put("ultimo_nome", jsonUser.getString("ultimo_nome"));
+                dadosUser.put("data_nascimento", jsonUser.getString("data_nascimento"));
+            }else {
+                dadosUser.put("mensagem", jsonUser.getString("mensagem"));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -156,7 +170,11 @@ public class CiclismoJsonParser {
                 json.put("velocidade_media", ciclismo.getVelocidade_media());
                 json.put("velocidade_maxima", ciclismo.getVelocidade_maxima());
                 json.put("velocidade_grafico", ciclismo.getVelocidade_grafico());
-                json.put("rota", ciclismo.getRota());
+                if(ciclismo.getRota() == null){
+                    json.put("rota", "");
+                }else {
+                    json.put("rota", ciclismo.getRota());
+                }
                 json.put("data_treino", ciclismo.getData_treino());
 
                 jsonArray.put(json);

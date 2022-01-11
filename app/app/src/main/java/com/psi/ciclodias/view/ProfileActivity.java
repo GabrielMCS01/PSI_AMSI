@@ -132,18 +132,21 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         // Guarda os dados da API na Shared Preferences
         SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PRIMEIRO_NOME, dadosUser.get("primeiro_nome"));
-        editor.putString(ULTIMO_NOME, dadosUser.get("ultimo_nome"));
+        if(dadosUser.get("mensagem") == null) {
+            editor.putString(PRIMEIRO_NOME, dadosUser.get("primeiro_nome"));
+            editor.putString(ULTIMO_NOME, dadosUser.get("ultimo_nome"));
 
-        // Se a data de nascimento for NULL retorna vazio
-        if (!dadosUser.get("data_nascimento").equals("nulo")){
-            editor.putString(DATA_NASCIMENTO, dadosUser.get("data_nascimento")); }
-        else {
-            editor.putString(DATA_NASCIMENTO, "");
+            // Se a data de nascimento for NULL retorna vazio
+            if (!dadosUser.get("data_nascimento").equals("nulo")) {
+                editor.putString(DATA_NASCIMENTO, dadosUser.get("data_nascimento"));
+            } else {
+                editor.putString(DATA_NASCIMENTO, "");
+            }
+
+            editor.apply();
+        }else{
+            Toast.makeText(this, dadosUser.get("mensagem"), Toast.LENGTH_SHORT).show();
         }
-
-        editor.apply();
-
         dadosPerfil();
     }
 
