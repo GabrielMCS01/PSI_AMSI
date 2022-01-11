@@ -86,7 +86,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private MapView mapView;
     private MapboxMap mapboxMap;
     private NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
-    private MapboxNavigation mapboxNavigation;
+    public MapboxNavigation mapboxNavigation;
 
     //Objetos Bindings das Activities que necessitam dos dados do mapa
     public ActivityStartTrainingBinding startBinding = null;
@@ -218,7 +218,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
-    private void startNavigation() {
+    public void startNavigation() {
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
             if (mapboxNavigation == null) {
@@ -270,6 +270,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                             routeString = resultGeometryString;
 
+                            listDirections = new ArrayList<>();
 
                             System.out.println(resultGeometryString);
                             System.out.println(resultGeometryString.length());
@@ -336,6 +337,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                     // Generate a polyline encoded string from the accumulated points.
                     String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+                    listDirections = new ArrayList<>();
 
                     routeString = resultGeometryString;
 
@@ -412,7 +415,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     // Ouve alterações da localização
     private LocationObserver locationObs = new LocationObserver() {
-
         // Quando tem uma nova alteração na localização
         @Override
         public void onNewRawLocation(@NonNull Location location) {
@@ -425,11 +427,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 updateCamera(location);
                 startBinding.textView3.setText(R.string.txtGPSAdquirido);
                 startBinding.btComecarTreino.setEnabled(true);
-                startBinding = null;
             } else {
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
                 pointsList.add(point);
-
                 if (pointsList.size() == 95) {
                     mapMatching = MapboxMapMatching.builder().
                             accessToken(accessToken).
@@ -515,7 +515,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
         mapboxNavigation.resetTripSession();
         mapboxNavigation.stopTripSession();
         mapboxNavigation.setRoutes(new ArrayList<>());
-        listDirections = new ArrayList<>();
         if (routesObserver != null) {
             mapboxNavigation.unregisterRoutesObserver(routesObserver);
         }

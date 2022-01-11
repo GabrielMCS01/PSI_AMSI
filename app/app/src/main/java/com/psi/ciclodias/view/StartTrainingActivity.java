@@ -28,7 +28,7 @@ public class StartTrainingActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Fragment mapfragment = mapFragment.getInstancia();
             mapFragment.getInstancia().startBinding = binding;
-            if(mapfragment != null){
+            if (mapfragment != null) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mapViewStartTraining, mapfragment)
@@ -47,7 +47,7 @@ public class StartTrainingActivity extends AppCompatActivity {
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         BottomNavBarFragment fragment = new BottomNavBarFragment();
 
-        if(fragment != null){
+        if (fragment != null) {
             fragment.lockTraining = true;
             getSupportFragmentManager()
                     .beginTransaction()
@@ -81,10 +81,28 @@ public class StartTrainingActivity extends AppCompatActivity {
                                 .replace(R.id.mapViewStartTraining, mapfragment)
                                 .commit();
                     }
-                }else{
+                } else {
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
                 }
             });
+
+    @Override
+    public void onBackPressed() {
+        mapFragment.getInstancia().onMyDestroy();
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapFragment.getInstancia().onMyDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapFragment.getInstancia().startNavigation();
+    }
 }
