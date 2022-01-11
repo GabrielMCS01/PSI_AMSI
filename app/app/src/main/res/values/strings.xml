@@ -13,8 +13,14 @@
     <string name="txtDataNascimento">Data de Nascimento</string>
     <string name="txtBtGuardarAlteracoes">Guardar Alterações</string>
     <string name="txtDistancia">Distância: </string>
-    <string name="txtTempo">Tempo</string>
     <string name="txtVelocidadeMedia">Velocidade Média: </string>
+    <string name="txtVelocidadeMediaInProgress">Velocidade Média</string>
+    <string name="txtVelocidadeMaxima">Velocidade Máxima: </string>
+    <string name="txtVelocidadeMaximaInProgress">Velocidade Máxima</string>
+    <string name="txtDuracao">Duração: </string>
+    <string name="txtDuracaoInProgress">Duração</string>
+    <string name="txtVelInstantanea">Velocidade Instantânea</string>
+    <string name="txtVelInstantaneaInProgress">Velocidade Instantânea: </string>
     <string name="txtNomeCompleto">Nome Completo</string>
     <string name="txtTreino">Treino</string>
     <string name="txtBtComecarTreino">Começar</string>
@@ -33,20 +39,14 @@
     <string name="txtBtGuardar">Guardar</string>
     <string name="txtBtSair">Sair</string>
     <string name="tvSessaoTreino">Sessão de Treino</string>
-    <string name="txtDuracao">Duração: </string>
-    <string name="txtVelInstantanea">Velocidade Instantânea</string>
     <string name="txtDistanciaPercorrida">Distância Percorrida</string>
     <string name="txtBtMapa">Mapa</string>
     <string name="txtGPSAdquirido">GPS Adquirido</string>
     <string name="txtGuardadoSucesso">Guardado com Sucesso</string>
     <string name="txtGuardadoSemSucesso">As alterações não foram guardadas</string>
-    <string name="txtVelMaxima">Velocidade Máxima</string>
-    <string name="txtPermissaoExplicacao">A aplicação necessita de localização</string>
+    <string name="txtPermissaoExplicacao">A aplicação necessita de acesso á localização</string>
     <string name="txtPermissaoNãoDada">Tem que permitir que a aplicação utilize a localização</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiaXVyaWNhcnJhcyIsImEiOiJja3V3aDJrZWEwNjhuMm5xd3hqNHRuODdiIn0.Yztl8wZEMrxIlkEVwt1zgw</string>
-    <string name="txtDialogTerminarSessao">Pretende Terminar o Treino</string>
-    <string name="txtNao">Não</string>
-    <string name="txtSim">Sim</string>
     <string name="txtDialog">dialog</string>
     <string name="txtGPSPorAdquirir">GPS por Adquirir</string>
     <string name="title_activity_in_progress_training_map">InProgressTrainingMapActivity</string>
@@ -57,4 +57,9 @@
     <string name="login_invalido">Dados Inseridos para login Inválidos</string>
     <string name="txtPrimeiroNome">Primeiro Nome</string>
     <string name="txtUltimoNome">Ultimo Nome</string>
+    <string name="txtHintNomeTreino">Indique o nome do treino</string>
+    <string name="txtCiclismoNaoRemovido">Não foi possivel apagar o treino</string>
+    <string name="txtCiclismoRemovido">Treino apagado com sucesso</string>
+    <string name="txtUserNaoRemovido">Erro a apagar o Utilizador</string>
+    <string name="txtUserRemovido">Utilizador apagado com sucesso</string>
 </resources>

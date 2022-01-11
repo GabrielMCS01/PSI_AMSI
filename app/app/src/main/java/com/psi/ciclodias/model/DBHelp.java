@@ -74,8 +74,27 @@ public class DBHelp extends SQLiteOpenHelper {
         valores.put(VELOCIDADE_MAXIMA, ciclismo.getVelocidade_maxima());
         valores.put(VELOCIDADE_GRAFICO, ciclismo.getVelocidade_grafico());
         valores.put(ROTA, ciclismo.getRota());
+        valores.put(DATA_TREINO, ciclismo.getData_treino());
+        valores.put(USER_ID_CICLISMO, ciclismo.getUser_id_ciclismo());
 
         bd.insert(TABELA_CICLISMO, null, valores);
+    }
+
+    public long AdicionarCiclismoDBUnSync(Ciclismo ciclismo) {
+        ContentValues valores = new ContentValues();
+
+        valores.put(ID_CICLISMO, ciclismo.getId());
+        valores.put(NOME_PERCURSO, ciclismo.getNome_percurso());
+        valores.put(DURACAO, ciclismo.getDuracao());
+        valores.put(DISTANCIA, ciclismo.getDistancia());
+        valores.put(VELOCIDADE_MEDIA, ciclismo.getVelocidade_media());
+        valores.put(VELOCIDADE_MAXIMA, ciclismo.getVelocidade_maxima());
+        valores.put(VELOCIDADE_GRAFICO, ciclismo.getVelocidade_grafico());
+        valores.put(ROTA, ciclismo.getRota());
+        valores.put(DATA_TREINO, ciclismo.getData_treino());
+        valores.put(USER_ID_CICLISMO, ciclismo.getUser_id_ciclismo());
+
+        return bd.insert(TABELA_CICLISMO, null, valores);
     }
 
     // Retorna todas as sessões de treino do utilizador
@@ -84,7 +103,7 @@ public class DBHelp extends SQLiteOpenHelper {
 
         // Query á tabela toda
         Cursor cursor = bd.query(TABELA_CICLISMO, new String[] {ID_CICLISMO, NOME_PERCURSO, DURACAO, DISTANCIA, VELOCIDADE_MEDIA,
-                        VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO},
+                        VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO, USER_ID_CICLISMO},
                 null, null, null, null, null);
 
         // Se o encontrar algum faz
@@ -100,6 +119,7 @@ public class DBHelp extends SQLiteOpenHelper {
                         cursor.getString(6),
                         cursor.getString(7),
                         cursor.getString(8));
+                aux.setUser_id_ciclismo(cursor.getLong(9));
                 lista.add(aux);
             } while (cursor.moveToNext());
         }
@@ -126,7 +146,7 @@ public class DBHelp extends SQLiteOpenHelper {
                     cursor.getString(6),
                     cursor.getString(7),
                     cursor.getString(8));
-
+                ciclismo.setUser_id_ciclismo(cursor.getLong(9));
                 cursor.close();
 
                 return ciclismo;
@@ -137,19 +157,23 @@ public class DBHelp extends SQLiteOpenHelper {
     }
 
     // Edita uma sessão de treino
-    public boolean editarCiclismoDB(Ciclismo ciclismo){
+    public boolean editarCiclismoDB(long id, String nome){
         ContentValues valores = new ContentValues();
 
         // O utilizador apenas pode editar o nome do percurso
-        valores.put(NOME_PERCURSO, ciclismo.getNome_percurso());
+        valores.put(NOME_PERCURSO, nome);
 
         // Retorna na Tabela Ciclismo o resultado de editar o treino com o ID enviado
-        return bd.update(TABELA_CICLISMO, valores, ID_CICLISMO + " = ?", new String[] {"" + ciclismo.getId()}) > 0;
+        return bd.update(TABELA_CICLISMO, valores, ID_CICLISMO + " = ?", new String[] {"" + id}) > 0;
     }
 
     // Apaga uma sessão de treino
     public boolean apagarCiclismoDB(long id){
         // Retorna na Tabela Ciclismo o resultado de apagar o treino com o ID enviado
         return bd.delete(TABELA_CICLISMO, ID_CICLISMO + " = ?", new String[] {"" + id}) == 1;
+    }
+
+    public void apagarCiclismoDBAll() {
+        bd.delete(TABELA_CICLISMO, null, null);
     }
 }

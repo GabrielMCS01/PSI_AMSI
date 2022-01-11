@@ -33,10 +33,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/txtTempo"
+        android:layout_marginBottom="8dp"
+        android:text="00:00:00 h"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvDistanciaResumo"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView28"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -44,9 +45,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="40dp"
-        android:text="@string/txtDistancia"
+        android:layout_marginBottom="20dp"
+        android:text="0.00 Km"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btGuardarResumo"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -55,10 +57,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/txtVelocidadeMedia"
+        android:layout_marginBottom="8dp"
+        android:text="0.00 Km/h"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvVelMaxResumo"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView30"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -66,9 +69,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="40dp"
-        android:text="@string/txtVelMaxima"
+        android:layout_marginBottom="20dp"
+        android:text="0.00 Km/h"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btSairResumo"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -78,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="12"
-        android:hint="Indique o nome do treino"
+        android:hint="@string/txtHintNomeTreino"
         android:inputType="text"
         android:minHeight="48dp"
         android:textAlignment="center"
@@ -92,12 +96,56 @@
         android:id="@+id/mapViewResult"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTempoResumo"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView27"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNomeTreino">
 
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/txtDuracao"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTempoResumo"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/txtDistancia"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvDistanciaResumo"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView29"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/txtVelocidadeMedia"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvVelMediaResumo"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/txtVelocidadeMaxima"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvVelMaxResumo"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

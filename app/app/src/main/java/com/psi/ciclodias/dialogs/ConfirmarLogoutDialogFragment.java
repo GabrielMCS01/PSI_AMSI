@@ -7,23 +7,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.psi.ciclodias.model.SingletonGestorCiclismo;
 import com.psi.ciclodias.view.LoginActivity;
 
-public class ConfirmarLogoutDialogFragment extends DialogFragment {
+import java.util.ArrayList;
 
+public class ConfirmarLogoutDialogFragment extends DialogFragment {
     public static final String TOKEN = "token";
     public static final String USER = "user";
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
     private static final String ULTIMO_NOME = "ultimo_nome";
     private static final String DATA_NASCIMENTO = "data_nascimento";
-
 
     @NonNull
     @Override
@@ -43,6 +43,10 @@ public class ConfirmarLogoutDialogFragment extends DialogFragment {
                 editor.putString(DATA_NASCIMENTO, "null");
                 editor.apply();
 
+                SingletonGestorCiclismo.getInstancia(getContext()).ArrCiclismo = new ArrayList<>();
+                SingletonGestorCiclismo.getInstancia(getContext()).ArrCiclismoUnSync = new ArrayList<>();
+                SingletonGestorCiclismo.getInstancia(getContext()).apagarCiclismoDBAll();
+
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -50,7 +54,6 @@ public class ConfirmarLogoutDialogFragment extends DialogFragment {
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), ":( ", Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         }).setCancelable(false);

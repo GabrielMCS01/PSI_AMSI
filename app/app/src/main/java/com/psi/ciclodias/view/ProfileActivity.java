@@ -2,28 +2,33 @@ package com.psi.ciclodias.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityProfileBinding;
+import com.psi.ciclodias.dialogs.ConfirmarApagarUserDialogFragment;
 import com.psi.ciclodias.dialogs.InserirDataFragment;
 import com.psi.ciclodias.listeners.PerfilListener;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
+import com.psi.ciclodias.utils.Converter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity implements PerfilListener, InserirDataFragment.DateDialogListener {
+public class ProfileActivity extends AppCompatActivity implements PerfilListener, InserirDataFragment.DateDialogListener, ConfirmarApagarUserDialogFragment.ApagarPerfilListener {
     private ActivityProfileBinding binding;
 
+    private static final String TOKEN = "token";
     public static final String USER = "user";
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
@@ -39,6 +44,8 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         setContentView(binding.getRoot());
 
         SingletonGestorCiclismo.getInstancia(this).setPerfilListener(this);
+
+        dadosPerfil();
 
         // Chama a função da API para receber os dados do utilizador
         SingletonGestorCiclismo.getInstancia(this).getUserDados(this);
@@ -77,7 +84,29 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         });
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.delete, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.actionDelete) {
+
+            DialogFragment dialogFragment = new ConfirmarApagarUserDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "dialog");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     // Preencher o perfil com dados do utilizador
     private void dadosPerfil() {
@@ -91,10 +120,10 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         binding.etDataNascimentoPerfil.setText(sharedPreferences.getString(DATA_NASCIMENTO, ""));
 
         // Dados das atividades
-        binding.tvDistanciaPerfil.setText("Distância: " + SingletonGestorCiclismo.getInstancia(this).getDistancia() + " m");
-        binding.tvTempoPerfil.setText("Tempo: " + SingletonGestorCiclismo.getInstancia(this).getDuracao() + " s");
-        binding.tvVelMediaPerfil.setText("Vel Média: " + SingletonGestorCiclismo.getInstancia(this).getVelocidadeMedia() + " km/h");
-        binding.tvVelMaxPerfil.setText("Vel Máxima: " + SingletonGestorCiclismo.getInstancia(this).getVelocidadeMaxima() + " km/h");
+        binding.tvDistanciaPerfil.setText(Converter.distanceFormat(SingletonGestorCiclismo.getInstancia(this).getDistancia()));
+        binding.tvTempoPerfil.setText(Converter.hourFormat(SingletonGestorCiclismo.getInstancia(this).getDuracao()));
+        binding.tvVelMediaPerfil.setText(Converter.velocityFormat(SingletonGestorCiclismo.getInstancia(this).getVelocidadeMedia()));
+        binding.tvVelMaxPerfil.setText(Converter.velocityFormat(SingletonGestorCiclismo.getInstancia(this).getVelocidadeMaxima()));
     }
 
     // Preenche o perfil com os dados atualizados do perfil
@@ -126,9 +155,43 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     }
 
     @Override
+    public void removeUser(Boolean success) {
+        if (!success) {
+            Toast.makeText(getApplicationContext(), R.string.txtUserNaoRemovido, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), R.string.txtUserRemovido, Toast.LENGTH_SHORT).show();
+
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString(TOKEN, "null");
+            editor.putString(USER, "null");
+            editor.putString(ID, "null");
+            editor.putString(PRIMEIRO_NOME, "null");
+            editor.putString(ULTIMO_NOME, "null");
+            editor.putString(DATA_NASCIMENTO, "null");
+            editor.apply();
+
+            SingletonGestorCiclismo.getInstancia(this).ArrCiclismo = new ArrayList<>();
+            SingletonGestorCiclismo.getInstancia(this).ArrCiclismoUnSync = new ArrayList<>();
+            SingletonGestorCiclismo.getInstancia(this).apagarCiclismoDBAll();
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         String dataNascimento = year + "-" + month + "-" + day;
 
         binding.etDataNascimentoPerfil.setText(dataNascimento);
+    }
+
+    @Override
+    public void onApagarClick() {
+        SingletonGestorCiclismo.getInstancia(this).DeleteUser(getApplicationContext());
     }
 }

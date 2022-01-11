@@ -7,9 +7,8 @@ public class Ciclismo {
     private String data_treino;
     private int distancia, duracao;
 
-    // Construtor para Criar um Treino
-    public Ciclismo(long id, String nome_percurso, int duracao, int distancia, double velocidade_media, double velocidade_maxima, String velocidade_grafico, String rota) {
-        this.id = id;
+    // Construtor para adicionar o ciclismo na DB Local
+    public Ciclismo(String nome_percurso, int duracao, int distancia, double velocidade_media, double velocidade_maxima, String velocidade_grafico, String rota, String data_treino) {
         this.nome_percurso = nome_percurso;
         this.duracao = duracao;
         this.velocidade_grafico = velocidade_grafico;
@@ -17,9 +16,10 @@ public class Ciclismo {
         this.distancia = distancia;
         this.velocidade_media = velocidade_media;
         this.velocidade_maxima = velocidade_maxima;
+        this.data_treino = data_treino;
     }
 
-    // Construtor para Visualizar um Treino
+    // Construtor para Receber os treinos da API
     public Ciclismo(long id, String nome_percurso, int duracao, int distancia, double velocidade_media, double velocidade_maxima, String velocidade_grafico, String rota, String data_treino) {
         this.id = id;
         this.nome_percurso = nome_percurso;

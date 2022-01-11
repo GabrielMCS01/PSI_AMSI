@@ -3,6 +3,7 @@ package com.psi.ciclodias.model;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
+import com.psi.ciclodias.utils.Converter;
 import com.psi.ciclodias.view.mapFragment;
 
 import java.util.Formatter;
@@ -26,8 +27,8 @@ public class Chronometer extends Thread {
         
         private static Chronometer instancia = null;
 
-        public static synchronized Chronometer getInstancia(){
-            if (instancia == null){ instancia = new Chronometer();}
+        public static synchronized Chronometer getInstancia(boolean newChrometer){
+            if (instancia == null || newChrometer){ instancia = new Chronometer();}
             return instancia;
         }
 
@@ -45,8 +46,7 @@ public class Chronometer extends Thread {
                         trainingBinding.tvDuracaoTreino.post(new Runnable() {
                             @Override
                             public void run() {
-                                hourFormat();
-                                trainingBinding.tvDuracaoTreino.setText(strHours + ":" + strMinutes + ":" + strSeconds + strUnits);
+                                trainingBinding.tvDuracaoTreino.setText(Converter.hourFormat(timeSeconds));
 
                             }
                         });
@@ -54,8 +54,7 @@ public class Chronometer extends Thread {
                         mapBinding.tvTempo.post(new Runnable() {
                             @Override
                             public void run() {
-                                hourFormat();
-                                mapBinding.tvTempo.setText("Tempo: \n"  + strHours + ":" + strMinutes + ":" + strSeconds + strUnits);
+                                mapBinding.tvTempo.setText(Converter.hourFormat(timeSeconds));
                             }
                         });
                     }
@@ -69,38 +68,6 @@ public class Chronometer extends Thread {
                     return;
                 }
             }
-        }
-
-
-        private void hourFormat(){
-
-            long hours = timeSeconds/3600;
-            long minutes = 0;
-            long seconds = 0;
-
-            if(timeSeconds % 3600 != 0){
-                minutes = timeSeconds % 3600 / 60;
-            }
-            if(timeSeconds % 60 != 0){
-                seconds = timeSeconds % 60;
-            }
-
-            Formatter fmt = new Formatter(new StringBuilder());
-            fmt.format(Locale.US, "%02d", hours);
-            strHours= fmt.toString();
-
-
-            fmt = new Formatter(new StringBuilder());
-            fmt.format(Locale.US, "%02d", minutes);
-            strMinutes = fmt.toString();
-
-            fmt = new Formatter(new StringBuilder());
-            fmt.format(Locale.US, "%02d", seconds);
-            strSeconds = fmt.toString();
-
-
-            // Unidade de medida
-            strUnits = " h";
         }
 
         public int getTime() {

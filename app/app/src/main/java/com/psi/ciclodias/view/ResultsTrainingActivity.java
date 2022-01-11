@@ -11,7 +11,9 @@ import android.widget.Toast;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.listeners.CreateCiclismoListener;
+import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
+import com.psi.ciclodias.utils.CiclismoJsonParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,13 +54,20 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 dadosCiclismo.put("distancia", String.valueOf(distance));
                 dadosCiclismo.put("velocidade_media", String.valueOf(mapFragment.getInstancia().velocityMean));
                 dadosCiclismo.put("velocidade_maxima", String.valueOf(mapFragment.getInstancia().velocityMax));
-                //dadosCiclismo.put("velocidade_grafico", null);
-                //dadosCiclismo.put("rota", null);
+                dadosCiclismo.put("velocidade_grafico", CiclismoJsonParser.createJsonVelocity(mapFragment.getInstancia().arrayVelocity).toString());
+                dadosCiclismo.put("rota", mapFragment.getInstancia().routeString);
+
+                mapFragment.getInstancia().distance = 0;
+                mapFragment.getInstancia().velocityMax = 0;
+                mapFragment.getInstancia().velocityMean = 0;
+                mapFragment.getInstancia().time = 0;
+                mapFragment.getInstancia().velocityInstant = 0;
 
                 SingletonGestorCiclismo.getInstancia(getApplicationContext()).AddCiclismo(dadosCiclismo, getApplicationContext());
             }
         });
 
+        // PRECISA DE MAIS COISAS!
         binding.btSairResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +77,12 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 if (respostaUser){
                     mapFragment.getInstancia().onMyDestroy();
+                    mapFragment.getInstancia().distance = 0;
+                    mapFragment.getInstancia().velocityMax = 0;
+                    mapFragment.getInstancia().velocityMean = 0;
+                    mapFragment.getInstancia().time = 0;
+                    mapFragment.getInstancia().velocityInstant = 0;
+
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
@@ -78,8 +93,11 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
     }
 
     @Override
-    public void createCiclismo(Boolean success) {
-        if (success) {
+    public void createCiclismo(Ciclismo ciclismo) {
+        if (ciclismo.getId() != -1) {
+
+            SingletonGestorCiclismo.getInstancia(this).adicionarCiclismoBD(ciclismo);
+
             Toast.makeText(getApplicationContext(), "Treino Guardado com sucesso", Toast.LENGTH_SHORT).show();
 
             mapFragment.getInstancia().onMyDestroy();
