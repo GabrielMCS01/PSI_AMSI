@@ -35,16 +35,16 @@ public class MosquittoNotification implements MqttCallback {
 
         MqttClient mqttClient;
 
-        String clientID = "id_sub";
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+        String clientID = sharedPreferences.getString(ID, "");
+        System.out.println("ID MOSQUITTO " + clientID);
         try {
             mqttClient = new MqttClient("tcp://ciclodias.duckdns.org:1883",
                     clientID,null);
 
             mqttClient.setCallback(this);
             mqttClient.connect();
-
-
-            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
 
             String myTopic = sharedPreferences.getString(ID, "");

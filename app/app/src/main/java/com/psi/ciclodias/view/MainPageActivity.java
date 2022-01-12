@@ -6,10 +6,14 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +26,7 @@ import com.psi.ciclodias.listeners.RecyclerViewListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 import com.psi.ciclodias.notifications.MosquittoNotification;
+import com.psi.ciclodias.notifications.NotificationService;
 
 import java.util.ArrayList;
 
@@ -55,12 +60,13 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
             finish();
         }
 
-        MosquittoNotification mosquittoNotification = new MosquittoNotification();
 
         // Preenche as shared Preferences
         PreencherSharedPreferences();
 
-        mosquittoNotification.start(this);
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
+
 
         SingletonGestorCiclismo.getInstancia(this).PreencherArrCiclismoUnsync();
 
@@ -93,6 +99,7 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
     }
+
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
