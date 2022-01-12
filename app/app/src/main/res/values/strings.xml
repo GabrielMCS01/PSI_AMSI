@@ -62,4 +62,6 @@
     <string name="txtCiclismoRemovido">Treino apagado com sucesso</string>
     <string name="txtUserNaoRemovido">Erro a apagar o Utilizador</string>
     <string name="txtUserRemovido">Utilizador apagado com sucesso</string>
+    <string name="channel_name">mosquitto</string>
+    <string name="channel_description">canal do mosquitto</string>
 </resources>

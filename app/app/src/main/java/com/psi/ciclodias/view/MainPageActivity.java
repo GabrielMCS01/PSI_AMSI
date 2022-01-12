@@ -21,6 +21,7 @@ import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.listeners.RecyclerViewListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
+import com.psi.ciclodias.notifications.MosquittoNotification;
 
 import java.util.ArrayList;
 
@@ -54,9 +55,12 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
             finish();
         }
 
+        MosquittoNotification mosquittoNotification = new MosquittoNotification();
 
         // Preenche as shared Preferences
         PreencherSharedPreferences();
+
+        mosquittoNotification.start(this);
 
         SingletonGestorCiclismo.getInstancia(this).PreencherArrCiclismoUnsync();
 
