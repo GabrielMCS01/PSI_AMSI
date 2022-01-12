@@ -219,7 +219,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
     // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
     public void startNavigation() {
-        if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
             if (mapboxNavigation == null) {
                 mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
@@ -384,10 +383,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                 }
             }
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(getActivity());
-        }
     }
 
     @Override

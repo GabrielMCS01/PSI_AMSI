@@ -97,12 +97,16 @@ public class StartTrainingActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mapFragment.getInstancia().onMyDestroy();
+        if(mapFragment.getInstancia().mapboxNavigation != null) {
+            mapFragment.getInstancia().onMyDestroy();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mapFragment.getInstancia().startNavigation();
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mapFragment.getInstancia().startNavigation();
+        }
     }
 }

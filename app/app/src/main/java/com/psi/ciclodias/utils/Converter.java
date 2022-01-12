@@ -1,5 +1,7 @@
 package com.psi.ciclodias.utils;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+
 import java.util.Formatter;
 import java.util.Locale;
 
