@@ -112,6 +112,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private Location loc1;
     private Location loc2;
 
+    public Location actualLocation = null;
 
     // Variável para verificar se existe algum valor na localização 1 (primeira vez que entra na função recebe)
     private boolean isLoc1 = false;
@@ -420,6 +421,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             navigationLocationProvider.changePosition(location, list, null, null);
             // Função para atualizar a camera enviando a nova localização
             //Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
+            actualLocation = location;
             if (startBinding != null) {
                 updateCamera(location);
                 startBinding.textView3.setText(R.string.txtGPSAdquirido);
@@ -489,20 +491,22 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
 
 
-    private void updateCamera(Location location) {
+    public void updateCamera(Location location) {
         // Animações na câmera
-        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+        if(location != null) {
+            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
-        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
 
-        // Modifica o zoom na câmera automaticamente
-        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                .center(Point.fromLngLat(location.getLongitude(), location.getLatitude()))
-                .zoom(17.0)
-                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                .build();
+            // Modifica o zoom na câmera automaticamente
+            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                    .center(Point.fromLngLat(location.getLongitude(), location.getLatitude()))
+                    .zoom(17.0)
+                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                    .build();
 
-        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+        }
     }
 
     //Função para destruir as variaveis do mapa a pedido do código

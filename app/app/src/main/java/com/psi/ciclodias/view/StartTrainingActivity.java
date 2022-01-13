@@ -66,7 +66,12 @@ public class StartTrainingActivity extends AppCompatActivity {
             }
         });
 
-
+        binding.floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapFragment.getInstancia().updateCamera(mapFragment.getInstancia().actualLocation);
+            }
+        });
     }
 
     private ActivityResultLauncher<String> requestPermissionLauncher =

@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".view.InProgressTrainingMapActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabTrainingMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/green_700"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/mapViewTraining"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"

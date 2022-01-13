@@ -74,6 +74,12 @@ public class PausedTrainingActivity extends AppCompatActivity {
         });
 
 
+        binding.fabTrainingPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapFragment.getInstancia().updateCamera(mapFragment.getInstancia().actualLocation);
+            }
+        });
     }
 
 }

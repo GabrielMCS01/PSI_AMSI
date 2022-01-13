@@ -66,7 +66,7 @@ public class BottomNavBarFragment extends Fragment {
                     getActivity().finish();
                 }else{
                     if(count == 75) {
-                        Toast.makeText(getContext(), "Fock Off", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "I told you!", Toast.LENGTH_LONG).show();
                         getActivity().finish();
                     }else if(count == 50){
                         Toast.makeText(getContext(), "STOP!!!!", Toast.LENGTH_LONG).show();

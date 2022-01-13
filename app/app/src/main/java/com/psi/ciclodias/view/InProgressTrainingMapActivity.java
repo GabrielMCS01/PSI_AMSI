@@ -96,6 +96,13 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        binding.fabTrainingMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapFragment.getInstancia().updateCamera(mapFragment.getInstancia().actualLocation);
+            }
+        });
     }
 
 }
