@@ -25,6 +25,10 @@ public class StartTrainingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Recebe os IDs da Activity Start Training
+        binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Fragment mapfragment = mapFragment.getInstancia();
             mapFragment.getInstancia().startBinding = binding;
@@ -37,12 +41,6 @@ public class StartTrainingActivity extends AppCompatActivity {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-
-
-        // Recebe os IDs da Activity Start Training
-        binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         BottomNavBarFragment fragment = new BottomNavBarFragment();
