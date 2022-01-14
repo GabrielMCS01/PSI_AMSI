@@ -20,6 +20,7 @@ import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
 public class StartTrainingActivity extends AppCompatActivity {
     private ActivityStartTrainingBinding binding;
+    private boolean startTraining = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class StartTrainingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Iniciar o treino
+                startTraining = true;
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();
@@ -93,15 +95,23 @@ public class StartTrainingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        mapFragment.getInstancia().onMyDestroy();
-        finish();
+        if(startTraining) {
+            startTraining = false;
+        }else {
+            mapFragment.getInstancia().onMyDestroy();
+            finish();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if(mapFragment.getInstancia().mapboxNavigation != null) {
-            mapFragment.getInstancia().onMyDestroy();
+            if(startTraining) {
+                startTraining = false;
+            }else{
+                mapFragment.getInstancia().onMyDestroy();
+            }
         }
     }
 

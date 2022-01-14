@@ -60,7 +60,6 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
             finish();
         }
 
-
         // Preenche as shared Preferences
         PreencherSharedPreferences();
 
