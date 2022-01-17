@@ -16,6 +16,7 @@ import com.psi.ciclodias.model.Chronometer;
 
 public class PausedTrainingActivity extends AppCompatActivity {
     private ActivityPausedTrainingBinding binding;
+    private Fragment mapfragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
         mapFragment.getInstancia().pausedBinding = binding;
         mapFragment.getInstancia().setData();
 
-        Fragment mapfragment = mapFragment.getInstancia();
+        mapfragment = mapFragment.getInstancia();
 
         if(mapfragment != null){
             getSupportFragmentManager()
@@ -64,8 +65,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
                 DialogFragment dialogFragment = new ConfirmarSaidaDialogFragment();
                 dialogFragment.show(getSupportFragmentManager(), "dialog");
 
-
-                return false;
+                return true;
             }
         });
 
