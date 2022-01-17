@@ -60,6 +60,7 @@ public class StartTrainingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Iniciar o treino
                 startTraining = true;
+                mapFragment.getInstancia().startBinding = null;
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();
