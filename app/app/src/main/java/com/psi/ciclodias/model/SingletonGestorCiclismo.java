@@ -142,7 +142,11 @@ public class SingletonGestorCiclismo {
             velMedia += c.getVelocidade_media();
         }
 
-        return velMedia / ArrCiclismo.size();
+        if(ArrCiclismo.size() != 0) {
+            return velMedia / ArrCiclismo.size();
+        }else{
+            return velMedia;
+        }
     }
 
     // Retorna a velocidade máxima dos percursos realizados pelo utilizador (BD local)

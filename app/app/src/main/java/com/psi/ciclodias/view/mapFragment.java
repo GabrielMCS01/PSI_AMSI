@@ -510,6 +510,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             mapboxNavigation.unregisterRoutesObserver(routesObserver);
         }
         mapboxNavigation.unregisterLocationObserver(locationObs);
+        startBinding = null;
         trainingBinding = null;
         pausedBinding = null;
         mapBinding = null;
