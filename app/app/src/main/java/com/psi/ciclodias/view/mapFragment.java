@@ -3,17 +3,13 @@ package com.psi.ciclodias.view;
 import android.annotation.SuppressLint;
 
 import android.content.Context;
-import android.icu.text.Transliterator;
 import android.location.Location;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +43,6 @@ import com.mapbox.navigation.core.directions.session.RoutesObserver;
 import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
-import com.mapbox.navigation.core.trip.session.TripSession;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
@@ -66,10 +61,7 @@ import com.psi.ciclodias.model.Chronometer;
 import com.psi.ciclodias.utils.Converter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -79,7 +71,6 @@ import retrofit2.Response;
 public class mapFragment extends Fragment implements PermissionsListener {
 
     //Gestor de Permissões
-
     private PermissionsManager permissionsManager;
     private String accessToken;
 
