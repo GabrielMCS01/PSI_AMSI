@@ -64,4 +64,5 @@
     <string name="txtUserRemovido">Utilizador apagado com sucesso</string>
     <string name="channel_name">mosquitto</string>
     <string name="channel_description">canal do mosquitto</string>
+    <string name="txtBtPublicar">Publicar</string>
 </resources>
