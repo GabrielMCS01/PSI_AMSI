@@ -178,205 +178,204 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Responsavel por dar um estilo ao mapa e criar o puck de localização
     private void loadMap() {
-            //Carregar o estilo no mapa
-            mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
-                @Override
-                public void onStyleLoaded(@NonNull Style style) {
+        //Carregar o estilo no mapa
+        mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
 
-                    if (!isFinished) {
-                        LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
+                if (!isFinished) {
+                    LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
-                        //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
-                        locationComponentPlugin.setLocationProvider(navigationLocationProvider);
-
-
-                        //Carregar o puck de localização
-                        LocationPuck2D locationPuck2D = new LocationPuck2D();
-                        locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
-
-                        // Colocar o puck no mapa
-                        locationComponentPlugin.setLocationPuck(locationPuck2D);
+                    //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
+                    locationComponentPlugin.setLocationProvider(navigationLocationProvider);
 
 
-                        locationComponentPlugin.setEnabled(true);
-                    }
-                    // Verificar as permissões de localização e começar a navegação
-                    startNavigation();
+                    //Carregar o puck de localização
+                    LocationPuck2D locationPuck2D = new LocationPuck2D();
+                    locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
 
+                    // Colocar o puck no mapa
+                    locationComponentPlugin.setLocationPuck(locationPuck2D);
+
+
+                    locationComponentPlugin.setEnabled(true);
                 }
-            });
+                // Verificar as permissões de localização e começar a navegação
+                startNavigation();
+
+            }
+        });
 
 
-
-}
+    }
 
     // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
     public void startNavigation() {
 
-            if (mapboxNavigation == null) {
-                mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
-                        .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
-                accessToken = getString(R.string.mapbox_access_token);
+        if (mapboxNavigation == null) {
+            mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
+                    .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
+            accessToken = getString(R.string.mapbox_access_token);
 
 
-            }
-            if (isDetails) {
-                System.out.println("isDetails entered");
-                rotaListener.setRoute();
-                isDetails = false;
-            }
+        }
+        if (isDetails) {
+            System.out.println("isDetails entered");
+            rotaListener.setRoute();
+            isDetails = false;
+        }
 
-            // Inicia a navegação
-            if (!mapboxNavigation.isRunningForegroundService() && !isFinished) {
-                mapboxNavigation.startTripSession();
-                mapboxNavigation.registerLocationObserver(locationObs);
-                mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
+        // Inicia a navegação
+        if (!mapboxNavigation.isRunningForegroundService() && !isFinished) {
+            mapboxNavigation.startTripSession();
+            mapboxNavigation.registerLocationObserver(locationObs);
+            mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
 
-            } else if (isFinished) {
-                if (pointsList.size() > 2) {
-                    MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
-                            accessToken(getString(R.string.mapbox_access_token)).
-                            coordinates(pointsList).
-                            steps(true).
-                            profile(DirectionsCriteria.PROFILE_WALKING).
-                            build();
+        } else if (isFinished) {
+            if (pointsList.size() > 2) {
+                MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
+                        accessToken(getString(R.string.mapbox_access_token)).
+                        coordinates(pointsList).
+                        steps(true).
+                        profile(DirectionsCriteria.PROFILE_WALKING).
+                        build();
 
-                    pointsList = new ArrayList<>();
-                    mapMatchingTwo.enqueueCall(new Callback<MapMatchingResponse>() {
-                        @Override
-                        public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
-                            directionsRoute = response.body().matchings().get(0).toDirectionRoute();
-                            listDirections.add(directionsRoute);
+                pointsList = new ArrayList<>();
+                mapMatchingTwo.enqueueCall(new Callback<MapMatchingResponse>() {
+                    @Override
+                    public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                        directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+                        listDirections.add(directionsRoute);
 
-                            ArrayList<Point> resultGeometry = new ArrayList<>();
-                            for (DirectionsRoute directions : listDirections) {
+                        ArrayList<Point> resultGeometry = new ArrayList<>();
+                        for (DirectionsRoute directions : listDirections) {
 
-                                // Convert the polyline string into a list of Position objects
-                                List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
+                            // Convert the polyline string into a list of Position objects
+                            List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
 
-                                resultGeometry.addAll(routePoints);
+                            resultGeometry.addAll(routePoints);
+                        }
+
+                        // Generate a polyline encoded string from the accumulated points.
+                        String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+                        routeString = resultGeometryString;
+
+                        listDirections = new ArrayList<>();
+
+                        System.out.println(resultGeometryString);
+                        System.out.println(resultGeometryString.length());
+
+                        ArrayList<DirectionsRoute> list = new ArrayList<>();
+                        list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+
+                        mapboxNavigation.setRoutes(new ArrayList<>());
+                        mapboxNavigation.setRoutes(list);
+
+                        routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
+                        routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                        routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                        routeLine = new RouteLine(list.get(0), null);
+
+                        routesObserver = new RoutesObserver() {
+                            @Override
+                            public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                                routes.add(routeLine);
+                                routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                                    System.out.println("Hello");
+                                    routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                                    System.out.println("Hello");
+                                    MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+                                    routes = new ArrayList<>();
+                                    CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+                                    // Modifica o zoom na câmera automaticamente
+                                    CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                            .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
+                                            .zoom(15.0)
+                                            .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                            .build();
+
+                                    cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                                });
                             }
+                        };
 
-                            // Generate a polyline encoded string from the accumulated points.
-                            String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
-
-                            routeString = resultGeometryString;
-
-                            listDirections = new ArrayList<>();
-
-                            System.out.println(resultGeometryString);
-                            System.out.println(resultGeometryString.length());
-
-                            ArrayList<DirectionsRoute> list = new ArrayList<>();
-                            list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
-
-                            mapboxNavigation.setRoutes(new ArrayList<>());
-                            mapboxNavigation.setRoutes(list);
-
-                            routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
-                            routeLineApi = new MapboxRouteLineApi(routeLineOptions);
-                            routeLineView = new MapboxRouteLineView(routeLineOptions);
-
-                            routeLine = new RouteLine(list.get(0), null);
-
-                            routesObserver = new RoutesObserver() {
-                                @Override
-                                public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                                    routes.add(routeLine);
-                                    routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                                        System.out.println("Hello");
-                                        routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                                        System.out.println("Hello");
-                                        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-
-                                        routes = new ArrayList<>();
-                                        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
-
-                                        // Modifica o zoom na câmera automaticamente
-                                        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                                .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
-                                                .zoom(15.0)
-                                                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                                .build();
-
-                                        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                                    });
-                                }
-                            };
-
-                            mapboxNavigation.registerRoutesObserver(routesObserver);
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
-
-                        }
-                    });
-
-                } else {
-                    pointsList = new ArrayList<>();
-                    ArrayList<Point> resultGeometry = new ArrayList<>();
-                    for (DirectionsRoute directions : listDirections) {
-
-                        // Convert the polyline string into a list of Position objects
-                        List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
-
-                        // Concatenate the route points, removing the first point if we're appendin
-                        resultGeometry.addAll(routePoints);
+                        mapboxNavigation.registerRoutesObserver(routesObserver);
 
                     }
 
-                    // Generate a polyline encoded string from the accumulated points.
-                    String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+                    @Override
+                    public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
 
-                    listDirections = new ArrayList<>();
+                    }
+                });
 
-                    routeString = resultGeometryString;
+            } else {
+                pointsList = new ArrayList<>();
+                ArrayList<Point> resultGeometry = new ArrayList<>();
+                for (DirectionsRoute directions : listDirections) {
 
-                    ArrayList<DirectionsRoute> list = new ArrayList<>();
-                    list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+                    // Convert the polyline string into a list of Position objects
+                    List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
 
-                    mapboxNavigation.setRoutes(new ArrayList<>());
-                    mapboxNavigation.setRoutes(list);
-
-                    routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
-                    routeLineApi = new MapboxRouteLineApi(routeLineOptions);
-                    routeLineView = new MapboxRouteLineView(routeLineOptions);
-
-                    routeLine = new RouteLine(list.get(0), null);
-
-                    routesObserver = new RoutesObserver() {
-                        @Override
-                        public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                            routes.add(routeLine);
-                            routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                                System.out.println("Hello");
-                                routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                                System.out.println("Hello");
-
-                                routes = new ArrayList<>();
-                                MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-
-                                CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
-
-                                // Modifica o zoom na câmera automaticamente
-                                CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                        .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
-                                        .zoom(15.0)
-                                        .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                        .build();
-
-                                cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                            });
-                        }
-                    };
-
-                    mapboxNavigation.registerRoutesObserver(routesObserver);
+                    // Concatenate the route points, removing the first point if we're appendin
+                    resultGeometry.addAll(routePoints);
 
                 }
+
+                // Generate a polyline encoded string from the accumulated points.
+                String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+                listDirections = new ArrayList<>();
+
+                routeString = resultGeometryString;
+
+                ArrayList<DirectionsRoute> list = new ArrayList<>();
+                list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+
+                mapboxNavigation.setRoutes(new ArrayList<>());
+                mapboxNavigation.setRoutes(list);
+
+                routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
+                routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                routeLine = new RouteLine(list.get(0), null);
+
+                routesObserver = new RoutesObserver() {
+                    @Override
+                    public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                        routes.add(routeLine);
+                        routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                            System.out.println("Hello");
+                            routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                            System.out.println("Hello");
+
+                            routes = new ArrayList<>();
+                            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+                            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+                            // Modifica o zoom na câmera automaticamente
+                            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                    .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
+                                    .zoom(15.0)
+                                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                    .build();
+
+                            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                        });
+                    }
+                };
+
+                mapboxNavigation.registerRoutesObserver(routesObserver);
+
             }
+        }
     }
 
     @Override
@@ -470,7 +469,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
-                } else if (pausedBinding != null){
+                } else if (pausedBinding != null) {
                     updateCamera(location);
                 }
             }
@@ -482,11 +481,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
     };
 
 
-
-
     public void updateCamera(Location location) {
         // Animações na câmera
-        if(location != null) {
+        if (location != null) {
             MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
             CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
@@ -512,9 +509,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
         if (routesObserver != null) {
             mapboxNavigation.unregisterRoutesObserver(routesObserver);
         }
-        routeLineOptions = null;
-        routeLineApi = null;
-        routeLineView = null;
         mapboxNavigation.unregisterLocationObserver(locationObs);
         trainingBinding = null;
         pausedBinding = null;
@@ -638,6 +632,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     }
 
+    private RouteLine routeLineDetails;
 
     public void setRoute(String route, Context context) {
         if (!route.equals("null")) {
@@ -658,7 +653,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             routeLineApi = new MapboxRouteLineApi(routeLineOptions);
             routeLineView = new MapboxRouteLineView(routeLineOptions);
 
-            RouteLine routeLineDetails = new RouteLine(list.get(0), null);
+            routeLineDetails = new RouteLine(list.get(0), null);
 
             list = null;
 
@@ -666,29 +661,31 @@ public class mapFragment extends Fragment implements PermissionsListener {
             routesObserver = new RoutesObserver() {
                 @Override
                 public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                    ArrayList<RouteLine> routesDetails = new ArrayList<>();
-                    routesDetails.add(routeLineDetails);
-                    routeLineApi.setRoutes(routesDetails, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                        System.out.println("Hello");
-                        routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                        System.out.println("Hello");
+                    if (routeLineDetails != null) {
+                        ArrayList<RouteLine> routesDetails = new ArrayList<>();
+                        routesDetails.add(routeLineDetails);
+                        routeLineApi.setRoutes(routesDetails, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                            System.out.println("rota detalhes");
+                            routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                            System.out.println("Hello");
 
-                        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+                            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
-                        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+                            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
 
-                        // Modifica o zoom na câmera automaticamente
-                        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                .center(finalResultGeometry.get(resultGeometryIndex))
-                                .zoom(15.0)
-                                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                .build();
+                            // Modifica o zoom na câmera automaticamente
+                            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                    .center(finalResultGeometry.get(resultGeometryIndex))
+                                    .zoom(15.0)
+                                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                    .build();
 
-                        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                    });
+                            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                        });
+                    }
+                    routeLineDetails = null;
                 }
             };
-
             mapboxNavigation.registerRoutesObserver(routesObserver);
         }
     }
