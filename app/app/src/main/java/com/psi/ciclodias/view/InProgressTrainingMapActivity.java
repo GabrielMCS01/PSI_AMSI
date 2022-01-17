@@ -53,6 +53,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
         binding.btPausaTreino.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
                 // Pausa no treino
                 Intent intent = new Intent(getApplicationContext(), PausedTrainingActivity.class);
                 startActivity(intent);
