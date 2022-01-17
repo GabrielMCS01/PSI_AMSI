@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.psi.ciclodias.view.InProgressTrainingActivity;
 import com.psi.ciclodias.view.ResultsTrainingActivity;
 import com.psi.ciclodias.view.mapFragment;
 
@@ -34,8 +35,9 @@ public class ConfirmarSaidaDialogFragment extends DialogFragment {
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), "no clicked", Toast.LENGTH_SHORT).show();
-                dismiss();
+                intent = new Intent(getActivity(), InProgressTrainingActivity.class);
+                startActivity(intent);
+                getActivity().finish();
             }
         }).setCancelable(false);
 
