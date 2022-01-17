@@ -107,6 +107,7 @@ public class StartTrainingActivity extends AppCompatActivity {
             if(startTraining) {
                 startTraining = false;
             }else{
+                mapFragment.getInstancia().startBinding = null;
                 mapFragment.getInstancia().onMyDestroy();
             }
         }
