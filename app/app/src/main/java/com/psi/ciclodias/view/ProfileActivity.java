@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
 
+
         binding.btGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

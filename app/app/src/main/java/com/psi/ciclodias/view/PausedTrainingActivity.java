@@ -41,6 +41,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View view) {
                 // Retoma atividade
+                mapFragment.getInstancia().pausedBinding = null;
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();
@@ -62,6 +63,8 @@ public class PausedTrainingActivity extends AppCompatActivity {
                 // Terminar a ativity da pausa e da sessão do treino
                 DialogFragment dialogFragment = new ConfirmarSaidaDialogFragment();
                 dialogFragment.show(getSupportFragmentManager(), "dialog");
+
+
                 return false;
             }
         });

@@ -479,6 +479,8 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
+                } else if (pausedBinding != null){
+                    updateCamera(location);
                 }
             }
         }
