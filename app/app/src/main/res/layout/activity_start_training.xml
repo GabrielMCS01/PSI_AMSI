@@ -24,6 +24,7 @@
         android:backgroundTint="@color/green_700"
         android:enabled="false"
         android:text="@string/txtBtComecarTreino"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/navBarMainPage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -52,7 +53,7 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/mapViewStartTraining"
         app:layout_constraintEnd_toEndOf="@+id/mapViewStartTraining"
-        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+        app:srcCompat="@drawable/ic_action_mylocation" />
 
     <FrameLayout
         android:id="@+id/navBarMainPage"

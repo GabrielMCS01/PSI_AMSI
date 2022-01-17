@@ -11,10 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
@@ -78,7 +75,6 @@ public class StartTrainingActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    System.out.println("henlo permission");
                     Fragment mapfragment = mapFragment.getInstancia();
                     mapFragment.getInstancia().startBinding = binding;
                     if (mapfragment != null) {
