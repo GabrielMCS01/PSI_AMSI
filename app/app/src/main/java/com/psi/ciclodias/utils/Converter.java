@@ -1,7 +1,5 @@
 package com.psi.ciclodias.utils;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -33,7 +31,6 @@ public class Converter {
         fmt.format(Locale.US, "%02d", secondsString);
         String strSeconds = fmt.toString();
 
-
         // Unidade de medida
         String strUnits = " h";
 
@@ -56,7 +53,6 @@ public class Converter {
     }
 
     public static String velocityFormat(double velocity){
-
         // Formata os dados
         Formatter fmt = new Formatter(new StringBuilder());
         fmt.format(Locale.US, "%5.2f", velocity);

@@ -3,11 +3,8 @@ package com.psi.ciclodias.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
 
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.psi.ciclodias.model.Ciclismo;
 
 import org.json.JSONArray;
@@ -26,8 +23,8 @@ public class CiclismoJsonParser {
         try {
             JSONObject jsonObject = new JSONObject(resposta);
 
+            // Caso a resposta seja sucesso faz
             if(jsonObject.getBoolean("success")) {
-
                 JSONArray array = jsonObject.getJSONArray("ciclismo");
 
                 for (int i = 0; i < array.length(); i++) {
@@ -201,8 +198,6 @@ public class CiclismoJsonParser {
     }
 
     public static String parserJsonCriaPublicacao(String response) {
-
-
         try {
             JSONObject json = new JSONObject(response);
 

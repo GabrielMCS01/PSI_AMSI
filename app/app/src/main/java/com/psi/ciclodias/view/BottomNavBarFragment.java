@@ -46,7 +46,9 @@ public class BottomNavBarFragment extends Fragment {
         btHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Se o utilizador estiver numa activity diferente da que carregou para ir
                 if(!lockHome) {
+                    // Caso tenha uma sessão de treino em progresso, esta é destruida
                     if(lockTraining){
                         mapFragment.getInstancia().onMyDestroy();
                     }
@@ -60,6 +62,7 @@ public class BottomNavBarFragment extends Fragment {
         btTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Se o utilizador estiver numa activity diferente da que carregou para ir
                 if(!lockTraining) {
                     Intent intent = new Intent(getContext(), StartTrainingActivity.class);
                     startActivity(intent);
@@ -81,7 +84,9 @@ public class BottomNavBarFragment extends Fragment {
         btPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Se o utilizador estiver numa activity diferente da que carregou para ir
                 if(!lockPerfil) {
+                    // Caso tenha uma sessão de treino em progresso, esta é destruida
                     if(lockTraining){
                         mapFragment.getInstancia().onMyDestroy();
                     }
