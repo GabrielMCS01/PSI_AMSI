@@ -19,6 +19,7 @@ import com.psi.ciclodias.listeners.CreateCiclismoListener;
 import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.listeners.LoginListener;
 import com.psi.ciclodias.listeners.PerfilListener;
+import com.psi.ciclodias.listeners.PublicacaoListener;
 import com.psi.ciclodias.listeners.RegistoListener;
 import com.psi.ciclodias.utils.CiclismoJsonParser;
 
@@ -42,6 +43,7 @@ public class SingletonGestorCiclismo {
     private static final String URL_REGISTO = "http://ciclodias.duckdns.org/admin/v1/registo/signup";
     private static final String URL_CICLISMO = "http://ciclodias.duckdns.org/admin/v1/ciclismo";
     private static final String URL_USER = "http://ciclodias.duckdns.org/admin/v1/user";
+    private static final String URL_PUBLICACAO = "http://ciclodias.duckdns.org/admin/v1/publicacao";
 
     // Arraylist com todos as atividades do utilizador
     public ArrayList<Ciclismo> ArrCiclismo;
@@ -65,6 +67,7 @@ public class SingletonGestorCiclismo {
     private RegistoListener registoListener = null;
     private CreateCiclismoListener createCiclismoListener = null;
     private CiclismoListener ciclismoListener = null;
+    private PublicacaoListener publicacaoListener = null;
 
     // Faz de forma sincronizada
     public static synchronized SingletonGestorCiclismo getInstancia(Context context) {
@@ -543,6 +546,45 @@ public class SingletonGestorCiclismo {
     }
 
 
+    public void publicar(final long ciclismoId, final Context context){
+        if (!CiclismoJsonParser.isInternetConnection(context)) {
+            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+
+            String url = URL_PUBLICACAO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
+
+            StringRequest req = new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            publicacaoListener.criarPublicacao(CiclismoJsonParser.parserJsonCriaPublicacao(response));
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Erro: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            ) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+
+                    params.put("ciclismo_id", String.valueOf(ciclismoId));
+
+                    return params;
+                }
+            };
+
+            volleyQueue.add(req);
+        }
+    }
+
     // ------------------------------------- LOGIN -------------------------------------------------
     // Envia uma resposta ao LoginListener onde o login é validado
     public void loginAPI(final String username, final String password, final Context context) {
@@ -608,6 +650,10 @@ public class SingletonGestorCiclismo {
         this.ciclismoListener = ciclismoListener;
     }
 
+    public void setPublicacaoListener(PublicacaoListener publicacaoListener) {
+        this.publicacaoListener = publicacaoListener;
+    }
+
     // ---------------------------------- OUTROS METODOS -------------------------------------------
     // Preencher o array Unsync quando se entra na aplicação para verificar se existem treinos que
     // ainda não foram enviados para a API
@@ -625,4 +671,6 @@ public class SingletonGestorCiclismo {
             }
         }
     }
+
+
 }

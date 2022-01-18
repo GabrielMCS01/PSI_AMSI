@@ -20,12 +20,13 @@ import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityDetalhesTreinoMainBinding;
 import com.psi.ciclodias.dialogs.ConfirmarApagarTreinoDialogFragment;
 import com.psi.ciclodias.listeners.CiclismoListener;
+import com.psi.ciclodias.listeners.PublicacaoListener;
 import com.psi.ciclodias.listeners.RotaListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
 import com.psi.ciclodias.utils.Converter;
 
-public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener, ConfirmarApagarTreinoDialogFragment.ApagarTreinoListener, RotaListener {
+public class DetalhesTreinoMainActivity extends AppCompatActivity implements CiclismoListener, ConfirmarApagarTreinoDialogFragment.ApagarTreinoListener, RotaListener, PublicacaoListener {
     private ActivityDetalhesTreinoMainBinding binding;
     public static String POSITION_TREINO = "position";
     public int position, id;
@@ -56,6 +57,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
+        SingletonGestorCiclismo.getInstancia(getApplicationContext()).setPublicacaoListener(this);
 
         // Recebe a posição do treino selecionada na recycler view (DB local)
         Intent intent = getIntent();
@@ -92,6 +94,17 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
                 SingletonGestorCiclismo.getInstancia(getApplicationContext()).EditCiclismo(nome, ciclismo.getId(), getApplicationContext());
             }
         });
+
+
+        binding.btPublicarTreino.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                System.out.println("ID: " + ciclismo.getId());
+                SingletonGestorCiclismo.getInstancia(getApplicationContext()).publicar(ciclismo.getId(), getApplicationContext());
+            }
+        });
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -212,4 +225,10 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
                     finish();
                 }
             });
+
+    @Override
+    public void criarPublicacao(String mensagem) {
+
+        Toast.makeText(getApplicationContext(), mensagem, Toast.LENGTH_LONG).show();
+    }
 }
