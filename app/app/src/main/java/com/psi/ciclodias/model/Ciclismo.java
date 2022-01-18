@@ -52,63 +52,31 @@ public class Ciclismo {
         return nome_percurso;
     }
 
-    public void setNome_percurso(String nome_percurso) {
-        this.nome_percurso = nome_percurso;
-    }
-
     public String getVelocidade_grafico() {
         return velocidade_grafico;
-    }
-
-    public void setVelocidade_grafico(String velocidade_grafico) {
-        this.velocidade_grafico = velocidade_grafico;
     }
 
     public String getRota() {
         return rota;
     }
 
-    public void setRota(String rota) {
-        this.rota = rota;
-    }
-
     public double getVelocidade_media() {
         return velocidade_media;
-    }
-
-    public void setVelocidade_media(double velocidade_media) {
-        this.velocidade_media = velocidade_media;
     }
 
     public double getVelocidade_maxima() {
         return velocidade_maxima;
     }
 
-    public void setVelocidade_maxima(double velocidade_maxima) {
-        this.velocidade_maxima = velocidade_maxima;
-    }
-
     public String getData_treino() {
         return data_treino;
-    }
-
-    public void setData_treino(String data_treino) {
-        this.data_treino = data_treino;
     }
 
     public int getDistancia() {
         return distancia;
     }
 
-    public void setDistancia(int distancia) {
-        this.distancia = distancia;
-    }
-
     public int getDuracao() {
         return duracao;
-    }
-
-    public void setDuracao(int duracao) {
-        this.duracao = duracao;
     }
 }

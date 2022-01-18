@@ -1,7 +1,5 @@
 package com.psi.ciclodias.listeners;
 
-import android.content.Context;
-
 import java.util.Map;
 
 public interface LoginListener {
