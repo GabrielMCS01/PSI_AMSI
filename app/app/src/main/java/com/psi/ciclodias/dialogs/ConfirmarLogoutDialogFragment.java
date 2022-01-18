@@ -30,9 +30,13 @@ public class ConfirmarLogoutDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         // Classe default para construir a Alert Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        String mensagem = "Deseja terminar sessão?";
+        if (SingletonGestorCiclismo.getInstancia(getActivity().getApplicationContext()).ArrCiclismoUnSync.size() != 0){
+            mensagem = mensagem + " - ATENÇÃO - Tem treinos por sincronizar, ligue a internet para a fazer";
+        }
 
         // Construi a Alert Dialog (Mensagem, Botão Positivo e Botão Negativo) e não permite cancelar
-        builder.setMessage("Deseja terminar sessão?").setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        builder.setMessage(mensagem).setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             // Caso o utilizador clique para terminar sessão
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

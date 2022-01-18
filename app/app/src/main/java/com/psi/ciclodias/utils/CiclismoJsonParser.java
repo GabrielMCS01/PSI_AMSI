@@ -201,8 +201,6 @@ public class CiclismoJsonParser {
     }
 
     public static String parserJsonCriaPublicacao(String response) {
-
-
         try {
             JSONObject json = new JSONObject(response);
 
@@ -215,7 +213,6 @@ public class CiclismoJsonParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return "Erro";
     }
 }
