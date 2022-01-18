@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.adapters.RecyclerCiclismoAdapter;
@@ -116,6 +117,7 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         //noinspection SimplifiableIfStatement
         if (id == R.id.actionLogout) {
 
+            
             DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
             return true;

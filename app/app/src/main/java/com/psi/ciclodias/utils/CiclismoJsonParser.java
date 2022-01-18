@@ -210,7 +210,6 @@ public class CiclismoJsonParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return "Erro";
     }
 }
