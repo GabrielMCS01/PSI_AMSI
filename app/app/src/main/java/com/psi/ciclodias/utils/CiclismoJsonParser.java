@@ -200,4 +200,22 @@ public class CiclismoJsonParser {
         return jsonArray;
     }
 
+    public static String parserJsonCriaPublicacao(String response) {
+
+
+        try {
+            JSONObject json = new JSONObject(response);
+
+            if(json.getBoolean("success")){
+                return "Publicação Criada";
+            }else{
+                return json.getString("mensagem");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return "Erro";
+    }
 }
