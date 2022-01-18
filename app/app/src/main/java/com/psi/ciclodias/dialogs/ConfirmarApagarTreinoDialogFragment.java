@@ -15,12 +15,15 @@ public class ConfirmarApagarTreinoDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //return super.onCreateDialog(savedInstanceState);
+
+        // Classe default para construir a Alert Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Construi a Alert Dialog (Mensagem, Botão Positivo e Botão Negativo) e não permite cancelar
         builder.setMessage("Deseja apagar a sessão de treino?").setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 apagarTreinoListener.onApagarClick();
-
             }
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
@@ -29,11 +32,13 @@ public class ConfirmarApagarTreinoDialogFragment extends DialogFragment {
             }
         }).setCancelable(false);
 
+        // Cria a Dialog
         return builder.create();
     }
 
     ApagarTreinoListener apagarTreinoListener;
 
+    // Método para apagar o treino
     public interface ApagarTreinoListener{
         void onApagarClick();
     }

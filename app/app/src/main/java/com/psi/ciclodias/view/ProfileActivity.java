@@ -158,8 +158,10 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
     }
 
+    // Recebe a resposta da API e faz edições localmente
     @Override
     public void removeUser(Boolean success) {
+        // Caso não remova o utilizador envia um TOAST a informar que ocorreu um erro
         if (!success) {
             Toast.makeText(getApplicationContext(), R.string.txtUserNaoRemovido, Toast.LENGTH_SHORT).show();
         }
