@@ -21,9 +21,6 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
     private ArrayList<Ciclismo> listaCiclismo;
     private RecyclerViewListener itemListener = null;
 
-
-
-
     // Construtor que recebe o contexto e a lista com as atividades do utilizador
     public RecyclerCiclismoAdapter(Context context, ArrayList<Ciclismo> lista){
         this.context = context;
@@ -70,6 +67,7 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
             itemView.setOnClickListener(this);
         }
 
+        // Insere os dados do treino no cartão
         public void update(Ciclismo ciclismo) {
             tvNomeAtividade.setText(ciclismo.getNome_percurso());
             tvDuracao.setText(Converter.hourFormat(ciclismo.getDuracao()));
@@ -77,7 +75,7 @@ public class RecyclerCiclismoAdapter extends RecyclerView.Adapter<RecyclerCiclis
             tvVelMedia.setText(Converter.velocityFormat(ciclismo.getVelocidade_media()));
         }
 
-
+        // Recebe a posição do item selecionado
         @Override
         public void onClick(View view) {
             itemListener.recyclerViewListClicked(view, this.getLayoutPosition());
