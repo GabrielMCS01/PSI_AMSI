@@ -35,7 +35,7 @@ public class DBHelp extends SQLiteOpenHelper {
         bd = getWritableDatabase();
     }
 
-    // Crias as tabelas na DB enviada
+    // Cria a tabela na DB criada
     @Override
     public void onCreate(SQLiteDatabase db) {
         String SQL = "CREATE TABLE " + TABELA_CICLISMO + "(" +
@@ -80,6 +80,7 @@ public class DBHelp extends SQLiteOpenHelper {
         bd.insert(TABELA_CICLISMO, null, valores);
     }
 
+    // Cria uma nova sessão de treino que irá ficar por sincronizar
     public long AdicionarCiclismoDBUnSync(Ciclismo ciclismo) {
         ContentValues valores = new ContentValues();
 
