@@ -39,12 +39,13 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Profile
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         SingletonGestorCiclismo.getInstancia(this).setPerfilListener(this);
 
+        // Carrega os dados iniciais no perfil
         dadosPerfil();
 
         // Chama a função da API para receber os dados do utilizador
@@ -62,10 +63,11 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
 
-
+        // Botão para guardar as alterações feitas ao utilizador
         binding.btGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Objeto com todos os dados editáveis do perfil
                 Map<String, String> params = new HashMap<>();
 
                 params.put("primeiro_nome", binding.etPrimeiroNomePerfil.getText().toString());
@@ -76,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
             }
         });
 
+        // Botão que carrega a dialog fragment para escolher a data de nascimento
         binding.ibDataNascimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,12 +88,14 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         });
     }
 
+    // Carrega a action bar com o botão de menu para apagar o utilizador
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.delete, menu);
         return true;
     }
 
+    // Verifica qual foi o item selecionado na action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -98,9 +103,8 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // Se o item selecionado foi o de apagar o utilizador, é carregada uma dialog de confirmação
         if (id == R.id.actionDelete) {
-
             DialogFragment dialogFragment = new ConfirmarApagarUserDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
             return true;
