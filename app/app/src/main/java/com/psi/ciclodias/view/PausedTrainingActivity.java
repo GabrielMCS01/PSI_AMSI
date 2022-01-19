@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
 import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
-import com.psi.ciclodias.model.Chronometer;
 
 public class PausedTrainingActivity extends AppCompatActivity {
     private ActivityPausedTrainingBinding binding;
@@ -22,13 +21,14 @@ public class PausedTrainingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Results Training
         binding = ActivityPausedTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Atribuição do binding para o MapFragment poder alterar os dados
         mapFragment.getInstancia().pausedBinding = binding;
         mapFragment.getInstancia().setData();
 
+        // Carrega o fragment do mapa
         mapfragment = mapFragment.getInstancia();
 
         if(mapfragment != null){
@@ -38,17 +38,21 @@ public class PausedTrainingActivity extends AppCompatActivity {
                     .commit();
         }
 
+        // Botão para retomar o treino
         binding.btRetomarTreinoPausa.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                // Retoma atividade
+                // Retira o binding para não atualizar mais os dados desta activity
                 mapFragment.getInstancia().pausedBinding = null;
+                // Redireciona para a activity
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();
                 return false;
             }
         });
+
+        // Premir o botão de Pausa
         binding.btRetomarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,9 +60,11 @@ public class PausedTrainingActivity extends AppCompatActivity {
             }
         });
 
+        // Botão que carrega uma dialogBox para terminar o treino
         binding.btTerminarTreinoPausa.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                // Remove o mapa da activity
                 getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
 
                 // Terminar a ativity da pausa e da sessão do treino
@@ -69,6 +75,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
             }
         });
 
+        // Premir o botão de Terminar o treino
         binding.btTerminarTreinoPausa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +83,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
             }
         });
 
-
+        // Botão para atualizar a câmera para a localização atual
         binding.fabTrainingPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
