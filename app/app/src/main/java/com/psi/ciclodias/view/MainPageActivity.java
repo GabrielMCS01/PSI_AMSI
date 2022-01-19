@@ -55,6 +55,7 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+
         if(mapFragment.getInstancia().isRunning){
             Intent intent = new Intent(this, InProgressTrainingActivity.class);
             startActivity(intent);

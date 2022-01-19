@@ -75,6 +75,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         binding.tvVelMaxDetalhes.setText(Converter.velocityFormat(ciclismo.getVelocidade_maxima()));
         binding.tvVelMediaDetalhes.setText(Converter.velocityFormat(ciclismo.getVelocidade_media()));
         binding.etNomeTreinoDetalhes.setText(ciclismo.getNome_percurso());
+        binding.tvData.setText(ciclismo.getData_treino());
 
         // Volta para o menu principal
         binding.btVoltarDetalhes.setOnClickListener(new View.OnClickListener() {
