@@ -27,8 +27,10 @@ public class RegistryActivity extends AppCompatActivity implements RegistoListen
         binding = ActivityRegistryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Permite ao método do registo listener da singleton aceder a esta activity
         SingletonGestorCiclismo.getInstancia(this).setRegistoListener(this);
 
+        // botão para registar o utilizador
         binding.btRegistarse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +50,7 @@ public class RegistryActivity extends AppCompatActivity implements RegistoListen
                 if (!isEmpty) {
                     // Se o email e a password estiverem válidas faz
                     if (isMailValida(email) && isPasswordValida(password, confirmarPassword)) {
+                        // Preenche o objeto
                         Map<String, String> params = new HashMap<>();
 
                         params.put("username", username);
@@ -63,6 +66,7 @@ public class RegistryActivity extends AppCompatActivity implements RegistoListen
         });
     }
 
+    // Verifica se o email é válido
     private boolean isMailValida(String email){
         if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return true;
@@ -73,8 +77,11 @@ public class RegistryActivity extends AppCompatActivity implements RegistoListen
         }
     }
 
+    // Verifica se a palavra-passe é válida
     private boolean isPasswordValida(String password, String confirmarPassword){
+        // Se a palavra-passe tiver 8 ou mais caracteres
         if (password.length() >= 8)
+            // Se a palavra-passe e a palavra-passe de confirmação forem iguais
             if (password.equals(confirmarPassword))
                 return true;
             else {
@@ -87,6 +94,7 @@ public class RegistryActivity extends AppCompatActivity implements RegistoListen
         }
     }
 
+    // Verifica se existem campos do registo vazios
     public void isEmptyRegisto(){
         if(primeiroNome.isEmpty()){
             binding.etPrimeiroNome.setError(getString(R.string.txtErrorCampoVazio));
@@ -119,11 +127,10 @@ public class RegistryActivity extends AppCompatActivity implements RegistoListen
     public void createUser(Boolean success) {
         if (success) {
             Toast.makeText(getApplicationContext(), "Utilizador registado com sucesso", Toast.LENGTH_SHORT).show();
-
             finish();
         }
         else {
-            Toast.makeText(getApplicationContext(), "Registo Invalido, experimente outro EMAIL ou USERNAME", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Registo Invalido, experimente outro EMAIL ou NOME DE UTILIZADOR", Toast.LENGTH_SHORT).show();
         }
     }
 }

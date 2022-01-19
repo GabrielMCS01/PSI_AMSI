@@ -134,10 +134,13 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     // Preenche o perfil com os dados atualizados do perfil
     @Override
     public void perfilDados(Map<String, String> dadosUser) {
-        // Guarda os dados da API na Shared Preferences
+
         SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Se tiver mensagem é porque deu erro
         if(dadosUser.get("mensagem") == null) {
+            // Guarda os dados da API na Shared Preferences
             editor.putString(PRIMEIRO_NOME, dadosUser.get("primeiro_nome"));
             editor.putString(ULTIMO_NOME, dadosUser.get("ultimo_nome"));
 
@@ -157,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
 
     @Override
     public void editUser(Boolean success) {
-        // TOAST que os dados foram guardados com sucesso ou com insucesso
+        // TOAST que os dados foram guardados com sucesso ou que não foram guardados
         if (!success) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
         else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
     }
@@ -172,9 +175,11 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         else {
             Toast.makeText(getApplicationContext(), R.string.txtUserRemovido, Toast.LENGTH_SHORT).show();
 
+            // Carrega as SharedPreferences do Utilizador
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
+            // Remove os dados da SharedPreferences carregada
             editor.putString(TOKEN, "null");
             editor.putString(USER, "null");
             editor.putString(ID, "null");
@@ -183,16 +188,19 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
             editor.putString(DATA_NASCIMENTO, "null");
             editor.apply();
 
+            // Elimina o array dos treinos sincronizados e por sincronizar, apaga também os treinos da DB local
             SingletonGestorCiclismo.getInstancia(this).ArrCiclismo = new ArrayList<>();
             SingletonGestorCiclismo.getInstancia(this).ArrCiclismoUnSync = new ArrayList<>();
             SingletonGestorCiclismo.getInstancia(this).apagarCiclismoDBAll();
 
+            // Redireciona para a activity de login
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
+    // Atribui na Textbox a data de nascimento selecionada já com o formato correto
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         String dataNascimento = year + "-" + month + "-" + day;
@@ -200,6 +208,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         binding.etDataNascimentoPerfil.setText(dataNascimento);
     }
 
+    // Carrega o método para apagar o utilizador
     @Override
     public void onApagarClick() {
         SingletonGestorCiclismo.getInstancia(this).DeleteUser(getApplicationContext());

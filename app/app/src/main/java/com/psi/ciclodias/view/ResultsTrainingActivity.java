@@ -25,14 +25,16 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Results Training
         binding = ActivityResultsTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Envia o binding da activity de resultados para os dados do treino serem mostrados nesta activity
         mapFragment.getInstancia().getResults(binding);
 
+        // Permite ao método para criar ciclismo listener da singleton aceder a esta activity
         SingletonGestorCiclismo.getInstancia(this).setCreateCiclismoListener(this);
 
+        // Carrega o fragment do mapa
         Fragment mapfragment = mapFragment.getInstancia();
 
         if (mapfragment != null) {
@@ -42,6 +44,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                     .commit();
         }
 
+        // Botão para Criar o treino na DB
         binding.btGuardarResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,26 +60,29 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                 dadosCiclismo.put("velocidade_grafico", CiclismoJsonParser.createJsonVelocity(mapFragment.getInstancia().arrayVelocity).toString());
                 dadosCiclismo.put("rota", mapFragment.getInstancia().routeString);
 
-
+                // Redefine os dados do fragment para 0 de modo ao próximo treino não ter dados erráticos
                 mapFragment.getInstancia().distance = 0;
                 mapFragment.getInstancia().velocityMax = 0;
                 mapFragment.getInstancia().velocityMean = 0;
                 mapFragment.getInstancia().time = 0;
                 mapFragment.getInstancia().velocityInstant = 0;
 
+                // Método para adicionar o treino na API
                 SingletonGestorCiclismo.getInstancia(getApplicationContext()).AddCiclismo(dadosCiclismo, getApplicationContext());
             }
         });
 
-        // PRECISA DE MAIS COISAS!
+        // TERMINAR ESTE METODO
+        // Botão para sair sem guardar o treino
         binding.btSairResumo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mapFragment.getInstancia().onMyDestroy();
-                boolean respostaUser = true; // Mudar para false e depois perguntar ao USER
+                boolean respostaUser = true;// Mudar para false e depois perguntar ao USER
 
                 // Confirmar ao utilizador se não quer mesmo guardar os dados
                 if (respostaUser) {
+                    // Redifine os dados para o próximo treino
                     mapFragment.getInstancia().onMyDestroy();
                     mapFragment.getInstancia().distance = 0;
                     mapFragment.getInstancia().velocityMax = 0;
@@ -84,6 +90,7 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
                     mapFragment.getInstancia().time = 0;
                     mapFragment.getInstancia().velocityInstant = 0;
 
+                    // Redireciona o utilizador para a página principal
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
@@ -92,15 +99,19 @@ public class ResultsTrainingActivity extends AppCompatActivity implements Create
         });
     }
 
+    // Resposta ao criar o treino
     @Override
     public void createCiclismo(Ciclismo ciclismo) {
+        // Se o treino tiver um ID diferente -1, o treino foi guardado com sucesso
         if (ciclismo.getId() != -1) {
-
+            // Guarda o treino na DB local
             SingletonGestorCiclismo.getInstancia(this).adicionarCiclismoBD(ciclismo);
 
             Toast.makeText(getApplicationContext(), "Treino Guardado com sucesso", Toast.LENGTH_SHORT).show();
 
             mapFragment.getInstancia().onMyDestroy();
+
+            // Redireciona o Utilizador para a página principal
             Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
             startActivity(intent);
             finish();

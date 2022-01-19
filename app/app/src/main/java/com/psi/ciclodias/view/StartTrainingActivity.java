@@ -23,11 +23,12 @@ public class StartTrainingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Start Training
         binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Verifica se a aplicação tem permissões de localização
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Carrega o fragment do mapa
             Fragment mapfragment = mapFragment.getInstancia();
             mapFragment.getInstancia().startBinding = binding;
             if (mapfragment != null) {
@@ -37,6 +38,7 @@ public class StartTrainingActivity extends AppCompatActivity {
                         .commit();
             }
         } else {
+            // Pede as permissões de localização
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
@@ -51,7 +53,7 @@ public class StartTrainingActivity extends AppCompatActivity {
                     .commit();
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
-
+        // Botão para iniciar o treino
         binding.btComecarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,6 +66,7 @@ public class StartTrainingActivity extends AppCompatActivity {
             }
         });
 
+        // Botão para atualizar a câmera para localização atual
         binding.floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,9 +75,12 @@ public class StartTrainingActivity extends AppCompatActivity {
         });
     }
 
+    // Pede as permissões de localização
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // Se for permitida
                 if (isGranted) {
+                    // Carrega o fragment do mapa
                     Fragment mapfragment = mapFragment.getInstancia();
                     mapFragment.getInstancia().startBinding = binding;
                     if (mapfragment != null) {
@@ -83,13 +89,16 @@ public class StartTrainingActivity extends AppCompatActivity {
                                 .replace(R.id.mapViewStartTraining, mapfragment)
                                 .commit();
                     }
-                } else {
+                }
+                // Caso contrário volta para o menu principal
+                else {
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
                 }
             });
 
+    // Se clicar para voltar atrás
     @Override
     public void onBackPressed() {
         if(startTraining) {
