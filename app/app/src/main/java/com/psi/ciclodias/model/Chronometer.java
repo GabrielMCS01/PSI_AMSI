@@ -59,12 +59,14 @@ public class Chronometer extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                // Sai do ciclo caso a variável para parar seja TRUE
                 if(stop){
                     return;
                 }
             }
         }
 
+        // Retorna o tempo em segundos
         public int getTime() {
             return timeSeconds;
     }

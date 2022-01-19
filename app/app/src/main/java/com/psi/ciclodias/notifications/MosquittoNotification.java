@@ -28,6 +28,8 @@ public class MosquittoNotification implements MqttCallback {
     public MosquittoNotification(){
     }
 
+    // Inicia o serviço MOSQUITTO para o utilizador e dá subscribe do TOP do Website e das publicações
+    // Realizados pelo mesmo
     public void start(Context context) {
 
         contexto = context;
@@ -38,8 +40,7 @@ public class MosquittoNotification implements MqttCallback {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
         String clientID = sharedPreferences.getString(ID, "");
-
-
+        System.out.println("ID MOSQUITTO " + clientID);
         try {
             mqttClient = new MqttClient("tcp://ciclodias.duckdns.org:1883",
                     clientID,null);
@@ -47,14 +48,10 @@ public class MosquittoNotification implements MqttCallback {
             mqttClient.setCallback(this);
             mqttClient.connect();
 
-
             String myTopic = sharedPreferences.getString(ID, "");
             int subQoS = 0;
             mqttClient.subscribe(myTopic, subQoS);
             mqttClient.subscribe("leaderboard", subQoS);
-
-
-
 
         } catch (MqttException e) {
             e.printStackTrace();
@@ -62,12 +59,12 @@ public class MosquittoNotification implements MqttCallback {
 
     }
 
-
     @Override
     public void connectionLost(Throwable cause) {
 
     }
 
+    // Recebe uma mensagem
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         System.out.println(new String(message.getPayload()));
@@ -81,7 +78,6 @@ public class MosquittoNotification implements MqttCallback {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(contexto);
 
         notificationManager.notify(new Random().nextInt(999999999), builder.build());
-
     }
 
     @Override
@@ -89,6 +85,7 @@ public class MosquittoNotification implements MqttCallback {
 
     }
 
+    // Cria o canal de Notificações
     private void createNotificationChannel(Context context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library

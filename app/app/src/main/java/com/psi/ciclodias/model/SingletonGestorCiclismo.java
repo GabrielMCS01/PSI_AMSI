@@ -10,7 +10,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.psi.ciclodias.R;
@@ -104,6 +103,7 @@ public class SingletonGestorCiclismo {
         bd.apagarCiclismoDB(id);
     }
 
+    // Remove todos os treinos da DB local
     public void apagarCiclismoDBAll() {
         bd.apagarCiclismoDBAll();
     }
@@ -175,18 +175,26 @@ public class SingletonGestorCiclismo {
     // ---------------------------------------------------------------------------------------------
     // ------------------------------------- API ---------------------------------------------------
     // ------------------------------------ USER ---------------------------------------------------
+    // Recebe os dados do utilizador (Perfil)
     public void getUserDados(final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL completo com o ID do utilizador e o access token
             String url = URL_USER + "/" + sharedPreferences.getString(ID, "") + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido get
             StringRequest req = new StringRequest(
                     Request.Method.GET,
                     url,
                     new Response.Listener<String>() {
+                        // Caso devolva uma resposta esta é recebida pelo devido listener
                         @Override
                         public void onResponse(String response) {
                             perfilListener.perfilDados(CiclismoJsonParser.ParserUserDados(response));
@@ -204,13 +212,18 @@ public class SingletonGestorCiclismo {
 
     // Cria um utilizador
     public void CreateUser(final Map<String, String> dadosRegisto,final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Pedido POST
             StringRequest req = new StringRequest(
                     Request.Method.POST,
                     URL_REGISTO,
                     new Response.Listener<String>() {
+                        // Recebe a resposta de se o utilizador foi criado com sucesso
                         @Override
                         public void onResponse(String response) {
                             registoListener.createUser(CiclismoJsonParser.parserJsonSuccess(response));
@@ -238,17 +251,24 @@ public class SingletonGestorCiclismo {
 
     // Edita o utilizador
     public void EditUser(final Map<String, String> dadosEdicao, final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL completo com o ID do utilizador e o access token
             String url = URL_USER + "/" + sharedPreferences.getString(ID, "") + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido PUT
             StringRequest req = new StringRequest(
                     Request.Method.PUT,
                     url,
                     new Response.Listener<String>() {
+                        // Recebe a resposta de se o utilizador foi editado com sucesso
                         @Override
                         public void onResponse(String response) {
                             perfilListener.editUser(CiclismoJsonParser.parserJsonSuccess(response));
@@ -276,17 +296,24 @@ public class SingletonGestorCiclismo {
 
     // Apaga o utilizador
     public void DeleteUser(final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL Completo com o ID do Utilizador e o access-token
             String url = URL_USER + "/" + sharedPreferences.getString(ID, "") + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido DELETE
             StringRequest req = new StringRequest(
                     Request.Method.DELETE,
                     url,
                     new Response.Listener<String>() {
+                        // Recebe a resposta de se o utilizador foi apagado com sucesso
                         @Override
                         public void onResponse(String response) {
                             if (CiclismoJsonParser.parserJsonSuccess(response)) {
@@ -308,30 +335,39 @@ public class SingletonGestorCiclismo {
     }
 
     // ------------------------------------- CICLISMO ----------------------------------------------
+    // Recebe todos os treinos da API
     public void getListaCiclismoAPI(final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
             // Verifica se a BD local está vazia (Login pela primeira vez ou sem treinos)
             if (getArrCiclismo().size() == 0) {
+                // Recebe as SharedPreferences do utilizador
                 SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+                // URL completo com o access token
                 String url = URL_CICLISMO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+                // Pedido GET
                 StringRequest req = new StringRequest(
                         Request.Method.GET,
                         url,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
+                                // Recebe os treinos da API
                                 ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
 
-                                // Recebe todos os treinos da API e cria-os na BD local
+                                // Para cada treino no ArrCiclismo, este é adicionado na DB Local
                                 for (Ciclismo c : ArrCiclismo) {
                                     c = new Ciclismo(c.getId(), c.getNome_percurso(), c.getDuracao(), c.getDistancia(), c.getVelocidade_media(), c.getVelocidade_maxima(), c.getVelocidade_grafico(), c.getRota(), c.getData_treino());
                                     adicionarCiclismoBD(c);
                                 }
 
+                                // Se existerem treinos atualiza a lista dos livros
                                 if (listaCiclismoListener != null) {
                                     listaCiclismoListener.onRefreshListaLivros(ArrCiclismo);
                                 }
@@ -347,30 +383,39 @@ public class SingletonGestorCiclismo {
             }
             // Verifica se existem treinos para sincronizar com a API
             else if (ArrCiclismoUnSync.size() != 0){
+                // Recebe as SharedPreferences do utilizador
                 SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+                // URL completo com a chamada do método sync e o access token
                 String url = URL_CICLISMO + "/sync?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+                // Cria um jsonArray com os treinos por sincronizar
                 JSONArray json = CiclismoJsonParser.createJsonArray(ArrCiclismoUnSync);
 
+                // Pedido POST
                 StringRequest req = new StringRequest(
                         Request.Method.POST,
                         url,
                         new Response.Listener<String>() {
+                            // Depois de ter sincronizado os treinos na API
                             @Override
                             public void onResponse(String response) {
+                                // Recebe todos os treino da API
                                 ArrCiclismo = CiclismoJsonParser.parserJsonListaCiclismo(response);
 
-                                // Apaga os treinos todos
+                                // Apaga os treinos todos da DB Local
                                 apagarCiclismoDBAll();
 
+                                // Para cada treino no ArrCiclismo, este é adicionado na DB Local
                                 for (Ciclismo c : ArrCiclismo) {
                                     c = new Ciclismo(c.getId(), c.getNome_percurso(), c.getDuracao(), c.getDistancia(), c.getVelocidade_media(), c.getVelocidade_maxima(), c.getVelocidade_grafico(), c.getRota(), c.getData_treino());
                                     adicionarCiclismoBD(c);
                                 }
 
+                                // Cria um novo ArrayList
                                 ArrCiclismoUnSync = new ArrayList<>();
 
+                                // Atualiza a lista de livros
                                 if (listaCiclismoListener != null) {
                                     listaCiclismoListener.onRefreshListaLivros(ArrCiclismo);
                                 }
@@ -404,17 +449,18 @@ public class SingletonGestorCiclismo {
         }
     }
 
-
-
     // Cria um Ciclismo
     public void AddCiclismo(final Map<String, String> dadosCiclismo,final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             // Cria localmente se não tiver Internet
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
 
+            // Cria o formato da data
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
             String date = sdf.format(new Date());
 
+            // Cria um treino
             Ciclismo c = new Ciclismo(dadosCiclismo.get("nome_percurso"),
                     Integer.parseInt(dadosCiclismo.get("duracao")),
                     Integer.parseInt(dadosCiclismo.get("distancia")),
@@ -424,24 +470,33 @@ public class SingletonGestorCiclismo {
                     dadosCiclismo.get("rota"),
                     date);
 
+            // Atribui o user_id com -1
             c.setUser_id_ciclismo(-1);
 
+            // adiciona o treino na DB Local
             bd.AdicionarCiclismoDBUnSync(c);
 
             ArrCiclismo = getArrCiclismo();
-            // Adiciona no Arraylist do treinos para sincronizar
+
+            // Adiciona no Arraylist dos treinos para sincronizar
             ArrCiclismoUnSync.add(c);
 
             createCiclismoListener.createCiclismo(c);
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do Utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL completo com o access-token
             String url = URL_CICLISMO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido POST
             StringRequest req = new StringRequest(
                     Request.Method.POST,
                     url,
                     new Response.Listener<String>() {
+                        // Resposta de se o Treino foi criado com sucesso
                         @Override
                         public void onResponse(String response) {
                             createCiclismoListener.createCiclismo(CiclismoJsonParser.parserJsonCriaCiclismo(response));
@@ -469,17 +524,24 @@ public class SingletonGestorCiclismo {
 
     // Edita o nome da sessão de treino
     public void EditCiclismo(final String dadosEdicao, long id, final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do Utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL completo com o ID do treino a ser editado e o access-token
             String url = URL_CICLISMO + "/" + id + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido PUT
             StringRequest req = new StringRequest(
                     Request.Method.PUT,
                     url,
                     new Response.Listener<String>() {
+                        // Resposta de se o Treino foi editado com sucesso
                         @Override
                         public void onResponse(String response) {
                             if (CiclismoJsonParser.parserJsonSuccess(response)) {
@@ -513,20 +575,28 @@ public class SingletonGestorCiclismo {
 
     // Apaga uma sessão de treino
     public void DeleteCiclismo(long id, final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do Utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL Completo com o ID do Treino a ser Apagado e o access-token
             String url = URL_CICLISMO + "/" + id + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido DELETE
             StringRequest req = new StringRequest(
                     Request.Method.DELETE,
                     url,
                     new Response.Listener<String>() {
+                        // Resposta de se o treino foi apagado com sucesso
                         @Override
                         public void onResponse(String response) {
                             if (CiclismoJsonParser.parserJsonSuccess(response)) {
+                                // Apaga o treino localmente
                                 apagarCiclismoDB(id);
 
                                 ciclismoListener.removeCiclismo(true);
@@ -545,19 +615,26 @@ public class SingletonGestorCiclismo {
         }
     }
 
-
+    // Cria uma publicação
     public void publicar(final long ciclismoId, final Context context){
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Recebe as SharedPreferences do Utilizador
             SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
 
+            // URL Completo com o access-token
             String url = URL_PUBLICACAO + "?access-token=" + sharedPreferences.getString(TOKEN, "");
 
+            // Pedido POST
             StringRequest req = new StringRequest(
                     Request.Method.POST,
                     url,
                     new Response.Listener<String>() {
+                        // Resposta de se a publicação foi criada com sucesso
                         @Override
                         public void onResponse(String response) {
                             publicacaoListener.criarPublicacao(CiclismoJsonParser.parserJsonCriaPublicacao(response));
@@ -586,15 +663,20 @@ public class SingletonGestorCiclismo {
     }
 
     // ------------------------------------- LOGIN -------------------------------------------------
-    // Envia uma resposta ao LoginListener onde o login é validado
+    // Envia uma resposta ao LoginListener onde verifica se o login é validado
     public void loginAPI(final String username, final String password, final Context context) {
+        // Caso não tenha Internet
         if (!CiclismoJsonParser.isInternetConnection(context)) {
             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        // Se tiver Internet
+        else {
+            // Pedido POST
             StringRequest req = new StringRequest(
                     Request.Method.POST,
                     URL_LOGIN,
                     new Response.Listener<String>() {
+                        // Recebe a resposta de caso o login é feito com sucesso
                         @Override
                         public void onResponse(String response) {
                             System.out.println(response);
@@ -660,10 +742,14 @@ public class SingletonGestorCiclismo {
     public void PreencherArrCiclismoUnsync() {
         if(ArrCiclismoUnSync.size() == 0) {
             ArrayList<Ciclismo> arrayList = new ArrayList<>();
+
+            // Preenche o arraylist com todos os treino da DB Local
             arrayList = bd.getListaCiclismoDB();
 
+            // Caso existam treinos
             if (arrayList.size() != 0) {
                 for (Ciclismo ciclismo : arrayList) {
+                    // Se o UserID for -1 adiciona o treino no arraylist dos treinos não sincronizados
                     if (ciclismo.getUser_id_ciclismo() == -1) {
                         ArrCiclismoUnSync.add(ciclismo);
                     }
