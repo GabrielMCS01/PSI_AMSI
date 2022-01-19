@@ -31,15 +31,14 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
     public static String POSITION_TREINO = "position";
     public int position, id;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Results Training
         binding = ActivityDetalhesTreinoMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Caso tenha permissão para localização, carrega o mapa
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Fragment mapfragment = mapFragment.getInstancia();
 
@@ -57,6 +56,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
+        // Instancia para poder criar uma publicação
         SingletonGestorCiclismo.getInstancia(getApplicationContext()).setPublicacaoListener(this);
 
         // Recebe a posição do treino selecionada na recycler view (DB local)
@@ -66,6 +66,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         // Recebe o treino com este ID
         Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(position);
 
+        // Recebe e converte o ID do treino
         id = (int)ciclismo.getId();
 
         // Preencher as textViews com os dados do treino
@@ -75,7 +76,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         binding.tvVelMediaDetalhes.setText(Converter.velocityFormat(ciclismo.getVelocidade_media()));
         binding.etNomeTreinoDetalhes.setText(ciclismo.getNome_percurso());
 
-
+        // Volta para o menu principal
         binding.btVoltarDetalhes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +87,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
             }
         });
 
+        // Botão para guardar as alterações no nome do treino
         binding.btGuardarDetalhes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,11 +97,10 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
             }
         });
 
-
+        // Botão para publicar o treino
         binding.btPublicarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 System.out.println("ID: " + ciclismo.getId());
                 SingletonGestorCiclismo.getInstancia(getApplicationContext()).publicar(ciclismo.getId(), getApplicationContext());
             }
@@ -107,20 +108,24 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
     }
 
+    // Adiciona o botão na action bar para apagar o treino
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.delete, menu);
         return true;
     }
 
+    // Se algum item da action bar for selecionado faz
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+        // Recebe o ID do item selecionado
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // Se o item selecionado for o botão para apagar o treino faz
         if (id == R.id.actionDelete) {
             DialogFragment dialogFragment = new ConfirmarApagarTreinoDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
@@ -134,11 +139,11 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
     @Override
     public void editCiclismo(Boolean success) {
-        // TOAST que os dados foram guardados com sucesso ou com insucesso
+        // Se os dados não foram guardados
         if (!success) {
             Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
         }
-
+        // Dados foram guardados com sucesso
         else {
             Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
             mapFragment.getInstancia().onMyDestroy();
@@ -150,10 +155,11 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
     @Override
     public void removeCiclismo(Boolean success) {
+        // Treino não foi apagado
         if (!success) {
             Toast.makeText(getApplicationContext(), R.string.txtCiclismoNaoRemovido, Toast.LENGTH_SHORT).show();
         }
-
+        // Treino apagado com sucesso
         else {
             Toast.makeText(getApplicationContext(), R.string.txtCiclismoRemovido, Toast.LENGTH_SHORT).show();
             mapFragment.getInstancia().onMyDestroy();
@@ -163,11 +169,13 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         }
     }
 
+    // Botão na action bar para apagar o treino
     @Override
     public void onApagarClick() {
         SingletonGestorCiclismo.getInstancia(this).DeleteCiclismo(id, getApplicationContext());
     }
 
+    // Desenha a rota do treino realizado pelo utilizador no mapa
     @Override
     public void setRoute() {
         Ciclismo ciclismo = SingletonGestorCiclismo.getInstancia(this).getCiclismo(position);
@@ -207,9 +215,10 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
         }
     }
 
-
+    // Resposta do dialog para permissões de localização
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // Se já tiver permissões, carrega o fragmento do mapa
                 if (isGranted) {
                     Fragment mapfragment = mapFragment.getInstancia();
 
@@ -219,7 +228,9 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
                                 .replace(R.id.mapViewResult, mapfragment)
                                 .commit();
                     }
-                } else {
+                }
+                // Caso contrário, o utilizador volta para a página principal
+                else {
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
@@ -228,7 +239,7 @@ public class DetalhesTreinoMainActivity extends AppCompatActivity implements Cic
 
     @Override
     public void criarPublicacao(String mensagem) {
-
+        // TOAST a informar se o treino foi publicado ou não
         Toast.makeText(getApplicationContext(), mensagem, Toast.LENGTH_LONG).show();
     }
 }
