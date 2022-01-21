@@ -181,7 +181,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
-
+                // Se o treino ainda não foi terminado carrega os estilos do mapa
                 if (!isFinished) {
                     LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
@@ -201,7 +201,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 }
                 // Verificar as permissões de localização e começar a navegação
                 startNavigation();
-
             }
         });
 
@@ -211,16 +210,15 @@ public class mapFragment extends Fragment implements PermissionsListener {
     // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
     public void startNavigation() {
-
+        // Cria uma nova navegação caso não exista
         if (mapboxNavigation == null) {
             mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
                     .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
             accessToken = getString(R.string.mapbox_access_token);
-
-
         }
+
+        // Verifica se estamos a ver os detalhes de um treino
         if (isDetails) {
-            System.out.println("isDetails entered");
             rotaListener.setRoute();
             isDetails = false;
         }
@@ -230,10 +228,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
             mapboxNavigation.startTripSession();
             mapboxNavigation.registerLocationObserver(locationObs);
             mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
-
         }
         // Se acabou o treino
         else if (isFinished) {
+            // Se existirem mais de 2 pontos de localização e se o utilizador tiver conexão á internet
             if (pointsList.size() > 2 && CiclismoJsonParser.isInternetConnection(getContext())) {
                 MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
                         accessToken(getString(R.string.mapbox_access_token)).
@@ -242,31 +240,36 @@ public class mapFragment extends Fragment implements PermissionsListener {
                         profile(DirectionsCriteria.PROFILE_WALKING).
                         build();
 
+                // Cria uma nova lista de pontos
                 pointsList = new ArrayList<>();
+
+                // Resposta da API com a rota dos pontos dados
                 mapMatchingTwo.enqueueCall(new Callback<MapMatchingResponse>() {
                     @Override
                     public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
                         directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+
+                        // Adiciona a rota á lista de rotas
                         listDirections.add(directionsRoute);
 
                         ArrayList<Point> resultGeometry = new ArrayList<>();
+
+                        // Para cada rota na lista de rotas converte a rota numa lista de points
                         for (DirectionsRoute directions : listDirections) {
 
-                            // Convert the polyline string into a list of Position objects
+                            // Converte a string de polyline em uma lista de pontos
                             List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
 
                             resultGeometry.addAll(routePoints);
                         }
 
-                        // Generate a polyline encoded string from the accumulated points.
+                        // Gera uma string polyline encriptada de todos os pontos
                         String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
 
                         routeString = resultGeometryString;
 
+                        // Limpa a variável com todas as rotas do treino
                         listDirections = new ArrayList<>();
-
-                        System.out.println(resultGeometryString);
-                        System.out.println(resultGeometryString.length());
 
                         ArrayList<DirectionsRoute> list = new ArrayList<>();
                         list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
@@ -285,9 +288,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                             public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
                                 routes.add(routeLine);
                                 routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                                    System.out.println("Hello");
                                     routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                                    System.out.println("Hello");
                                     MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
                                     routes = new ArrayList<>();
@@ -304,9 +305,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                                 });
                             }
                         };
-
                         mapboxNavigation.registerRoutesObserver(routesObserver);
-
                     }
 
                     @Override
@@ -314,7 +313,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                     }
                 });
-            } else {
+            }
+            // Faz o mesmo que em cima expecto que não faz pedido á API da ultima rota
+            else {
                 pointsList = new ArrayList<>();
                 ArrayList<Point> resultGeometry = new ArrayList<>();
                 for (DirectionsRoute directions : listDirections) {
@@ -351,9 +352,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
                     public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
                         routes.add(routeLine);
                         routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                            System.out.println("Hello");
                             routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                            System.out.println("Hello");
 
                             routes = new ArrayList<>();
                             MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
@@ -378,14 +377,16 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     }
 
+    // ------------------------------------ Não é utilizado --------------------------------------------------------------
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        System.out.println("I am on 'onRequestPermissionsResult'");
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
         startNavigation();
     }
+    // -------------------------------------------------------------------------------------------------------------------
 
+    // Devolve um Toast de que a aplicação necessita de acesso á localização para poder fazer treinos
     @Override
     public void onExplanationNeeded(List<String> list) {
         Toast.makeText(getContext(), R.string.txtPermissaoExplicacao, Toast.LENGTH_LONG).show();
@@ -410,19 +411,31 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Lista para os keyPoints (vazia) rotas
             List<Location> list = new ArrayList<>();
             navigationLocationProvider.changePosition(location, list, null, null);
-            // Função para atualizar a camera enviando a nova localização
-            //Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
+
             actualLocation = location;
+
+            // Se o utilizador se escontrar na activity de iniciar o treino
             if (startBinding != null) {
+                // atualiza a câmera enviando a nova localização
                 updateCamera(location);
+
+                // Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
                 startBinding.textView3.setText(R.string.txtGPSAdquirido);
                 startBinding.btComecarTreino.setEnabled(true);
-            } else {
+            }
+            // Se o utilizador encontrar-se em outra activity de treino sem ser a de iniciar o treino
+            else {
+                // Recebe o valor da logintude e latidude do ponto atual da localização
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+
+                // Adiciona o ponto á lista de pontos, para depois ser desenhada a rota
                 pointsList.add(point);
+
+                // Limite de 100 pontos de localização na lista
                 if (pointsList.size() == 95) {
-                    // Se tiver Internet
+                    // Se o utilizador tiver conexão á Internet
                     if (CiclismoJsonParser.isInternetConnection(getContext())) {
+                        // Envia os pontos para a API dar uma rota
                         mapMatching = MapboxMapMatching.builder().
                                 accessToken(accessToken).
                                 coordinates(pointsList).
@@ -430,11 +443,16 @@ public class mapFragment extends Fragment implements PermissionsListener {
                                 profile(DirectionsCriteria.PROFILE_WALKING).
                                 build();
 
+                        // Apaga os pontos e cria uma nova lista vazia
                         pointsList = new ArrayList<>();
+
+                        // Resposta da API com a rota dos pontos dados
                         mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
                             @Override
                             public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
                                 directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+
+                                // Adiciona a rota á lista de rotas
                                 listDirections.add(directionsRoute);
                             }
 
@@ -443,38 +461,50 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                             }
                         });
-                    }else{
+                    }
+                    // Se o utilizador não tiver conexão a Internet
+                    else{
+                        // Apaga os pontos e cria uma nova lista vazia
                         pointsList = new ArrayList<>();
                     }
                 }
-                // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
-                // No InProgressTrainingActivity
+                // Se o utilizador se encontra na activity inicial do treino
                 if (trainingBinding != null) {
+                    // Atualiza o valor do tempo do treino
                     isRunning = true;
                     Chronometer.getInstancia(false).trainingBinding = trainingBinding;
+
+                    // Inicia um novo cronometro caso não exista um
                     if (startTimer) {
                         chronometer = Chronometer.getInstancia(true);
                         Chronometer.getInstancia(false).trainingBinding = trainingBinding;
                         chronometer.start();
                         startTimer = false;
                     }
+                    // Inicia novamente o cronômetro
                     if (resumeTimer) {
                         chronometer.stopVariable = false;
                         resumeTimer = false;
                     }
+
+                    // Atualiza a câmera, velocidade, velocidade média e a distância
                     updateCamera(location);
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
-                    // No InProgressTrainingMapActivity
-                } else if (mapBinding != null) {
+                }
+                // No InProgressTrainingMapActivity
+                else if (mapBinding != null) {
+                    // Atualiza os dados do treino
                     updateCamera(location);
                     isRunning = true;
                     Chronometer.getInstancia(false).mapBinding = mapBinding;
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
-                } else if (pausedBinding != null) {
+                }
+                // Se o utilizador estiver na activity de pausa, atualiza apenas a câmera
+                else if (pausedBinding != null) {
                     updateCamera(location);
                 }
             }
@@ -504,7 +534,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     }
 
-    //Função para destruir as variaveis do mapa a pedido do código
+    // Função para destruir as variaveis do mapa a pedido do código
     public void onMyDestroy() {
         super.onDestroy();
         isRunning = false;
@@ -519,6 +549,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         trainingBinding = null;
         pausedBinding = null;
         mapBinding = null;
+        // Se existir algum cronometro a correr
         if (chronometer != null) {
             startTimer = true;
             chronometer.stop = true;
@@ -540,10 +571,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         setMaxVelocity(nCurrentSpeed);
 
-        // Atualiza na view a velocidade atual
+        // Atualiza a velocidade atual na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
-        } else if (mapBinding != null) {
+        }
+        // Atualiza a velocidade atual na view do mapa durante o treino
+        else if (mapBinding != null) {
             mapBinding.tvVelInstantanea.setText(Converter.velocityFormat(velocityInstant));
         }
     }
@@ -571,10 +604,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityMean = mean;
 
-        // Escreve o valor da velocidade no ecrâ em KM/H
+        // Atualiza a velocidade média na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(mean));
-        } else if (mapBinding != null) {
+        }
+        // Atualiza a velocidade média na view do mapa durante o treino
+        else if (mapBinding != null) {
             mapBinding.tvVelMedia.setText(Converter.velocityFormat(mean));
         }
     }
@@ -583,10 +618,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private void setDistance(Location location) {
         // Caso seja o primeiro valor que recebe faz
         if (!isLoc1) {
-            //
+            // Recebe a localização
             loc1 = location;
             isLoc1 = true;
-            // Se já existir um valor anterior faz
+        // Se já existir um valor anterior faz
         } else {
             // Recebe a localização atual e coloca na segunda variável
             loc2 = location;
@@ -598,39 +633,44 @@ public class mapFragment extends Fragment implements PermissionsListener {
             distance = distance + newDistance;
         }
 
-
-        // Atualiza na view o valor da distância
+        // Atualiza a distância na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
-        } else if (mapBinding != null) {
+        }
+        // Atualiza a distância na view do mapa durante o treino
+        else if (mapBinding != null) {
             mapBinding.tvDistancia.setText(Converter.distanceFormat(distance));
         }
-
-
     }
 
-    //Mostra os resultados do treino no ResultsTrainingActivity
+    // Mostra os resultados do treino no ResultsTrainingActivity
     public void getResults(ActivityResultsTrainingBinding binding) {
         binding.tvVelMaxResumo.setText(Converter.velocityFormat(velocityMax));
         binding.tvVelMediaResumo.setText(Converter.velocityFormat(velocityMean));
         binding.tvDistanciaResumo.setText(Converter.distanceFormat(distance));
         binding.tvTempoResumo.setText(Converter.hourFormat(time));
+        // Indica que o treino foi terminado
         isFinished = true;
     }
 
-
+    // Atribui os dados na devida activity cada vez que se entra nela
     public void setData() {
+        // Insere os dados da atividade na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvDuracaoTreino.setText(Converter.hourFormat(time));
             trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(velocityMean));
             trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
             trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
-        } else if (mapBinding != null) {
+        }
+        // Insere os dados da atividade na view do mapa do treino
+        else if (mapBinding != null) {
             mapBinding.tvTempo.setText(Converter.hourFormat(time));
             mapBinding.tvVelInstantanea.setText(Converter.velocityFormat(velocityInstant));
             mapBinding.tvVelMedia.setText(Converter.velocityFormat(velocityMean));
             mapBinding.tvDistancia.setText(Converter.distanceFormat(distance));
-        } else if (pausedBinding != null) {
+        }
+        // Insere os dados da atividade na página de pausa do treino
+        else if (pausedBinding != null) {
             pausedBinding.tvDistanciaPausa.setText(Converter.distanceFormat(distance));
             pausedBinding.tvVelMaxPausa.setText(Converter.velocityFormat(velocityMax));
             pausedBinding.tvVelMediaPausa.setText(Converter.velocityFormat(velocityMean));
@@ -640,21 +680,26 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     private RouteLine routeLineDetails;
 
+    // Coloca a informação dentro das classes necessárias para desenhar a rota
     public void setRoute(String route, Context context) {
+        // Se existir uma rota
         if (!route.equals("null")) {
-            System.out.println(route);
             ArrayList<DirectionsRoute> list = new ArrayList<>();
-            list.add(DirectionsRoute.builder().geometry(route).duration(0.0).distance(0.0).build());
 
+            // Gera uma directions route, precisamos colocar valor inicial
+            list.add(DirectionsRoute.builder().geometry(route).duration(0.0).distance(0.0).build());
 
             List<Point> resultGeometry = new ArrayList<>();
             resultGeometry = PolylineUtils.decode(route, 6);
 
+            // Ponto central do treino para poder dar o zoom
             int resultGeometryIndex = resultGeometry.size() / 2;
 
+            // Desenha a rota com os pontos da lista
             mapboxNavigation.setRoutes(new ArrayList<>());
             mapboxNavigation.setRoutes(list);
 
+            // Opções a desenhar a rota
             routeLineOptions = new MapboxRouteLineOptions.Builder(context).withRouteLineBelowLayerId("road-label").build();
             routeLineApi = new MapboxRouteLineApi(routeLineOptions);
             routeLineView = new MapboxRouteLineView(routeLineOptions);
@@ -667,13 +712,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
             routesObserver = new RoutesObserver() {
                 @Override
                 public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                    // IF devido a um problema que fazia no mapa aparecer várias rotas
                     if (routeLineDetails != null) {
                         ArrayList<RouteLine> routesDetails = new ArrayList<>();
                         routesDetails.add(routeLineDetails);
                         routeLineApi.setRoutes(routesDetails, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                            System.out.println("rota detalhes");
                             routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                            System.out.println("Hello");
 
                             MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
