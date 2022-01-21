@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingMapBinding;
-import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
+import com.psi.ciclodias.dialogs.ConfirmarSairDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
 
 public class InProgressTrainingMapActivity extends AppCompatActivity {
@@ -74,7 +74,7 @@ public class InProgressTrainingMapActivity extends AppCompatActivity {
                 // Remove o mapa da activity,
                 getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
 
-                DialogFragment newFragment = new ConfirmarSaidaDialogFragment();
+                DialogFragment newFragment = new ConfirmarSairDialogFragment();
                 newFragment.show(getSupportFragmentManager(), getString(R.string.txtDialog));
 
                 return false;

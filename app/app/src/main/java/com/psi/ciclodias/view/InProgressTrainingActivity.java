@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import com.psi.ciclodias.databinding.ActivityInProgressTrainingBinding;
-import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
+import com.psi.ciclodias.dialogs.ConfirmarSairDialogFragment;
 import com.psi.ciclodias.model.Chronometer;
 
 
@@ -39,7 +39,7 @@ public class InProgressTrainingActivity extends AppCompatActivity {
         binding.btTerminarTreino.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                DialogFragment newFragment = new ConfirmarSaidaDialogFragment();
+                DialogFragment newFragment = new ConfirmarSairDialogFragment();
                 newFragment.show(getSupportFragmentManager(), "dialog");
                 return false;
             }

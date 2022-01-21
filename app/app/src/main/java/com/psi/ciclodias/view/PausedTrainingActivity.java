@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityPausedTrainingBinding;
-import com.psi.ciclodias.dialogs.ConfirmarSaidaDialogFragment;
+import com.psi.ciclodias.dialogs.ConfirmarSairDialogFragment;
 
 public class PausedTrainingActivity extends AppCompatActivity {
     private ActivityPausedTrainingBinding binding;
@@ -68,7 +68,7 @@ public class PausedTrainingActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().remove(mapfragment).commit();
 
                 // Terminar a ativity da pausa e da sessão do treino
-                DialogFragment dialogFragment = new ConfirmarSaidaDialogFragment();
+                DialogFragment dialogFragment = new ConfirmarSairDialogFragment();
                 dialogFragment.show(getSupportFragmentManager(), "dialog");
 
                 return true;

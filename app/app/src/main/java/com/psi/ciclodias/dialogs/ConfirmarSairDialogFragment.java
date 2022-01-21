@@ -14,7 +14,7 @@ import com.psi.ciclodias.view.InProgressTrainingActivity;
 import com.psi.ciclodias.view.ResultsTrainingActivity;
 import com.psi.ciclodias.view.mapFragment;
 
-public class ConfirmarSaidaDialogFragment extends DialogFragment {
+public class ConfirmarSairDialogFragment extends DialogFragment {
     Intent intent;
 
     @NonNull
