@@ -119,7 +119,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public String routeString = null;
     public ArrayList<Float> arrayVelocity = new ArrayList<>();
 
-
+    // Variáveis para guardar a rota, os pontos de localização
     private MapboxMapMatching mapMatching;
     private DirectionsRoute directionsRoute;
     private MapboxRouteLineOptions routeLineOptions;
@@ -149,7 +149,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
         return instancia;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,7 +167,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         if (startBinding != null) {
             isFinished = false;
-
         }
 
         //Responsavel por dar um estilo ao mapa e criar o puck de localização
@@ -233,7 +231,9 @@ public class mapFragment extends Fragment implements PermissionsListener {
             mapboxNavigation.registerLocationObserver(locationObs);
             mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
 
-        } else if (isFinished) {
+        }
+        // Se acabou o treino
+        else if (isFinished) {
             if (pointsList.size() > 2 && CiclismoJsonParser.isInternetConnection(getContext())) {
                 MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
                         accessToken(getString(R.string.mapbox_access_token)).
@@ -391,9 +391,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
         Toast.makeText(getContext(), R.string.txtPermissaoExplicacao, Toast.LENGTH_LONG).show();
     }
 
-
+    // Resposta ao devolver a permissão
     @Override
     public void onPermissionResult(boolean granted) {
+        // Caso tenha a permissão, carrega o mapa
         if (granted) {
             loadMap();
         } else {
@@ -484,7 +485,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     };
 
-
+    // Atualiza a câmera para a localização atual
     public void updateCamera(Location location) {
         // Animações na câmera
         if (location != null) {
