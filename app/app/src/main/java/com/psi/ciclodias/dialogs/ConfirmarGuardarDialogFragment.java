@@ -46,7 +46,11 @@ public class ConfirmarGuardarDialogFragment extends DialogFragment {
 
                 int distance = (int) mapFragment.getInstancia().distance;
                 // Recebe os dados do treino
-                dadosCiclismo.put("nome_percurso", binding.etNomeTreino.getText().toString());
+                if(binding.etNomeTreino.getText().toString().isEmpty()) {
+                    dadosCiclismo.put("nome_percurso", "Percurso sem nome");
+                }else {
+                    dadosCiclismo.put("nome_percurso", binding.etNomeTreino.getText().toString());
+                }
                 dadosCiclismo.put("duracao", String.valueOf(mapFragment.getInstancia().time));
                 dadosCiclismo.put("distancia", String.valueOf(distance));
                 dadosCiclismo.put("velocidade_media", String.valueOf(mapFragment.getInstancia().velocityMean));
