@@ -58,6 +58,7 @@ import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 import com.psi.ciclodias.listeners.RotaListener;
 import com.psi.ciclodias.model.Chronometer;
+import com.psi.ciclodias.utils.CiclismoJsonParser;
 import com.psi.ciclodias.utils.Converter;
 
 import java.util.ArrayList;
@@ -233,7 +234,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
             mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
 
         } else if (isFinished) {
-            if (pointsList.size() > 2) {
+            if (pointsList.size() > 2 && CiclismoJsonParser.isInternetConnection(getContext())) {
                 MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
                         accessToken(getString(R.string.mapbox_access_token)).
                         coordinates(pointsList).
@@ -313,7 +314,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                     }
                 });
-
             } else {
                 pointsList = new ArrayList<>();
                 ArrayList<Point> resultGeometry = new ArrayList<>();
@@ -420,27 +420,31 @@ public class mapFragment extends Fragment implements PermissionsListener {
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
                 pointsList.add(point);
                 if (pointsList.size() == 95) {
-                    mapMatching = MapboxMapMatching.builder().
-                            accessToken(accessToken).
-                            coordinates(pointsList).
-                            steps(true).
-                            profile(DirectionsCriteria.PROFILE_WALKING).
-                            build();
+                    // Se tiver Internet
+                    if (CiclismoJsonParser.isInternetConnection(getContext())) {
+                        mapMatching = MapboxMapMatching.builder().
+                                accessToken(accessToken).
+                                coordinates(pointsList).
+                                steps(true).
+                                profile(DirectionsCriteria.PROFILE_WALKING).
+                                build();
 
-                    pointsList = new ArrayList<>();
-                    mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
-                        @Override
-                        public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
-                            directionsRoute = response.body().matchings().get(0).toDirectionRoute();
-                            listDirections.add(directionsRoute);
-                        }
+                        pointsList = new ArrayList<>();
+                        mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
+                            @Override
+                            public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                                directionsRoute = response.body().matchings().get(0).toDirectionRoute();
+                                listDirections.add(directionsRoute);
+                            }
 
-                        @Override
-                        public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+                            @Override
+                            public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
 
-                        }
-                    });
-
+                            }
+                        });
+                    }else{
+                        pointsList = new ArrayList<>();
+                    }
                 }
                 // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
                 // No InProgressTrainingActivity
