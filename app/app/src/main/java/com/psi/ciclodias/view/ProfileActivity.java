@@ -39,12 +39,13 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Recebe os IDs da Activity Profile
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         SingletonGestorCiclismo.getInstancia(this).setPerfilListener(this);
 
+        // Carrega os dados iniciais no perfil
         dadosPerfil();
 
         // Chama a função da API para receber os dados do utilizador
@@ -62,9 +63,11 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
 
+        // Botão para guardar as alterações feitas ao utilizador
         binding.btGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Objeto com todos os dados editáveis do perfil
                 Map<String, String> params = new HashMap<>();
 
                 params.put("primeiro_nome", binding.etPrimeiroNomePerfil.getText().toString());
@@ -75,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
             }
         });
 
+        // Botão que carrega a dialog fragment para escolher a data de nascimento
         binding.ibDataNascimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,12 +88,14 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         });
     }
 
+    // Carrega a action bar com o botão de menu para apagar o utilizador
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.delete, menu);
         return true;
     }
 
+    // Verifica qual foi o item selecionado na action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -97,9 +103,8 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // Se o item selecionado foi o de apagar o utilizador, é carregada uma dialog de confirmação
         if (id == R.id.actionDelete) {
-
             DialogFragment dialogFragment = new ConfirmarApagarUserDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
             return true;
@@ -129,10 +134,13 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
     // Preenche o perfil com os dados atualizados do perfil
     @Override
     public void perfilDados(Map<String, String> dadosUser) {
-        // Guarda os dados da API na Shared Preferences
+
         SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Se tiver mensagem é porque deu erro
         if(dadosUser.get("mensagem") == null) {
+            // Guarda os dados da API na Shared Preferences
             editor.putString(PRIMEIRO_NOME, dadosUser.get("primeiro_nome"));
             editor.putString(ULTIMO_NOME, dadosUser.get("ultimo_nome"));
 
@@ -152,22 +160,26 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
 
     @Override
     public void editUser(Boolean success) {
-        // TOAST que os dados foram guardados com sucesso ou com insucesso
+        // TOAST que os dados foram guardados com sucesso ou que não foram guardados
         if (!success) Toast.makeText(getApplicationContext(), R.string.txtGuardadoSemSucesso, Toast.LENGTH_SHORT).show();
         else Toast.makeText(getApplicationContext(), R.string.txtGuardadoSucesso, Toast.LENGTH_SHORT).show();
     }
 
+    // Recebe a resposta da API e faz edições localmente
     @Override
     public void removeUser(Boolean success) {
+        // Caso não remova o utilizador envia um TOAST a informar que ocorreu um erro
         if (!success) {
             Toast.makeText(getApplicationContext(), R.string.txtUserNaoRemovido, Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(getApplicationContext(), R.string.txtUserRemovido, Toast.LENGTH_SHORT).show();
 
+            // Carrega as SharedPreferences do Utilizador
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
+            // Remove os dados da SharedPreferences carregada
             editor.putString(TOKEN, "null");
             editor.putString(USER, "null");
             editor.putString(ID, "null");
@@ -176,16 +188,19 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
             editor.putString(DATA_NASCIMENTO, "null");
             editor.apply();
 
+            // Elimina o array dos treinos sincronizados e por sincronizar, apaga também os treinos da DB local
             SingletonGestorCiclismo.getInstancia(this).ArrCiclismo = new ArrayList<>();
             SingletonGestorCiclismo.getInstancia(this).ArrCiclismoUnSync = new ArrayList<>();
             SingletonGestorCiclismo.getInstancia(this).apagarCiclismoDBAll();
 
+            // Redireciona para a activity de login
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
+    // Atribui na Textbox a data de nascimento selecionada já com o formato correto
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         String dataNascimento = year + "-" + month + "-" + day;
@@ -193,6 +208,7 @@ public class ProfileActivity extends AppCompatActivity implements PerfilListener
         binding.etDataNascimentoPerfil.setText(dataNascimento);
     }
 
+    // Carrega o método para apagar o utilizador
     @Override
     public void onApagarClick() {
         SingletonGestorCiclismo.getInstancia(this).DeleteUser(getApplicationContext());

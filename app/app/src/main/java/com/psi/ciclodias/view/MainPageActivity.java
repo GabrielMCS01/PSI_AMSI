@@ -21,13 +21,14 @@ import com.psi.ciclodias.listeners.ListaCiclismoListener;
 import com.psi.ciclodias.listeners.RecyclerViewListener;
 import com.psi.ciclodias.model.Ciclismo;
 import com.psi.ciclodias.model.SingletonGestorCiclismo;
+import com.psi.ciclodias.notifications.MosquittoNotification;
+import com.psi.ciclodias.notifications.NotificationService;
 
 import java.util.ArrayList;
 
 public class MainPageActivity extends AppCompatActivity implements ListaCiclismoListener, RecyclerViewListener {
     public static String POSITION_TREINO = "position";
     public static final int REQUEST_PUT = 1;
-    public static final int OPERATION_DELETE = -1;
 
     // SHARED PREFERENCES
     public static final String TOKEN = "token";
@@ -35,7 +36,6 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
     private static final String ID = "id";
     private static final String PRIMEIRO_NOME = "primeiro_nome";
     private static final String ULTIMO_NOME = "ultimo_nome";
-    private static final String DATA_NASCIMENTO = "data_nascimento";
 
     private String user, token, primeiro_nome, ultimo_nome, id;
     private RecyclerCiclismoAdapter adaptador;
@@ -48,16 +48,21 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+        // Verifica se existe algum treino em progresso, caso sim redireciona para a página de treino
         if(mapFragment.getInstancia().isRunning){
             Intent intent = new Intent(this, InProgressTrainingActivity.class);
             startActivity(intent);
             finish();
         }
 
-
         // Preenche as shared Preferences
         PreencherSharedPreferences();
 
+        // Inicia o serviço das notifcações (MOSQUITTO)
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
+
+        // Preenche o Array de treinos que não estão sincronizados
         SingletonGestorCiclismo.getInstancia(this).PreencherArrCiclismoUnsync();
 
         // Instancia da Singleton para poder ser utilizada em qualquer parte do código
@@ -90,12 +95,14 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         // ------------------------ Fim da Bottom-navbar -----------------------------------
     }
 
+    // Carrega o menu com o botão de logout
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+    // Botão da action bar para dar logout da app
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -103,9 +110,8 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // verifica se o botão para logout foi o clicado
         if (id == R.id.actionLogout) {
-
             DialogFragment dialogFragment = new ConfirmarLogoutDialogFragment();
             dialogFragment.show(getSupportFragmentManager(), "dialog");
             return true;
@@ -137,16 +143,13 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
             editor.putString(PRIMEIRO_NOME, primeiro_nome);
             editor.putString(ULTIMO_NOME, ultimo_nome);
             editor.apply();
-
-            System.out.println(primeiro_nome);
-            System.out.println(token);
         }
     }
 
-
-    // Função que recebe os treinos da API e coloca na RecylerViewE
+    // Função que recebe os treinos da API e coloca na RecylerView
     @Override
     public void onRefreshListaLivros(ArrayList<Ciclismo> lista) {
+        // Se existirem treinos, estes são colocados na recycler
         if (lista != null){
             adaptador = new RecyclerCiclismoAdapter(this, lista);
             adaptador.setItemListener(this);
@@ -156,9 +159,9 @@ public class MainPageActivity extends AppCompatActivity implements ListaCiclismo
         }
     }
 
+    // Função para redirecionar para a activity de Detalhes do treino
     @Override
     public void recyclerViewListClicked(View v, int position) {
-        System.out.println(position);
         Intent intent = new Intent(v.getContext(), DetalhesTreinoMainActivity.class);
         intent.putExtra(POSITION_TREINO, position);
         startActivityForResult(intent, REQUEST_PUT);

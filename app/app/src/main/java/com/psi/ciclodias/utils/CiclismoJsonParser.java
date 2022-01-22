@@ -3,11 +3,8 @@ package com.psi.ciclodias.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
 
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.psi.ciclodias.model.Ciclismo;
 
 import org.json.JSONArray;
@@ -26,10 +23,11 @@ public class CiclismoJsonParser {
         try {
             JSONObject jsonObject = new JSONObject(resposta);
 
+            // Caso a resposta seja sucesso faz
             if(jsonObject.getBoolean("success")) {
-
                 JSONArray array = jsonObject.getJSONArray("ciclismo");
 
+                // Para cada treino do utilizador faz
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject jsonCiclismo = array.getJSONObject(i);
 
@@ -46,7 +44,10 @@ public class CiclismoJsonParser {
                     String rota = jsonCiclismo.getString("rota");
                     String data_treino = jsonCiclismo.getString("data_treino");
 
+                    // Cria um novo treino com os dados recebidos desse treino
                     Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
+
+                    // Adiciona o treino á lista de treinos
                     lista.add(ciclismo);
                 }
             }
@@ -57,15 +58,16 @@ public class CiclismoJsonParser {
         return lista;
     }
 
-    // Guarda um Treino na API
+    // Guardar um Treino que veio da API
     public static Ciclismo parserJsonCriaCiclismo(String response) {
         try {
             JSONObject json = new JSONObject(response);
 
+            // Se a API guardou os dados do treino com sucesso
             if(json.getBoolean("success")) {
-
                 JSONObject treino = json.getJSONObject("ciclismo");
 
+                // Recebe os valores JSON vindos da API
                 int id = treino.getInt("id");
                 String nome_percurso = treino.getString("nome_percurso");
                 int duracao = treino.getInt("duracao");
@@ -78,9 +80,9 @@ public class CiclismoJsonParser {
                 String rota = treino.getString("rota");
                 String data_treino = treino.getString("data_treino");
 
+                // Cria um treino com os dados desse treino
                 Ciclismo ciclismo = new Ciclismo(id, nome_percurso, duracao, distancia, velocidade_media, velocidade_maxima, velocidade_grafico, rota, data_treino);
 
-                System.out.println(id);
                 return ciclismo;
             }
         } catch (JSONException e) {
@@ -91,12 +93,14 @@ public class CiclismoJsonParser {
     }
 
     // ----------------------------------- lOGIN ---------------------------------------------------
-    // Retorna o token de login
+    // Retorna o token de login do utilizador que fez login
     public static Map<String, String> parserJsonLogin(String resposta) {
         Map<String, String> dadosUser = new HashMap<String, String>();
 
         try {
             JSONObject jsonLogin = new JSONObject(resposta);
+
+            // Se o pedido á API foi feito com sucesso
             if (jsonLogin.getBoolean("success")) {
                 dadosUser.put("id", jsonLogin.getString("id"));
                 dadosUser.put("token", jsonLogin.getString("token"));
@@ -120,13 +124,14 @@ public class CiclismoJsonParser {
     }
 
     // ------------------------------------- USER --------------------------------------------------
-    // Retorna os dados utilizador para preencher no perfil
+    // Retorna os dados do utilizador para preencher no perfil
     public static Map<String, String> ParserUserDados(String resposta) {
         Map<String, String> dadosUser = new HashMap<String, String>();
 
         try {
             JSONObject jsonUser = new JSONObject(resposta);
 
+            // Se a API devolveu dados do utilizador com sucesso
             if(jsonUser.getBoolean("success")) {
                 dadosUser.put("primeiro_nome", jsonUser.getString("primeiro_nome"));
                 dadosUser.put("ultimo_nome", jsonUser.getString("ultimo_nome"));
@@ -141,6 +146,7 @@ public class CiclismoJsonParser {
         return dadosUser;
     }
 
+    // Parser default para receber se o pedido foi feito á API com sucesso ou não
     public static Boolean parserJsonSuccess(String response) {
         boolean success = false;
 
@@ -156,9 +162,7 @@ public class CiclismoJsonParser {
         return success;
     }
 
-
-    // ------------------------------------- BD Local ----------------------------------------------
-    // Converte os treinos da API para BD Local
+    // Cria um JSON array com uma lista de treinos
     public static JSONArray createJsonArray(ArrayList<Ciclismo> ciclismoArrayList) {
         JSONArray jsonArray = new JSONArray();
         try {
@@ -188,9 +192,9 @@ public class CiclismoJsonParser {
     }
 
     //-------------------------------------- Velocidade --------------------------------------------
-    //Converte arraylist para json
+    // Converte arraylist para json
     public static JsonArray createJsonVelocity(ArrayList<Float> arrayList){
-
+        // Cria um JSON array com todas as velocidades do treino guardadas
         JsonArray jsonArray = new JsonArray();
 
         for(float velocity: arrayList){
@@ -200,4 +204,21 @@ public class CiclismoJsonParser {
         return jsonArray;
     }
 
+    //-------------------------------------- Publicação --------------------------------------------
+    // Verifica se publicação foi criada com sucesso para devolver uma mensagem no ecrã
+    public static String parserJsonCriaPublicacao(String response) {
+        try {
+            JSONObject json = new JSONObject(response);
+
+            if(json.getBoolean("success")){
+                return "Publicação Criada";
+            }else{
+                return json.getString("mensagem");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "Erro";
+    }
 }

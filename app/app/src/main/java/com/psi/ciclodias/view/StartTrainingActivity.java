@@ -11,21 +11,24 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 import com.psi.ciclodias.R;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 
 public class StartTrainingActivity extends AppCompatActivity {
     private ActivityStartTrainingBinding binding;
+    private boolean startTraining = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Verifica se a aplicação tem permissões de localização
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Carrega o fragment do mapa
             Fragment mapfragment = mapFragment.getInstancia();
             mapFragment.getInstancia().startBinding = binding;
             if (mapfragment != null) {
@@ -35,14 +38,9 @@ public class StartTrainingActivity extends AppCompatActivity {
                         .commit();
             }
         } else {
+            // Pede as permissões de localização
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-
-
-        // Recebe os IDs da Activity Start Training
-        binding = ActivityStartTrainingBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
 
         // ----------------------- Inicio da Bottom-navbar --------------------------------
         BottomNavBarFragment fragment = new BottomNavBarFragment();
@@ -55,24 +53,34 @@ public class StartTrainingActivity extends AppCompatActivity {
                     .commit();
         }
         // ------------------------ Fim da Bottom-navbar -----------------------------------
-
+        // Botão para iniciar o treino
         binding.btComecarTreino.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Iniciar o treino
+                startTraining = true;
+                mapFragment.getInstancia().startBinding = null;
                 Intent intent = new Intent(getApplicationContext(), InProgressTrainingActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
 
-
+        // Botão para atualizar a câmera para localização atual
+        binding.floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapFragment.getInstancia().updateCamera(mapFragment.getInstancia().actualLocation);
+            }
+        });
     }
 
+    // Pede as permissões de localização
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // Se for permitida
                 if (isGranted) {
-                    System.out.println("henlo permission");
+                    // Carrega o fragment do mapa
                     Fragment mapfragment = mapFragment.getInstancia();
                     mapFragment.getInstancia().startBinding = binding;
                     if (mapfragment != null) {
@@ -81,28 +89,44 @@ public class StartTrainingActivity extends AppCompatActivity {
                                 .replace(R.id.mapViewStartTraining, mapfragment)
                                 .commit();
                     }
-                } else {
+                }
+                // Caso contrário volta para o menu principal
+                else {
                     Intent intent = new Intent(getApplicationContext(), MainPageActivity.class);
                     startActivity(intent);
                     finish();
                 }
             });
 
+    // Se clicar para voltar atrás
     @Override
     public void onBackPressed() {
-        mapFragment.getInstancia().onMyDestroy();
-        finish();
+        if(startTraining) {
+            startTraining = false;
+        }else {
+            mapFragment.getInstancia().onMyDestroy();
+            finish();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mapFragment.getInstancia().onMyDestroy();
+        if(mapFragment.getInstancia().mapboxNavigation != null) {
+            if(startTraining) {
+                startTraining = false;
+            }else{
+                mapFragment.getInstancia().startBinding = null;
+                mapFragment.getInstancia().onMyDestroy();
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mapFragment.getInstancia().startNavigation();
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mapFragment.getInstancia().startNavigation();
+        }
     }
 }

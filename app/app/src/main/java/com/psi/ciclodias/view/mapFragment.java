@@ -3,17 +3,13 @@ package com.psi.ciclodias.view;
 import android.annotation.SuppressLint;
 
 import android.content.Context;
-import android.icu.text.Transliterator;
 import android.location.Location;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,13 +58,11 @@ import com.psi.ciclodias.databinding.ActivityResultsTrainingBinding;
 import com.psi.ciclodias.databinding.ActivityStartTrainingBinding;
 import com.psi.ciclodias.listeners.RotaListener;
 import com.psi.ciclodias.model.Chronometer;
+import com.psi.ciclodias.utils.CiclismoJsonParser;
 import com.psi.ciclodias.utils.Converter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -78,7 +72,6 @@ import retrofit2.Response;
 public class mapFragment extends Fragment implements PermissionsListener {
 
     //Gestor de Permissões
-
     private PermissionsManager permissionsManager;
     private String accessToken;
 
@@ -87,6 +80,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private MapboxMap mapboxMap;
     private NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     public MapboxNavigation mapboxNavigation;
+
 
     //Objetos Bindings das Activities que necessitam dos dados do mapa
     public ActivityStartTrainingBinding startBinding = null;
@@ -110,6 +104,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private Location loc1;
     private Location loc2;
 
+    public Location actualLocation = null;
 
     // Variável para verificar se existe algum valor na localização 1 (primeira vez que entra na função recebe)
     private boolean isLoc1 = false;
@@ -124,7 +119,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
     public String routeString = null;
     public ArrayList<Float> arrayVelocity = new ArrayList<>();
 
-
+    // Variáveis para guardar a rota, os pontos de localização
     private MapboxMapMatching mapMatching;
     private DirectionsRoute directionsRoute;
     private MapboxRouteLineOptions routeLineOptions;
@@ -154,7 +149,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
         return instancia;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,7 +167,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         if (startBinding != null) {
             isFinished = false;
-
         }
 
         //Responsavel por dar um estilo ao mapa e criar o puck de localização
@@ -184,228 +177,225 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
     //Responsavel por dar um estilo ao mapa e criar o puck de localização
     private void loadMap() {
-            //Carregar o estilo no mapa
-            mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
-                @Override
-                public void onStyleLoaded(@NonNull Style style) {
+        //Carregar o estilo no mapa
+        mapboxMap.loadStyleUri("mapbox://styles/mapbox/outdoors-v11", new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                // Se o treino ainda não foi terminado carrega os estilos do mapa
+                if (!isFinished) {
+                    LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
 
-                    if (!isFinished) {
-                        LocationComponentPlugin locationComponentPlugin = LocationComponentUtils.getLocationComponent(mapView);
-
-                        //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
-                        locationComponentPlugin.setLocationProvider(navigationLocationProvider);
-
-
-                        //Carregar o puck de localização
-                        LocationPuck2D locationPuck2D = new LocationPuck2D();
-                        locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
-
-                        // Colocar o puck no mapa
-                        locationComponentPlugin.setLocationPuck(locationPuck2D);
+                    //MapSDK  - LocationPlugin - NavigationProvider - MapBoxNavigation - NavigationSDK
+                    locationComponentPlugin.setLocationProvider(navigationLocationProvider);
 
 
-                        locationComponentPlugin.setEnabled(true);
-                    }
-                    // Verificar as permissões de localização e começar a navegação
-                    startNavigation();
+                    //Carregar o puck de localização
+                    LocationPuck2D locationPuck2D = new LocationPuck2D();
+                    locationPuck2D.setBearingImage(ContextCompat.getDrawable(getContext(), R.drawable.mapbox_navigation_puck_icon));
 
+                    // Colocar o puck no mapa
+                    locationComponentPlugin.setLocationPuck(locationPuck2D);
+
+
+                    locationComponentPlugin.setEnabled(true);
                 }
-            });
+                // Verificar as permissões de localização e começar a navegação
+                startNavigation();
+            }
+        });
 
 
-
-}
+    }
 
     // Verificar as permissões de localização e começar a navegação
     @SuppressLint("MissingPermission")
     public void startNavigation() {
-        if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
+        // Cria uma nova navegação caso não exista
+        if (mapboxNavigation == null) {
+            mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
+                    .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
+            accessToken = getString(R.string.mapbox_access_token);
+        }
 
-            if (mapboxNavigation == null) {
-                mapboxNavigation = new MapboxNavigation(new NavigationOptions.Builder(getContext()).accessToken(getString(R.string.mapbox_access_token))
-                        .deviceProfile(new DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build()).build());
-                accessToken = getString(R.string.mapbox_access_token);
+        // Verifica se estamos a ver os detalhes de um treino
+        if (isDetails) {
+            rotaListener.setRoute();
+            isDetails = false;
+        }
 
+        // Inicia a navegação
+        if (!mapboxNavigation.isRunningForegroundService() && !isFinished) {
+            mapboxNavigation.startTripSession();
+            mapboxNavigation.registerLocationObserver(locationObs);
+            mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
+        }
+        // Se acabou o treino
+        else if (isFinished) {
+            // Se existirem mais de 2 pontos de localização e se o utilizador tiver conexão á internet
+            if (pointsList.size() > 2 && CiclismoJsonParser.isInternetConnection(getContext())) {
+                MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
+                        accessToken(getString(R.string.mapbox_access_token)).
+                        coordinates(pointsList).
+                        steps(true).
+                        profile(DirectionsCriteria.PROFILE_WALKING).
+                        build();
 
-            }
-            if (isDetails) {
-                System.out.println("isDetails entered");
-                rotaListener.setRoute();
-                isDetails = false;
-            }
+                // Cria uma nova lista de pontos
+                pointsList = new ArrayList<>();
 
-            // Inicia a navegação
-            if (!mapboxNavigation.isRunningForegroundService() && !isFinished) {
-                mapboxNavigation.startTripSession();
-                mapboxNavigation.registerLocationObserver(locationObs);
-                mapboxNavigation.setRoutes(new ArrayList<DirectionsRoute>());
+                // Resposta da API com a rota dos pontos dados
+                mapMatchingTwo.enqueueCall(new Callback<MapMatchingResponse>() {
+                    @Override
+                    public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                        directionsRoute = response.body().matchings().get(0).toDirectionRoute();
 
-            } else if (isFinished) {
-                if (pointsList.size() > 2) {
-                    MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
-                            accessToken(getString(R.string.mapbox_access_token)).
-                            coordinates(pointsList).
-                            steps(true).
-                            profile(DirectionsCriteria.PROFILE_WALKING).
-                            build();
+                        // Adiciona a rota á lista de rotas
+                        listDirections.add(directionsRoute);
 
-                    pointsList = new ArrayList<>();
-                    mapMatchingTwo.enqueueCall(new Callback<MapMatchingResponse>() {
-                        @Override
-                        public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
-                            directionsRoute = response.body().matchings().get(0).toDirectionRoute();
-                            listDirections.add(directionsRoute);
+                        ArrayList<Point> resultGeometry = new ArrayList<>();
 
-                            ArrayList<Point> resultGeometry = new ArrayList<>();
-                            for (DirectionsRoute directions : listDirections) {
+                        // Para cada rota na lista de rotas converte a rota numa lista de points
+                        for (DirectionsRoute directions : listDirections) {
 
-                                // Convert the polyline string into a list of Position objects
-                                List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
+                            // Converte a string de polyline em uma lista de pontos
+                            List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
 
-                                resultGeometry.addAll(routePoints);
+                            resultGeometry.addAll(routePoints);
+                        }
+
+                        // Gera uma string polyline encriptada de todos os pontos
+                        String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+                        routeString = resultGeometryString;
+
+                        // Limpa a variável com todas as rotas do treino
+                        listDirections = new ArrayList<>();
+
+                        ArrayList<DirectionsRoute> list = new ArrayList<>();
+                        list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+
+                        mapboxNavigation.setRoutes(new ArrayList<>());
+                        mapboxNavigation.setRoutes(list);
+
+                        routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
+                        routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                        routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                        routeLine = new RouteLine(list.get(0), null);
+
+                        routesObserver = new RoutesObserver() {
+                            @Override
+                            public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                                routes.add(routeLine);
+                                routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                                    routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+                                    MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+                                    routes = new ArrayList<>();
+                                    CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+                                    // Modifica o zoom na câmera automaticamente
+                                    CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                            .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
+                                            .zoom(15.0)
+                                            .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                            .build();
+
+                                    cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                                });
                             }
-
-                            // Generate a polyline encoded string from the accumulated points.
-                            String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
-
-                            routeString = resultGeometryString;
-
-                            listDirections = new ArrayList<>();
-
-                            System.out.println(resultGeometryString);
-                            System.out.println(resultGeometryString.length());
-
-                            ArrayList<DirectionsRoute> list = new ArrayList<>();
-                            list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
-
-                            mapboxNavigation.setRoutes(new ArrayList<>());
-                            mapboxNavigation.setRoutes(list);
-
-                            routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
-                            routeLineApi = new MapboxRouteLineApi(routeLineOptions);
-                            routeLineView = new MapboxRouteLineView(routeLineOptions);
-
-                            routeLine = new RouteLine(list.get(0), null);
-
-                            routesObserver = new RoutesObserver() {
-                                @Override
-                                public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                                    routes.add(routeLine);
-                                    routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                                        System.out.println("Hello");
-                                        routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                                        System.out.println("Hello");
-                                        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-
-                                        routes = new ArrayList<>();
-                                        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
-
-                                        // Modifica o zoom na câmera automaticamente
-                                        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                                .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
-                                                .zoom(15.0)
-                                                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                                .build();
-
-                                        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                                    });
-                                }
-                            };
-
-                            mapboxNavigation.registerRoutesObserver(routesObserver);
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
-
-                        }
-                    });
-
-                } else {
-                    pointsList = new ArrayList<>();
-                    ArrayList<Point> resultGeometry = new ArrayList<>();
-                    for (DirectionsRoute directions : listDirections) {
-
-                        // Convert the polyline string into a list of Position objects
-                        List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
-
-                        // Concatenate the route points, removing the first point if we're appendin
-                        resultGeometry.addAll(routePoints);
-
+                        };
+                        mapboxNavigation.registerRoutesObserver(routesObserver);
                     }
 
-                    // Generate a polyline encoded string from the accumulated points.
-                    String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+                    @Override
+                    public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
 
-                    listDirections = new ArrayList<>();
+                    }
+                });
+            }
+            // Faz o mesmo que em cima expecto que não faz pedido á API da ultima rota
+            else {
+                pointsList = new ArrayList<>();
+                ArrayList<Point> resultGeometry = new ArrayList<>();
+                for (DirectionsRoute directions : listDirections) {
 
-                    routeString = resultGeometryString;
+                    // Convert the polyline string into a list of Position objects
+                    List<Point> routePoints = PolylineUtils.decode(directions.geometry(), 6);
 
-                    ArrayList<DirectionsRoute> list = new ArrayList<>();
-                    list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
-
-                    mapboxNavigation.setRoutes(new ArrayList<>());
-                    mapboxNavigation.setRoutes(list);
-
-                    routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
-                    routeLineApi = new MapboxRouteLineApi(routeLineOptions);
-                    routeLineView = new MapboxRouteLineView(routeLineOptions);
-
-                    routeLine = new RouteLine(list.get(0), null);
-
-                    routesObserver = new RoutesObserver() {
-                        @Override
-                        public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                            routes.add(routeLine);
-                            routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                                System.out.println("Hello");
-                                routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                                System.out.println("Hello");
-
-                                routes = new ArrayList<>();
-                                MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-
-                                CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
-
-                                // Modifica o zoom na câmera automaticamente
-                                CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                        .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
-                                        .zoom(15.0)
-                                        .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                        .build();
-
-                                cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                            });
-                        }
-                    };
-
-                    mapboxNavigation.registerRoutesObserver(routesObserver);
+                    // Concatenate the route points, removing the first point if we're appendin
+                    resultGeometry.addAll(routePoints);
 
                 }
+
+                // Generate a polyline encoded string from the accumulated points.
+                String resultGeometryString = PolylineUtils.encode(resultGeometry, 6);
+
+                listDirections = new ArrayList<>();
+
+                routeString = resultGeometryString;
+
+                ArrayList<DirectionsRoute> list = new ArrayList<>();
+                list.add(DirectionsRoute.builder().geometry(resultGeometryString).duration(0.0).distance(0.0).build());
+
+                mapboxNavigation.setRoutes(new ArrayList<>());
+                mapboxNavigation.setRoutes(list);
+
+                routeLineOptions = new MapboxRouteLineOptions.Builder(getContext()).withRouteLineBelowLayerId("road-label").build();
+                routeLineApi = new MapboxRouteLineApi(routeLineOptions);
+                routeLineView = new MapboxRouteLineView(routeLineOptions);
+
+                routeLine = new RouteLine(list.get(0), null);
+
+                routesObserver = new RoutesObserver() {
+                    @Override
+                    public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+                        routes.add(routeLine);
+                        routeLineApi.setRoutes(routes, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                            routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
+
+                            routes = new ArrayList<>();
+                            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+
+                            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+
+                            // Modifica o zoom na câmera automaticamente
+                            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                    .center(Point.fromLngLat(loc1.getLongitude(), loc1.getLatitude()))
+                                    .zoom(15.0)
+                                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                    .build();
+
+                            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                        });
+                    }
+                };
+
+                mapboxNavigation.registerRoutesObserver(routesObserver);
+
             }
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(getActivity());
         }
     }
 
+    // ------------------------------------ Não é utilizado --------------------------------------------------------------
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        System.out.println("I am on 'onRequestPermissionsResult'");
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
         startNavigation();
     }
+    // -------------------------------------------------------------------------------------------------------------------
 
+    // Devolve um Toast de que a aplicação necessita de acesso á localização para poder fazer treinos
     @Override
     public void onExplanationNeeded(List<String> list) {
         Toast.makeText(getContext(), R.string.txtPermissaoExplicacao, Toast.LENGTH_LONG).show();
     }
 
-
+    // Resposta ao devolver a permissão
     @Override
     public void onPermissionResult(boolean granted) {
+        // Caso tenha a permissão, carrega o mapa
         if (granted) {
             loadMap();
         } else {
@@ -421,65 +411,101 @@ public class mapFragment extends Fragment implements PermissionsListener {
             // Lista para os keyPoints (vazia) rotas
             List<Location> list = new ArrayList<>();
             navigationLocationProvider.changePosition(location, list, null, null);
-            // Função para atualizar a camera enviando a nova localização
-            //Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
+
+            actualLocation = location;
+
+            // Se o utilizador se escontrar na activity de iniciar o treino
             if (startBinding != null) {
+                // atualiza a câmera enviando a nova localização
                 updateCamera(location);
+
+                // Altera a textview txtGPSAdquirido e o botão btComecarTreino no StartTrainingActivity
                 startBinding.textView3.setText(R.string.txtGPSAdquirido);
                 startBinding.btComecarTreino.setEnabled(true);
-            } else {
+            }
+            // Se o utilizador encontrar-se em outra activity de treino sem ser a de iniciar o treino
+            else {
+                // Recebe o valor da logintude e latidude do ponto atual da localização
                 Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+
+                // Adiciona o ponto á lista de pontos, para depois ser desenhada a rota
                 pointsList.add(point);
+
+                // Limite de 100 pontos de localização na lista
                 if (pointsList.size() == 95) {
-                    mapMatching = MapboxMapMatching.builder().
-                            accessToken(accessToken).
-                            coordinates(pointsList).
-                            steps(true).
-                            profile(DirectionsCriteria.PROFILE_WALKING).
-                            build();
+                    // Se o utilizador tiver conexão á Internet
+                    if (CiclismoJsonParser.isInternetConnection(getContext())) {
+                        // Envia os pontos para a API dar uma rota
+                        mapMatching = MapboxMapMatching.builder().
+                                accessToken(accessToken).
+                                coordinates(pointsList).
+                                steps(true).
+                                profile(DirectionsCriteria.PROFILE_WALKING).
+                                build();
 
-                    pointsList = new ArrayList<>();
-                    mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
-                        @Override
-                        public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
-                            directionsRoute = response.body().matchings().get(0).toDirectionRoute();
-                            listDirections.add(directionsRoute);
-                        }
+                        // Apaga os pontos e cria uma nova lista vazia
+                        pointsList = new ArrayList<>();
 
-                        @Override
-                        public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+                        // Resposta da API com a rota dos pontos dados
+                        mapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
+                            @Override
+                            public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                                directionsRoute = response.body().matchings().get(0).toDirectionRoute();
 
-                        }
-                    });
+                                // Adiciona a rota á lista de rotas
+                                listDirections.add(directionsRoute);
+                            }
 
+                            @Override
+                            public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                    // Se o utilizador não tiver conexão a Internet
+                    else{
+                        // Apaga os pontos e cria uma nova lista vazia
+                        pointsList = new ArrayList<>();
+                    }
                 }
-                // Atualiza as funções de velocidade instântanea e média e a distância percorrida)
-                // No InProgressTrainingActivity
+                // Se o utilizador se encontra na activity inicial do treino
                 if (trainingBinding != null) {
+                    // Atualiza o valor do tempo do treino
                     isRunning = true;
                     Chronometer.getInstancia(false).trainingBinding = trainingBinding;
+
+                    // Inicia um novo cronometro caso não exista um
                     if (startTimer) {
                         chronometer = Chronometer.getInstancia(true);
                         Chronometer.getInstancia(false).trainingBinding = trainingBinding;
                         chronometer.start();
                         startTimer = false;
                     }
+                    // Inicia novamente o cronômetro
                     if (resumeTimer) {
                         chronometer.stopVariable = false;
                         resumeTimer = false;
                     }
+
+                    // Atualiza a câmera, velocidade, velocidade média e a distância
                     updateCamera(location);
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
-                    // No InProgressTrainingMapActivity
-                } else if (mapBinding != null) {
+                }
+                // No InProgressTrainingMapActivity
+                else if (mapBinding != null) {
+                    // Atualiza os dados do treino
                     updateCamera(location);
                     isRunning = true;
                     Chronometer.getInstancia(false).mapBinding = mapBinding;
                     setVelocity(location);
                     setVM(location);
                     setDistance(location);
+                }
+                // Se o utilizador estiver na activity de pausa, atualiza apenas a câmera
+                else if (pausedBinding != null) {
+                    updateCamera(location);
                 }
             }
         }
@@ -489,26 +515,26 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     };
 
-
-
-
-    private void updateCamera(Location location) {
+    // Atualiza a câmera para a localização atual
+    public void updateCamera(Location location) {
         // Animações na câmera
-        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+        if (location != null) {
+            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
-        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
 
-        // Modifica o zoom na câmera automaticamente
-        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                .center(Point.fromLngLat(location.getLongitude(), location.getLatitude()))
-                .zoom(17.0)
-                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                .build();
+            // Modifica o zoom na câmera automaticamente
+            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                    .center(Point.fromLngLat(location.getLongitude(), location.getLatitude()))
+                    .zoom(17.0)
+                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                    .build();
 
-        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+        }
     }
 
-    //Função para destruir as variaveis do mapa a pedido do código
+    // Função para destruir as variaveis do mapa a pedido do código
     public void onMyDestroy() {
         super.onDestroy();
         isRunning = false;
@@ -519,9 +545,11 @@ public class mapFragment extends Fragment implements PermissionsListener {
             mapboxNavigation.unregisterRoutesObserver(routesObserver);
         }
         mapboxNavigation.unregisterLocationObserver(locationObs);
+        startBinding = null;
         trainingBinding = null;
         pausedBinding = null;
         mapBinding = null;
+        // Se existir algum cronometro a correr
         if (chronometer != null) {
             startTimer = true;
             chronometer.stop = true;
@@ -543,10 +571,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         setMaxVelocity(nCurrentSpeed);
 
-        // Atualiza na view a velocidade atual
+        // Atualiza a velocidade atual na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
-        } else if (mapBinding != null) {
+        }
+        // Atualiza a velocidade atual na view do mapa durante o treino
+        else if (mapBinding != null) {
             mapBinding.tvVelInstantanea.setText(Converter.velocityFormat(velocityInstant));
         }
     }
@@ -574,10 +604,12 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
         velocityMean = mean;
 
-        // Escreve o valor da velocidade no ecrâ em KM/H
+        // Atualiza a velocidade média na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(mean));
-        } else if (mapBinding != null) {
+        }
+        // Atualiza a velocidade média na view do mapa durante o treino
+        else if (mapBinding != null) {
             mapBinding.tvVelMedia.setText(Converter.velocityFormat(mean));
         }
     }
@@ -586,10 +618,10 @@ public class mapFragment extends Fragment implements PermissionsListener {
     private void setDistance(Location location) {
         // Caso seja o primeiro valor que recebe faz
         if (!isLoc1) {
-            //
+            // Recebe a localização
             loc1 = location;
             isLoc1 = true;
-            // Se já existir um valor anterior faz
+        // Se já existir um valor anterior faz
         } else {
             // Recebe a localização atual e coloca na segunda variável
             loc2 = location;
@@ -601,39 +633,44 @@ public class mapFragment extends Fragment implements PermissionsListener {
             distance = distance + newDistance;
         }
 
-
-        // Atualiza na view o valor da distância
+        // Atualiza a distância na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
-        } else if (mapBinding != null) {
+        }
+        // Atualiza a distância na view do mapa durante o treino
+        else if (mapBinding != null) {
             mapBinding.tvDistancia.setText(Converter.distanceFormat(distance));
         }
-
-
     }
 
-    //Mostra os resultados do treino no ResultsTrainingActivity
+    // Mostra os resultados do treino no ResultsTrainingActivity
     public void getResults(ActivityResultsTrainingBinding binding) {
         binding.tvVelMaxResumo.setText(Converter.velocityFormat(velocityMax));
         binding.tvVelMediaResumo.setText(Converter.velocityFormat(velocityMean));
         binding.tvDistanciaResumo.setText(Converter.distanceFormat(distance));
         binding.tvTempoResumo.setText(Converter.hourFormat(time));
+        // Indica que o treino foi terminado
         isFinished = true;
     }
 
-
+    // Atribui os dados na devida activity cada vez que se entra nela
     public void setData() {
+        // Insere os dados da atividade na página principal do treino
         if (trainingBinding != null) {
             trainingBinding.tvDuracaoTreino.setText(Converter.hourFormat(time));
             trainingBinding.tvVelMediaTreino.setText(Converter.velocityFormat(velocityMean));
             trainingBinding.tvDistanciaTreino.setText(Converter.distanceFormat(distance));
             trainingBinding.tvVelInstantaneaTreino.setText(Converter.velocityFormat(velocityInstant));
-        } else if (mapBinding != null) {
+        }
+        // Insere os dados da atividade na view do mapa do treino
+        else if (mapBinding != null) {
             mapBinding.tvTempo.setText(Converter.hourFormat(time));
             mapBinding.tvVelInstantanea.setText(Converter.velocityFormat(velocityInstant));
             mapBinding.tvVelMedia.setText(Converter.velocityFormat(velocityMean));
             mapBinding.tvDistancia.setText(Converter.distanceFormat(distance));
-        } else if (pausedBinding != null) {
+        }
+        // Insere os dados da atividade na página de pausa do treino
+        else if (pausedBinding != null) {
             pausedBinding.tvDistanciaPausa.setText(Converter.distanceFormat(distance));
             pausedBinding.tvVelMaxPausa.setText(Converter.velocityFormat(velocityMax));
             pausedBinding.tvVelMediaPausa.setText(Converter.velocityFormat(velocityMean));
@@ -641,27 +678,33 @@ public class mapFragment extends Fragment implements PermissionsListener {
         }
     }
 
+    private RouteLine routeLineDetails;
 
+    // Coloca a informação dentro das classes necessárias para desenhar a rota
     public void setRoute(String route, Context context) {
+        // Se existir uma rota
         if (!route.equals("null")) {
-            System.out.println(route);
             ArrayList<DirectionsRoute> list = new ArrayList<>();
-            list.add(DirectionsRoute.builder().geometry(route).duration(0.0).distance(0.0).build());
 
+            // Gera uma directions route, precisamos colocar valor inicial
+            list.add(DirectionsRoute.builder().geometry(route).duration(0.0).distance(0.0).build());
 
             List<Point> resultGeometry = new ArrayList<>();
             resultGeometry = PolylineUtils.decode(route, 6);
 
+            // Ponto central do treino para poder dar o zoom
             int resultGeometryIndex = resultGeometry.size() / 2;
 
+            // Desenha a rota com os pontos da lista
             mapboxNavigation.setRoutes(new ArrayList<>());
             mapboxNavigation.setRoutes(list);
 
+            // Opções a desenhar a rota
             routeLineOptions = new MapboxRouteLineOptions.Builder(context).withRouteLineBelowLayerId("road-label").build();
             routeLineApi = new MapboxRouteLineApi(routeLineOptions);
             routeLineView = new MapboxRouteLineView(routeLineOptions);
 
-            RouteLine routeLineDetails = new RouteLine(list.get(0), null);
+            routeLineDetails = new RouteLine(list.get(0), null);
 
             list = null;
 
@@ -669,29 +712,30 @@ public class mapFragment extends Fragment implements PermissionsListener {
             routesObserver = new RoutesObserver() {
                 @Override
                 public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-                    ArrayList<RouteLine> routesDetails = new ArrayList<>();
-                    routesDetails.add(routeLineDetails);
-                    routeLineApi.setRoutes(routesDetails, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
-                        System.out.println("Hello");
-                        routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
-                        System.out.println("Hello");
+                    // IF devido a um problema que fazia no mapa aparecer várias rotas
+                    if (routeLineDetails != null) {
+                        ArrayList<RouteLine> routesDetails = new ArrayList<>();
+                        routesDetails.add(routeLineDetails);
+                        routeLineApi.setRoutes(routesDetails, (Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) -> {
+                            routeLineView.renderRouteDrawData(Objects.requireNonNull(mapboxMap.getStyle()), routeLineErrorRouteSetValueExpected);
 
-                        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+                            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
 
-                        CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
+                            CameraAnimationsPlugin cameraAnimationsPlugin = CameraAnimationsUtils.getCamera(mapView);
 
-                        // Modifica o zoom na câmera automaticamente
-                        CameraOptions cameraOptions = (new CameraOptions.Builder())
-                                .center(finalResultGeometry.get(resultGeometryIndex))
-                                .zoom(15.0)
-                                .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                                .build();
+                            // Modifica o zoom na câmera automaticamente
+                            CameraOptions cameraOptions = (new CameraOptions.Builder())
+                                    .center(finalResultGeometry.get(resultGeometryIndex))
+                                    .zoom(15.0)
+                                    .padding(new EdgeInsets(500.0, 0.0, 0.0, 0.0))
+                                    .build();
 
-                        cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
-                    });
+                            cameraAnimationsPlugin.easeTo(cameraOptions, animationOptions);
+                        });
+                    }
+                    routeLineDetails = null;
                 }
             };
-
             mapboxNavigation.registerRoutesObserver(routesObserver);
         }
     }

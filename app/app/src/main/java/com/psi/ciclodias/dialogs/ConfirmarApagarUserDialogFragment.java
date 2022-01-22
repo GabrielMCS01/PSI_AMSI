@@ -15,7 +15,11 @@ public class ConfirmarApagarUserDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //return super.onCreateDialog(savedInstanceState);
+
+        // Classe default para construir a Alert Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Construi a Alert Dialog (Mensagem, Botão Positivo e Botão Negativo) e não permite cancelar
         builder.setMessage("Deseja apagar o seu perfil de utilizador?").setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -28,11 +32,13 @@ public class ConfirmarApagarUserDialogFragment extends DialogFragment {
             }
         }).setCancelable(false);
 
+        // Cria a Dialog
         return builder.create();
     }
 
     ApagarPerfilListener apagarPerfilListener;
 
+    // Método para apagar o utilizador
     public interface ApagarPerfilListener{
         void onApagarClick();
     }

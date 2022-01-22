@@ -35,7 +35,7 @@ public class DBHelp extends SQLiteOpenHelper {
         bd = getWritableDatabase();
     }
 
-    // Crias as tabelas na DB enviada
+    // Cria a tabela na DB criada
     @Override
     public void onCreate(SQLiteDatabase db) {
         String SQL = "CREATE TABLE " + TABELA_CICLISMO + "(" +
@@ -80,6 +80,7 @@ public class DBHelp extends SQLiteOpenHelper {
         bd.insert(TABELA_CICLISMO, null, valores);
     }
 
+    // Cria uma nova sessão de treino que irá ficar por sincronizar com a API
     public long AdicionarCiclismoDBUnSync(Ciclismo ciclismo) {
         ContentValues valores = new ContentValues();
 
@@ -106,7 +107,7 @@ public class DBHelp extends SQLiteOpenHelper {
                         VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO, USER_ID_CICLISMO},
                 null, null, null, null, null);
 
-        // Se o encontrar algum faz
+        // Caso exista algum treino faz
         if(cursor.moveToFirst()){
             // Faz enquanto ainda houver mais treinos
             do {
@@ -126,34 +127,6 @@ public class DBHelp extends SQLiteOpenHelper {
 
         cursor.close();
         return lista;
-    }
-
-    // Retorna uma sessão de treino detalhada
-    public Ciclismo getCiclismoDB(){
-        // Query á tabela para procurar os detalhes do treino selecionado
-        Cursor cursor = bd.query(TABELA_CICLISMO, new String[] {ID_CICLISMO, NOME_PERCURSO, DURACAO, DISTANCIA, VELOCIDADE_MEDIA,
-                        VELOCIDADE_MAXIMA, VELOCIDADE_GRAFICO, ROTA, DATA_TREINO, USER_ID_CICLISMO},
-                null, null, null, null, null);
-
-        // Se encontrar algum treino faz
-        if(cursor.moveToFirst()){
-            Ciclismo ciclismo = new Ciclismo(cursor.getLong(0),
-                    cursor.getString(1),
-                    cursor.getInt(2),
-                    cursor.getInt(3),
-                    cursor.getFloat(4),
-                    cursor.getFloat(5),
-                    cursor.getString(6),
-                    cursor.getString(7),
-                    cursor.getString(8));
-                ciclismo.setUser_id_ciclismo(cursor.getLong(9));
-                cursor.close();
-
-                return ciclismo;
-        }
-
-        cursor.close();
-        return null;
     }
 
     // Edita uma sessão de treino
