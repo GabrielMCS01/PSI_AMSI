@@ -13,6 +13,12 @@ O projeto é comum entre várias disciplinas, mas as fases que traçam este proj
 * Iuri Carrasqueiro Nº 2201127
 * Gabriel Silva Nº 2201133
 
+# NOTA
+
+A aplicação pode ser utilizada por emulador, mas nem todas as funcionalidades podem funcionar, devendo-se utilizar um dispositivo fisico Android.
+
+Recomenda-se, para testar as funcionalidades de localização GPS, que o utilizador esteja em movimento e fora de um edificio.
+
 # Credenciais de Acesso
 
 ## Utilizador
