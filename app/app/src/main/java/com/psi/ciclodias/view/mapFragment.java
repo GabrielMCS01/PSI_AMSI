@@ -232,7 +232,7 @@ public class mapFragment extends Fragment implements PermissionsListener {
         // Se acabou o treino
         else if (isFinished) {
             // Se existirem mais de 2 pontos de localização e se o utilizador tiver conexão á internet
-            if (pointsList.size() > 2 && CiclismoJsonParser.isInternetConnection(getContext())) {
+            if (pointsList.size() > 2 && CiclismoJsonParser.isInternetConnection(getActivity().getApplicationContext())) {
                 MapboxMapMatching mapMatchingTwo = MapboxMapMatching.builder().
                         accessToken(getString(R.string.mapbox_access_token)).
                         coordinates(pointsList).
@@ -433,8 +433,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                 // Limite de 100 pontos de localização na lista
                 if (pointsList.size() == 95) {
-                    // Se o utilizador tiver conexão á Internet
-                    if (CiclismoJsonParser.isInternetConnection(getContext())) {
                         // Envia os pontos para a API dar uma rota
                         mapMatching = MapboxMapMatching.builder().
                                 accessToken(accessToken).
@@ -461,12 +459,6 @@ public class mapFragment extends Fragment implements PermissionsListener {
 
                             }
                         });
-                    }
-                    // Se o utilizador não tiver conexão a Internet
-                    else{
-                        // Apaga os pontos e cria uma nova lista vazia
-                        pointsList = new ArrayList<>();
-                    }
                 }
                 // Se o utilizador se encontra na activity inicial do treino
                 if (trainingBinding != null) {
