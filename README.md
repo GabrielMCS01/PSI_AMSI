@@ -13,6 +13,27 @@ O projeto é comum entre várias disciplinas, mas as fases que traçam este proj
 * Iuri Carrasqueiro Nº 2201127
 * Gabriel Silva Nº 2201133
 
+# Credenciais de Acesso
+
+## Utilizador
+
+Username: marioviana
+
+Password: 123456789
+
+## Link do Website
+
+http://ciclodias.duckdns.org/
+
+## Link do PhpMyAdmin
+
+http://ciclodias.duckdns.org/phpmyadmin/
+
+Username: marioviana
+
+Password: ciclodiasamsi2022
+
+
 ## Imagem da instituição
 
 ![IPL](docs/logoipl.png)
