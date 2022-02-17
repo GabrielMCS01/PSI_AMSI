@@ -23,7 +23,7 @@ Recomenda-se, para testar as funcionalidades de localização GPS, que o utiliza
 
 ## Utilizador
 
-Username: marioviana
+Username: ciclodias
 
 Password: 123456789
 
@@ -35,9 +35,9 @@ http://ciclodias.duckdns.org/
 
 http://ciclodias.duckdns.org/phpmyadmin/
 
-Username: marioviana
+Username: ciclodias_entrega
 
-Password: ciclodiasamsi2022
+Password: ciclodiaspsi2022
 
 
 ## Imagem da instituição
