@@ -38,11 +38,11 @@ public class SingletonGestorCiclismo {
     public static final String TOKEN = "token";
 
     // URLs utilizados para acesso á API
-    private static final String URL_LOGIN = "http://ciclodias.duckdns.org/admin/v1/login/login";
-    private static final String URL_REGISTO = "http://ciclodias.duckdns.org/admin/v1/registo/signup";
-    private static final String URL_CICLISMO = "http://ciclodias.duckdns.org/admin/v1/ciclismo";
-    private static final String URL_USER = "http://ciclodias.duckdns.org/admin/v1/user";
-    private static final String URL_PUBLICACAO = "http://ciclodias.duckdns.org/admin/v1/publicacao";
+    private static final String URL_LOGIN = "http://gabrielmcs.duckdns.org/ciclodias-admin/v1/login/login";
+    private static final String URL_REGISTO = "http://gabrielmcs.duckdns.org/ciclodias-admin/v1/registo/signup";
+    private static final String URL_CICLISMO = "http://gabrielmcs.duckdns.org/ciclodias-admin/v1/ciclismo";
+    private static final String URL_USER = "http://gabrielmcs.duckdns.org/ciclodias-admin/v1/user";
+    private static final String URL_PUBLICACAO = "http://gabrielmcs.duckdns.org/ciclodias-admin/v1/publicacao";
 
     // Arraylist com todos as atividades do utilizador
     public ArrayList<Ciclismo> ArrCiclismo;
